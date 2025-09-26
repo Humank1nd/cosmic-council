@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Council - Problem-Solving Workflow</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+
+        .workflow-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .workflow-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .workflow-panel h3 {
+            margin: 0 0 20px 0;
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .step.completed .step-circle {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        .step-label {
+            font-size: 12px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .current-step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .current-step h4 {
+            margin: 0 0 15px 0;
+            color: #fff;
+            font-size: 1.3em;
+        }
+
+        .current-step p {
+            margin: 0 0 15px 0;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .guidance-notes {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .guidance-notes h5 {
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        .guidance-notes ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .guidance-notes li {
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .input-section input,
+        .input-section textarea,
+        .input-section select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .input-section textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-section input:focus,
+        .input-section textarea:focus,
+        .input-section select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
+        }
+
+        .multi-input {
+            margin-bottom: 15px;
+        }
+
+        .multi-input-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .multi-input-item input {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+        }
+
+        .btn.success {
+            background: linear-gradient(45deg, #00b894, #00a085);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .results-panel h4 {
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .result-item h5 {
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        .result-item p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .confidence-score {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .confidence-high {
+            background: linear-gradient(45deg, #00b894, #00a085);
+        }
+
+        .confidence-medium {
+            background: linear-gradient(45deg, #fdcb6e, #e17055);
+        }
+
+        .confidence-low {
+            background: linear-gradient(45deg, #e84393, #d63031);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b894, #00a085);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .session-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .session-info h4 {
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .session-info p {
+            margin: 0 0 10px 0;
+            opacity: 0.9;
+        }
+
+        .enterprise-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+
+        .enterprise-red { background: #ff0000; }
+        .enterprise-orange { background: #ffa500; }
+        .enterprise-yellow { background: #ffff00; color: #333; }
+        .enterprise-green { background: #008000; }
+        .enterprise-blue { background: #0000ff; }
+        .enterprise-purple { background: #4b0082; }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-indicator {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .step {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 Cosmic Council</h1>
+            <p>Problem-Solving Workflow Interface</p>
+        </div>
+
+        <div class="session-info">
+            <h4>📋 Session Information</h4>
+            <p><strong>Session ID:</strong> <span id="session-id">Not started</span></p>
+            <p><strong>Status:</strong> <span id="session-status">Not started</span></p>
+            <p><strong>Progress:</strong> <span id="session-progress">0%</span></p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="workflow-container">
+            <div class="workflow-panel">
+                <h3>🎯 Workflow Steps</h3>
+                
+                <div class="step-indicator">
+                    <div class="step" id="step-1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Problem<br>Definition</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Red Owl<br>Research</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Orange<br>Planning</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Yellow<br>Development</div>
+                    </div>
+                    <div class="step" id="step-5">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Green<br>Resources</div>
+                    </div>
+                    <div class="step" id="step-6">
+                        <div class="step-circle">6</div>
+                        <div class="step-label">Blue<br>Communication</div>
+                    </div>
+                    <div class="step" id="step-7">
+                        <div class="step-circle">7</div>
+                        <div class="step-label">Purple<br>Support</div>
+                    </div>
+                    <div class="step" id="step-8">
+                        <div class="step-circle">8</div>
+                        <div class="step-label">Synthesis<br>& Decision</div>
+                    </div>
+                    <div class="step" id="step-9">
+                        <div class="step-circle">9</div>
+                        <div class="step-label">Implementation<br>Planning</div>
+                    </div>
+                    <div class="step" id="step-10">
+                        <div class="step-circle">10</div>
+                        <div class="step-label">Monitoring<br>& Feedback</div>
+                    </div>
+                </div>
+
+                <div class="current-step" id="current-step-panel">
+                    <h4 id="current-step-title">Welcome to the Cosmic Council Workflow</h4>
+                    <p id="current-step-description">Click "Start New Session" to begin your problem-solving journey using the hexagonal methodology.</p>
+                    
+                    <div class="guidance-notes hidden" id="guidance-notes">
+                        <h5>💡 Guidance Notes:</h5>
+                        <ul id="guidance-list"></ul>
+                    </div>
+
+                    <div class="input-section hidden" id="input-section">
+                        <!-- Dynamic input fields will be inserted here -->
+                    </div>
+
+                    <div class="btn-container">
+                        <button class="btn primary" id="start-session-btn">🚀 Start New Session</button>
+                        <button class="btn secondary hidden" id="next-step-btn">➡️ Next Step</button>
+                        <button class="btn secondary hidden" id="previous-step-btn">⬅️ Previous Step</button>
+                        <button class="btn secondary hidden" id="save-session-btn">💾 Save Session</button>
+                        <button class="btn secondary hidden" id="load-session-btn">📁 Load Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-panel">
+                <h3>📊 Results & Progress</h3>
+                
+                <div id="results-panel" class="results-panel hidden">
+                    <h4>Latest Results</h4>
+                    <div id="results-content">
+                        <!-- Results will be displayed here -->
+                    </div>
+                </div>
+
+                <div id="session-summary" class="results-panel">
+                    <h4>Session Summary</h4>
+                    <div id="summary-content">
+                        <p>No active session. Start a new session to begin the workflow.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Workflow state
+        let currentSession = null;
+        let currentStepIndex = 0;
+        let sessionData = {};
+
+        // Workflow steps configuration
+        const workflowSteps = [
+            {
+                id: 'problem_definition',
+                title: 'Problem Definition',
+                description: 'Define and clarify the problem to be solved',
+                enterprise: null,
+                guidance: [
+                    'Clearly define what problem you\'re trying to solve',
+                    'Identify the root cause, not just symptoms',
+                    'Consider who is affected by this problem',
+                    'Think about what success would look like'
+                ],
+                inputs: [
+                    { id: 'title', label: 'Problem Title', type: 'text', required: true },
+                    { id: 'description', label: 'Problem Description', type: 'textarea', required: true },
+                    { id: 'complexity', label: 'Complexity Level', type: 'select', options: ['simple', 'moderate', 'complex', 'systemic'], required: true },
+                    { id: 'domain', label: 'Domain/Industry', type: 'text', required: true },
+                    { id: 'stakeholders', label: 'Stakeholders', type: 'multi-text', required: true },
+                    { id: 'constraints', label: 'Constraints', type: 'multi-text', required: false },
+                    { id: 'success_criteria', label: 'Success Criteria', type: 'multi-text', required: true }
+                ]
+            },
+            {
+                id: 'red_owl_research',
+                title: 'Red Owl Research & Inquiry',
+                description: 'Gather comprehensive information and conduct research',
+                enterprise: 'red-owl',
+                guidance: [
+                    'What information do you need to understand this problem?',
+                    'Who are the key stakeholders and what are their perspectives?',
+                    'What research has already been done on similar problems?',
+                    'What data sources are available and reliable?'
+                ],
+                inputs: [
+                    { id: 'research_questions', label: 'Research Questions', type: 'multi-text', required: true },
+                    { id: 'data_sources', label: 'Data Sources', type: 'multi-text', required: true },
+                    { id: 'stakeholder_interviews', label: 'Stakeholder Interviews', type: 'multi-text', required: true }
+                ]
+            },
+            {
+                id: 'orange_orangutan_planning',
+                title: 'Orange Orangutan Planning & Strategy',
+                description: 'Develop comprehensive planning and strategic approach',
+                enterprise: 'orange-orangutan',
+                guidance: [
+                    'What are the key objectives and milestones?',
+                    'What resources will be needed and when?',
+                    'What are the potential risks and how can they be mitigated?',
+                    'What is the timeline and what are the critical dependencies?'
+                ],
+                inputs: [
+                    { id: 'objectives', label: 'Objectives', type: 'multi-text', required: true },
+                    { id: 'timeline', label: 'Timeline', type: 'text', required: true },
+                    { id: 'resources', label: 'Resources', type: 'multi-text', required: true },
+                    { id: 'risks', label: 'Risks', type: 'multi-text', required: true }
+                ]
+            },
+            {
+                id: 'yellow_honeybee_development',
+                title: 'Yellow Honeybee Development & Innovation',
+                description: 'Generate creative solutions and develop prototypes',
+                enterprise: 'yellow-honeybee',
+                guidance: [
+                    'What creative approaches could solve this problem?',
+                    'What innovative solutions have you considered?',
+                    'How can you prototype and test different approaches?',
+                    'What constraints limit your creative options?'
+                ],
+                inputs: [
+                    { id: 'creative_solutions', label: 'Creative Solutions', type: 'multi-text', required: true },
+                    { id: 'innovation_approaches', label: 'Innovation Approaches', type: 'multi-text', required: true },
+                    { id: 'prototype_ideas', label: 'Prototype Ideas', type: 'multi-text', required: true },
+                    { id: 'testing_strategy', label: 'Testing Strategy', type: 'textarea', required: true }
+                ]
+            },
+            {
+                id: 'green_tortoise_resources',
+                title: 'Green Tortoise Resource Management',
+                description: 'Plan budget, resources, and sustainability',
+                enterprise: 'green-tortoise',
+                guidance: [
+                    'What is your budget and how should it be allocated?',
+                    'What human, technical, and material resources are needed?',
+                    'How can you ensure long-term sustainability?',
+                    'What are the cost-benefit trade-offs?'
+                ],
+                inputs: [
+                    { id: 'budget', label: 'Budget', type: 'text', required: true },
+                    { id: 'timeline', label: 'Timeline', type: 'text', required: true },
+                    { id: 'resources', label: 'Resource Requirements', type: 'multi-text', required: true },
+                    { id: 'sustainability', label: 'Sustainability Considerations', type: 'multi-text', required: true }
+                ]
+            },
+            {
+                id: 'blue_dolphin_communication',
+                title: 'Blue Dolphin Communication & Marketing',
+                description: 'Develop communication strategy and stakeholder engagement',
+                enterprise: 'blue-dolphin',
+                guidance: [
+                    'How will you communicate the solution to stakeholders?',
+                    'What are the key messages and value propositions?',
+                    'What communication channels will be most effective?',
+                    'How will you handle resistance and build support?'
+                ],
+                inputs: [
+                    { id: 'key_messages', label: 'Key Messages', type: 'multi-text', required: true },
+                    { id: 'target_audiences', label: 'Target Audiences', type: 'multi-text', required: true },
+                    { id: 'communication_channels', label: 'Communication Channels', type: 'multi-text', required: true },
+                    { id: 'engagement_strategy', label: 'Engagement Strategy', type: 'textarea', required: true }
+                ]
+            },
+            {
+                id: 'purple_elephant_support',
+                title: 'Purple Elephant Support & Empathy',
+                description: 'Ensure human-centered design and support systems',
+                enterprise: 'purple-elephant',
+                guidance: [
+                    'How will this solution impact people emotionally?',
+                    'What support systems will be needed during implementation?',
+                    'How can you ensure the solution is accessible and inclusive?',
+                    'What feedback mechanisms will you establish?'
+                ],
+                inputs: [
+                    { id: 'stakeholder_impact', label: 'Stakeholder Impact', type: 'multi-text', required: true },
+                    { id: 'support_systems', label: 'Support Systems', type: 'multi-text', required: true },
+                    { id: 'feedback_mechanisms', label: 'Feedback Mechanisms', type: 'multi-text', required: true },
+                    { id: 'accessibility', label: 'Accessibility Considerations', type: 'textarea', required: true }
+                ]
+            },
+            {
+                id: 'synthesis_and_decision',
+                title: 'Synthesis & Final Decision',
+                description: 'Synthesize all inputs and make final decision',
+                enterprise: null,
+                guidance: [
+                    'Review all enterprise inputs and recommendations',
+                    'Identify the best overall approach',
+                    'Consider trade-offs and compromises',
+                    'Make final decision on implementation approach'
+                ],
+                inputs: [
+                    { id: 'final_decision', label: 'Final Decision', type: 'textarea', required: true },
+                    { id: 'approach_selection', label: 'Selected Approach', type: 'textarea', required: true },
+                    { id: 'trade_offs', label: 'Key Trade-offs', type: 'textarea', required: true }
+                ]
+            },
+            {
+                id: 'implementation_planning',
+                title: 'Implementation Planning',
+                description: 'Create detailed implementation plan',
+                enterprise: null,
+                guidance: [
+                    'Create detailed timeline and milestones',
+                    'Assign responsibilities and resources',
+                    'Establish success metrics and KPIs',
+                    'Plan for monitoring and adjustment'
+                ],
+                inputs: [
+                    { id: 'timeline', label: 'Implementation Timeline', type: 'text', required: true },
+                    { id: 'milestones', label: 'Milestones', type: 'multi-text', required: true },
+                    { id: 'responsibilities', label: 'Responsibilities', type: 'multi-text', required: true },
+                    { id: 'success_metrics', label: 'Success Metrics', type: 'multi-text', required: true }
+                ]
+            },
+            {
+                id: 'monitoring_and_feedback',
+                title: 'Monitoring & Feedback',
+                description: 'Establish monitoring systems and feedback loops',
+                enterprise: null,
+                guidance: [
+                    'Set up monitoring and tracking systems',
+                    'Establish regular feedback collection',
+                    'Plan for continuous improvement',
+                    'Document lessons learned'
+                ],
+                inputs: [
+                    { id: 'tracking_metrics', label: 'Tracking Metrics', type: 'multi-text', required: true },
+                    { id: 'feedback_channels', label: 'Feedback Channels', type: 'multi-text', required: true },
+                    { id: 'review_schedule', label: 'Review Schedule', type: 'text', required: true },
+                    { id: 'improvement_process', label: 'Improvement Process', type: 'textarea', required: true }
+                ]
+            }
+        ];
+
+        // Initialize the interface
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeInterface();
+        });
+
+        function initializeInterface() {
+            // Set up event listeners
+            document.getElementById('start-session-btn').addEventListener('click', startNewSession);
+            document.getElementById('next-step-btn').addEventListener('click', nextStep);
+            document.getElementById('previous-step-btn').addEventListener('click', previousStep);
+            document.getElementById('save-session-btn').addEventListener('click', saveSession);
+            document.getElementById('load-session-btn').addEventListener('click', loadSession);
+
+            // Initialize display
+            updateStepDisplay();
+        }
+
+        function startNewSession() {
+            currentSession = {
+                id: generateSessionId(),
+                startTime: new Date(),
+                status: 'in_progress',
+                steps: {},
+                currentStep: 0
+            };
+
+            currentStepIndex = 0;
+            sessionData = {};
+
+            updateSessionInfo();
+            updateStepDisplay();
+            showStep(0);
+
+            // Hide start button, show navigation buttons
+            document.getElementById('start-session-btn').classList.add('hidden');
+            document.getElementById('next-step-btn').classList.remove('hidden');
+            document.getElementById('previous-step-btn').classList.remove('hidden');
+            document.getElementById('save-session-btn').classList.remove('hidden');
+            document.getElementById('load-session-btn').classList.remove('hidden');
+        }
+
+        function showStep(stepIndex) {
+            if (stepIndex < 0 || stepIndex >= workflowSteps.length) return;
+
+            const step = workflowSteps[stepIndex];
+            currentStepIndex = stepIndex;
+
+            // Update step title and description
+            document.getElementById('current-step-title').textContent = step.title;
+            document.getElementById('current-step-description').textContent = step.description;
+
+            // Show enterprise badge if applicable
+            if (step.enterprise) {
+                const enterpriseBadge = `<span class="enterprise-badge enterprise-${step.enterprise.split('-')[0]}">${step.enterprise.replace('-', ' ').toUpperCase()}</span>`;
+                document.getElementById('current-step-description').innerHTML = step.description + '<br>' + enterpriseBadge;
+            }
+
+            // Show guidance notes
+            if (step.guidance && step.guidance.length > 0) {
+                const guidanceList = document.getElementById('guidance-list');
+                guidanceList.innerHTML = '';
+                step.guidance.forEach(note => {
+                    const li = document.createElement('li');
+                    li.textContent = note;
+                    guidanceList.appendChild(li);
+                });
+                document.getElementById('guidance-notes').classList.remove('hidden');
+            } else {
+                document.getElementById('guidance-notes').classList.add('hidden');
+            }
+
+            // Show input section
+            showInputSection(step);
+            updateStepIndicators();
+        }
+
+        function showInputSection(step) {
+            const inputSection = document.getElementById('input-section');
+            inputSection.innerHTML = '';
+
+            step.inputs.forEach(input => {
+                const div = document.createElement('div');
+                div.className = 'input-section';
+
+                const label = document.createElement('label');
+                label.textContent = input.label + (input.required ? ' *' : '');
+                div.appendChild(label);
+
+                if (input.type === 'text' || input.type === 'textarea') {
+                    const element = document.createElement(input.type);
+                    element.id = input.id;
+                    element.name = input.id;
+                    element.value = sessionData[input.id] || '';
+                    
+                    if (input.type === 'textarea') {
+                        element.rows = 4;
+                    }
+
+                    element.addEventListener('input', function() {
+                        sessionData[input.id] = this.value;
+                    });
+
+                    div.appendChild(element);
+                } else if (input.type === 'select') {
+                    const select = document.createElement('select');
+                    select.id = input.id;
+                    select.name = input.id;
+                    select.value = sessionData[input.id] || '';
+
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select an option...';
+                    select.appendChild(defaultOption);
+
+                    input.options.forEach(option => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option;
+                        optionElement.textContent = option.charAt(0).toUpperCase() + option.slice(1);
+                        select.appendChild(optionElement);
+                    });
+
+                    select.addEventListener('change', function() {
+                        sessionData[input.id] = this.value;
+                    });
+
+                    div.appendChild(select);
+                } else if (input.type === 'multi-text') {
+                    const multiInput = document.createElement('div');
+                    multiInput.className = 'multi-input';
+
+                    const items = sessionData[input.id] || [''];
+                    items.forEach((item, index) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'multi-input-item';
+
+                        const inputElement = document.createElement('input');
+                        inputElement.type = 'text';
+                        inputElement.value = item;
+                        inputElement.placeholder = `Item ${index + 1}`;
+
+                        inputElement.addEventListener('input', function() {
+                            if (!sessionData[input.id]) sessionData[input.id] = [];
+                            sessionData[input.id][index] = this.value;
+                        });
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.textContent = '×';
+                        removeBtn.className = 'btn';
+                        removeBtn.style.padding = '8px 12px';
+                        removeBtn.addEventListener('click', function() {
+                            if (items.length > 1) {
+                                items.splice(index, 1);
+                                showInputSection(step);
+                            }
+                        });
+
+                        itemDiv.appendChild(inputElement);
+                        itemDiv.appendChild(removeBtn);
+                        multiInput.appendChild(itemDiv);
+                    });
+
+                    const addBtn = document.createElement('button');
+                    addBtn.type = 'button';
+                    addBtn.textContent = '+ Add Item';
+                    addBtn.className = 'btn';
+                    addBtn.addEventListener('click', function() {
+                        if (!sessionData[input.id]) sessionData[input.id] = [''];
+                        sessionData[input.id].push('');
+                        showInputSection(step);
+                    });
+
+                    multiInput.appendChild(addBtn);
+                    div.appendChild(multiInput);
+                }
+
+                inputSection.appendChild(div);
+            });
+
+            inputSection.classList.remove('hidden');
+        }
+
+        function nextStep() {
+            if (currentStepIndex < workflowSteps.length - 1) {
+                // Save current step data
+                saveCurrentStepData();
+                
+                // Move to next step
+                currentStepIndex++;
+                showStep(currentStepIndex);
+                updateStepIndicators();
+                updateSessionInfo();
+
+                // Show results for completed step
+                showStepResults(currentStepIndex - 1);
+            } else {
+                // Complete workflow
+                completeWorkflow();
+            }
+        }
+
+        function previousStep() {
+            if (currentStepIndex > 0) {
+                // Save current step data
+                saveCurrentStepData();
+                
+                // Move to previous step
+                currentStepIndex--;
+                showStep(currentStepIndex);
+                updateStepIndicators();
+                updateSessionInfo();
+            }
+        }
+
+        function saveCurrentStepData() {
+            if (currentSession) {
+                const stepId = workflowSteps[currentStepIndex].id;
+                currentSession.steps[stepId] = {
+                    data: { ...sessionData },
+                    completed: true,
+                    timestamp: new Date()
+                };
+            }
+        }
+
+        function completeWorkflow() {
+            saveCurrentStepData();
+            
+            currentSession.status = 'completed';
+            currentSession.endTime = new Date();
+            currentSession.duration = currentSession.endTime - currentSession.startTime;
+
+            // Show completion message
+            document.getElementById('current-step-title').textContent = '🎉 Workflow Completed!';
+            document.getElementById('current-step-description').textContent = 'Congratulations! You have successfully completed the Cosmic Council problem-solving workflow.';
+            
+            // Hide input section and guidance
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('guidance-notes').classList.add('hidden');
+            
+            // Update buttons
+            document.getElementById('next-step-btn').classList.add('hidden');
+            document.getElementById('previous-step-btn').classList.remove('hidden');
+            
+            // Show final results
+            showFinalResults();
+            updateSessionInfo();
+        }
+
+        function showStepResults(stepIndex) {
+            const step = workflowSteps[stepIndex];
+            const resultsPanel = document.getElementById('results-panel');
+            const resultsContent = document.getElementById('results-content');
+
+            // Simulate step execution and results
+            const confidence = Math.random() * 0.4 + 0.6; // 0.6 to 1.0
+            const confidenceClass = confidence >= 0.8 ? 'confidence-high' : 
+                                   confidence >= 0.6 ? 'confidence-medium' : 'confidence-low';
+
+            resultsContent.innerHTML = `
+                <div class="result-item">
+                    <h5>✅ ${step.title} Completed</h5>
+                    <p>Confidence Score: <span class="confidence-score ${confidenceClass}">${(confidence * 100).toFixed(1)}%</span></p>
+                    <p>Step completed successfully with comprehensive analysis.</p>
+                </div>
+            `;
+
+            resultsPanel.classList.remove('hidden');
+        }
+
+        function showFinalResults() {
+            const resultsPanel = document.getElementById('results-panel');
+            const resultsContent = document.getElementById('results-content');
+
+            const overallConfidence = Math.random() * 0.3 + 0.7; // 0.7 to 1.0
+            const confidenceClass = overallConfidence >= 0.8 ? 'confidence-high' : 
+                                   overallConfidence >= 0.6 ? 'confidence-medium' : 'confidence-low';
+
+            resultsContent.innerHTML = `
+                <div class="result-item">
+                    <h5>🎯 Final Synthesis</h5>
+                    <p>Overall Confidence: <span class="confidence-score ${confidenceClass}">${(overallConfidence * 100).toFixed(1)}%</span></p>
+                    <p>All enterprise inputs have been synthesized into a comprehensive solution approach.</p>
+                </div>
+                <div class="result-item">
+                    <h5>📋 Implementation Ready</h5>
+                    <p>Your problem-solving workflow is complete and ready for implementation.</p>
+                </div>
+            `;
+
+            resultsPanel.classList.remove('hidden');
+        }
+
+        function updateStepIndicators() {
+            // Reset all steps
+            for (let i = 1; i <= 10; i++) {
+                const stepElement = document.getElementById(`step-${i}`);
+                stepElement.classList.remove('active', 'completed');
+            }
+
+            // Mark completed steps
+            for (let i = 0; i < currentStepIndex; i++) {
+                const stepElement = document.getElementById(`step-${i + 1}`);
+                stepElement.classList.add('completed');
+            }
+
+            // Mark current step
+            if (currentStepIndex < 10) {
+                const currentStepElement = document.getElementById(`step-${currentStepIndex + 1}`);
+                currentStepElement.classList.add('active');
+            }
+        }
+
+        function updateSessionInfo() {
+            if (currentSession) {
+                document.getElementById('session-id').textContent = currentSession.id;
+                document.getElementById('session-status').textContent = currentSession.status;
+                
+                const progress = ((currentStepIndex + 1) / workflowSteps.length) * 100;
+                document.getElementById('session-progress').textContent = `${progress.toFixed(1)}%`;
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+
+                // Update session summary
+                updateSessionSummary();
+            }
+        }
+
+        function updateSessionSummary() {
+            const summaryContent = document.getElementById('summary-content');
+            
+            if (!currentSession) {
+                summaryContent.innerHTML = '<p>No active session. Start a new session to begin the workflow.</p>';
+                return;
+            }
+
+            const completedSteps = Object.keys(currentSession.steps).length;
+            const totalSteps = workflowSteps.length;
+            
+            summaryContent.innerHTML = `
+                <p><strong>Session ID:</strong> ${currentSession.id}</p>
+                <p><strong>Status:</strong> ${currentSession.status}</p>
+                <p><strong>Progress:</strong> ${completedSteps}/${totalSteps} steps completed</p>
+                <p><strong>Started:</strong> ${currentSession.startTime.toLocaleString()}</p>
+                ${currentSession.endTime ? `<p><strong>Completed:</strong> ${currentSession.endTime.toLocaleString()}</p>` : ''}
+                ${currentSession.duration ? `<p><strong>Duration:</strong> ${formatDuration(currentSession.duration)}</p>` : ''}
+            `;
+        }
+
+        function saveSession() {
+            if (currentSession) {
+                const sessionData = {
+                    ...currentSession,
+                    sessionData: sessionData
+                };
+                
+                localStorage.setItem('cosmic-council-session', JSON.stringify(sessionData));
+                alert('Session saved successfully!');
+            }
+        }
+
+        function loadSession() {
+            const savedSession = localStorage.getItem('cosmic-council-session');
+            if (savedSession) {
+                const sessionData = JSON.parse(savedSession);
+                currentSession = sessionData;
+                sessionData = sessionData.sessionData || {};
+                
+                // Find current step
+                currentStepIndex = Object.keys(currentSession.steps).length;
+                if (currentStepIndex >= workflowSteps.length) {
+                    currentStepIndex = workflowSteps.length - 1;
+                }
+                
+                updateSessionInfo();
+                updateStepDisplay();
+                showStep(currentStepIndex);
+                
+                // Show/hide buttons appropriately
+                document.getElementById('start-session-btn').classList.add('hidden');
+                document.getElementById('next-step-btn').classList.remove('hidden');
+                document.getElementById('previous-step-btn').classList.remove('hidden');
+                document.getElementById('save-session-btn').classList.remove('hidden');
+                document.getElementById('load-session-btn').classList.remove('hidden');
+                
+                alert('Session loaded successfully!');
+            } else {
+                alert('No saved session found.');
+            }
+        }
+
+        function updateStepDisplay() {
+            updateStepIndicators();
+        }
+
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function formatDuration(milliseconds) {
+            const seconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            if (hours > 0) {
+                return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+            } else if (minutes > 0) {
+                return `${minutes}m ${seconds % 60}s`;
+            } else {
+                return `${seconds}s`;
+            }
+        }
+    </script>
+</body>
+</html>

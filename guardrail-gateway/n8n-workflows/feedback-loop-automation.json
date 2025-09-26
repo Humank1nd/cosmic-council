@@ -1,0 +1,395 @@
+{
+  "name": "Feedback Loop Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback-loop-trigger",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "start-webhook",
+      "name": "HTTP Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "feedback-loop-trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM get_next_cycle_recommendations()"
+      },
+      "id": "get-recommendations",
+      "name": "Get Next Cycle Recommendations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-recommendations",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-recommendations-check",
+      "name": "Has Recommendations?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO research_core_problems (main_problem_statement, context, initial_observations, submitted_by, associated_themes, severity_priority_rating, problem_status) VALUES ($1::text, 'Generated from continuous improvement feedback loop', $2::text, 'Purple Elephant Feedback System', ARRAY[$3::text], $4::text, 'active') RETURNING id"
+      },
+      "id": "create-new-problem",
+      "name": "Create New Problem",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Red Owl (Research & Inquiry) agent in the Cosmic Council. Based on the continuous improvement recommendation, generate initial research findings and prioritized questions for the new cycle. Focus on understanding the improvement opportunity and its context. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"Improvement Title: {{ $json.improvement_title }}\\nImprovement Description: {{ $json.improvement_description }}\\nPriority Level: {{ $json.priority_level }}\\nEstimated Impact: {{ $json.estimated_impact }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "research-ai-agent",
+      "name": "Research AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO research_findings (core_problem_id, source, summary, relevance_to_problem, credibility_rating, relevance_rating, impact_rating, notes) VALUES ($1::uuid, 'AI Analysis - Feedback Loop', $2::text, $3::text, $4::int, $5::int, $6::int, $7::text)"
+      },
+      "id": "store-research-findings",
+      "name": "Store Research Findings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1340, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO research_prioritized_questions (core_problem_id, question_text, importance_rating, relevance_to_core_problem, category_theme, status) VALUES ($1::uuid, $2::text, $3::int, $4::text, 'Feedback Loop Generated', 'pending')"
+      },
+      "id": "store-prioritized-questions",
+      "name": "Store Prioritized Questions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1560, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_WEBHOOK_URL }}/start-detailed-workflow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "problem_statement",
+              "value": "={{ $json.improvement_title }}"
+            },
+            {
+              "name": "context",
+              "value": "Generated from continuous improvement feedback loop"
+            },
+            {
+              "name": "initial_observations",
+              "value": "={{ $json.improvement_description }}"
+            },
+            {
+              "name": "submitted_by",
+              "value": "Purple Elephant Feedback System"
+            },
+            {
+              "name": "associated_themes",
+              "value": "=[\"feedback_loop\", \"continuous_improvement\", \"{{ $json.improvement_category }}\"]"
+            },
+            {
+              "name": "severity_priority_rating",
+              "value": "={{ $json.priority_level }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "trigger-new-workflow",
+      "name": "Trigger New Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 200],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE support_continuous_improvements SET improvement_status = 'implemented' WHERE id = $1::uuid"
+      },
+      "id": "update-improvement-status",
+      "name": "Update Improvement Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_complete_workflow_status($1::uuid) as workflow_status"
+      },
+      "id": "get-workflow-status",
+      "name": "Get Workflow Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Feedback loop processed successfully\", \"new_problem_id\": $json.id, \"workflow_status\": $json.workflow_status, \"timestamp\": new Date().toISOString() } }}"
+      },
+      "id": "response",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2220, 300]
+    }
+  ],
+  "connections": {
+    "start-webhook": {
+      "main": [
+        [
+          {
+            "node": "get-recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-recommendations": {
+      "main": [
+        [
+          {
+            "node": "has-recommendations-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "has-recommendations-check": {
+      "main": [
+        [
+          {
+            "node": "create-new-problem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-new-problem": {
+      "main": [
+        [
+          {
+            "node": "research-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "research-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-research-findings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-research-findings": {
+      "main": [
+        [
+          {
+            "node": "store-prioritized-questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-prioritized-questions": {
+      "main": [
+        [
+          {
+            "node": "trigger-new-workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "trigger-new-workflow": {
+      "main": [
+        [
+          {
+            "node": "update-improvement-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update-improvement-status": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-workflow-status": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "cosmic-council",
+      "name": "cosmic-council"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

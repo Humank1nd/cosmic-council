@@ -1,0 +1,375 @@
+# Cosmic Council Refinement Engine - Prometheus Alerting Rules
+groups:
+  - name: cosmic-council-alerts
+    rules:
+      # High error rate alerts
+      - alert: HighErrorRate
+        expr: rate(cosmic_council_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "High error rate detected in Cosmic Council Refinement Engine"
+          description: "Error rate is {{ $value }} errors per second for the last 5 minutes"
+          runbook_url: "https://docs.cosmiccouncil.com/runbooks/high-error-rate"
+
+      - alert: HighErrorRateWarning
+        expr: rate(cosmic_council_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Elevated error rate detected in Cosmic Council Refinement Engine"
+          description: "Error rate is {{ $value }} errors per second for the last 5 minutes"
+
+      # High response time alerts
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(cosmic_council_http_request_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High response time detected in Cosmic Council Refinement Engine"
+          description: "95th percentile response time is {{ $value }} seconds"
+
+      - alert: VeryHighResponseTime
+        expr: histogram_quantile(0.95, rate(cosmic_council_http_request_duration_seconds_bucket[5m])) > 10
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Very high response time detected in Cosmic Council Refinement Engine"
+          description: "95th percentile response time is {{ $value }} seconds"
+
+      # Memory usage alerts
+      - alert: HighMemoryUsage
+        expr: cosmic_council_system_memory_percent > 90
+        for: 2m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "High memory usage in Cosmic Council Refinement Engine"
+          description: "Memory usage is {{ $value }}%"
+
+      - alert: MemoryUsageWarning
+        expr: cosmic_council_system_memory_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Elevated memory usage in Cosmic Council Refinement Engine"
+          description: "Memory usage is {{ $value }}%"
+
+      # CPU usage alerts
+      - alert: HighCPUUsage
+        expr: cosmic_council_system_cpu_percent > 90
+        for: 2m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "High CPU usage in Cosmic Council Refinement Engine"
+          description: "CPU usage is {{ $value }}%"
+
+      - alert: CPUUsageWarning
+        expr: cosmic_council_system_cpu_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Elevated CPU usage in Cosmic Council Refinement Engine"
+          description: "CPU usage is {{ $value }}%"
+
+      # Disk usage alerts
+      - alert: HighDiskUsage
+        expr: cosmic_council_system_disk_percent > 90
+        for: 2m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "High disk usage in Cosmic Council Refinement Engine"
+          description: "Disk usage is {{ $value }}%"
+
+      - alert: DiskUsageWarning
+        expr: cosmic_council_system_disk_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Elevated disk usage in Cosmic Council Refinement Engine"
+          description: "Disk usage is {{ $value }}%"
+
+      # Service down alerts
+      - alert: ServiceDown
+        expr: up{job="cosmic-council-refinement-engine"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Cosmic Council Refinement Engine is down"
+          description: "The main refinement engine service is not responding"
+
+      - alert: MonitoringServiceDown
+        expr: up{job="cosmic-council-monitoring"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Cosmic Council Monitoring Service is down"
+          description: "The monitoring service is not responding"
+
+      # Database connection alerts
+      - alert: DatabaseConnectionFailed
+        expr: cosmic_council_database_connection_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Database connection failed in Cosmic Council Refinement Engine"
+          description: "Cannot connect to the database"
+
+      - alert: DatabaseSlowQueries
+        expr: rate(cosmic_council_database_slow_queries_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Slow database queries detected in Cosmic Council Refinement Engine"
+          description: "{{ $value }} slow queries per second"
+
+      # Redis connection alerts
+      - alert: RedisConnectionFailed
+        expr: cosmic_council_redis_connection_status == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Redis connection failed in Cosmic Council Refinement Engine"
+          description: "Cannot connect to Redis"
+
+      # AI service alerts
+      - alert: AIServiceHighLatency
+        expr: histogram_quantile(0.95, rate(cosmic_council_ai_request_duration_seconds_bucket[5m])) > 30
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High AI service latency in Cosmic Council Refinement Engine"
+          description: "95th percentile AI request latency is {{ $value }} seconds"
+
+      - alert: AIServiceHighCost
+        expr: rate(cosmic_council_ai_cost_usd_total[1h]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High AI service cost in Cosmic Council Refinement Engine"
+          description: "AI service cost is {{ $value }} USD per hour"
+
+      # Security alerts
+      - alert: HighFailedLogins
+        expr: rate(cosmic_council_failed_logins_total[5m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High number of failed login attempts in Cosmic Council Refinement Engine"
+          description: "{{ $value }} failed logins per second"
+
+      - alert: BruteForceAttack
+        expr: rate(cosmic_council_failed_logins_total[5m]) > 20
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Potential brute force attack detected in Cosmic Council Refinement Engine"
+          description: "{{ $value }} failed logins per second"
+
+      - alert: HighRateLimitViolations
+        expr: rate(cosmic_council_rate_limit_violations_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High rate limit violations in Cosmic Council Refinement Engine"
+          description: "{{ $value }} rate limit violations per second"
+
+      # Business metrics alerts
+      - alert: LowProblemResolutionRate
+        expr: rate(cosmic_council_problems_resolved_total[1h]) / rate(cosmic_council_problems_created_total[1h]) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Low problem resolution rate in Cosmic Council Refinement Engine"
+          description: "Problem resolution rate is {{ $value }}%"
+
+      - alert: HighProblemProcessingTime
+        expr: histogram_quantile(0.95, rate(cosmic_council_problem_processing_duration_seconds_bucket[1h])) > 3600
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High problem processing time in Cosmic Council Refinement Engine"
+          description: "95th percentile problem processing time is {{ $value }} seconds"
+
+      # Queue depth alerts
+      - alert: HighQueueDepth
+        expr: cosmic_council_queue_depth > 100
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High queue depth in Cosmic Council Refinement Engine"
+          description: "Queue depth is {{ $value }} problems"
+
+      - alert: VeryHighQueueDepth
+        expr: cosmic_council_queue_depth > 500
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Very high queue depth in Cosmic Council Refinement Engine"
+          description: "Queue depth is {{ $value }} problems"
+
+      # Health check alerts
+      - alert: HealthCheckFailed
+        expr: cosmic_council_health_check_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Health check failed in Cosmic Council Refinement Engine"
+          description: "One or more health checks are failing"
+
+      - alert: HealthCheckDegraded
+        expr: cosmic_council_health_check_status == 0.5
+        for: 2m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Health check degraded in Cosmic Council Refinement Engine"
+          description: "One or more health checks are degraded"
+
+  - name: cosmic-council-capacity-alerts
+    rules:
+      # Capacity planning alerts
+      - alert: ApproachingCapacityLimit
+        expr: cosmic_council_active_problems > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Approaching capacity limit in Cosmic Council Refinement Engine"
+          description: "Active problems count is {{ $value }}"
+
+      - alert: CapacityLimitReached
+        expr: cosmic_council_active_problems > 1500
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Capacity limit reached in Cosmic Council Refinement Engine"
+          description: "Active problems count is {{ $value }}"
+
+      # Resource exhaustion alerts
+      - alert: MemoryExhaustion
+        expr: cosmic_council_system_memory_percent > 95
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Memory exhaustion in Cosmic Council Refinement Engine"
+          description: "Memory usage is {{ $value }}%"
+
+      - alert: CPUExhaustion
+        expr: cosmic_council_system_cpu_percent > 95
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "CPU exhaustion in Cosmic Council Refinement Engine"
+          description: "CPU usage is {{ $value }}%"
+
+      - alert: DiskExhaustion
+        expr: cosmic_council_system_disk_percent > 95
+        for: 1m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "Disk exhaustion in Cosmic Council Refinement Engine"
+          description: "Disk usage is {{ $value }}%"
+
+  - name: cosmic-council-business-alerts
+    rules:
+      # Business continuity alerts
+      - alert: NoProblemsProcessed
+        expr: rate(cosmic_council_problems_processed_total[1h]) == 0
+        for: 10m
+        labels:
+          severity: critical
+          service: refinement-engine
+        annotations:
+          summary: "No problems processed in the last hour in Cosmic Council Refinement Engine"
+          description: "System may be down or experiencing issues"
+
+      - alert: LowProblemThroughput
+        expr: rate(cosmic_council_problems_processed_total[1h]) < 1
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Low problem throughput in Cosmic Council Refinement Engine"
+          description: "Only {{ $value }} problems processed per hour"
+
+      # Quality metrics alerts
+      - alert: LowSolutionQuality
+        expr: avg(cosmic_council_solution_confidence_score) < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "Low solution quality in Cosmic Council Refinement Engine"
+          description: "Average solution confidence score is {{ $value }}"
+
+      - alert: HighRefinementRate
+        expr: rate(cosmic_council_refinements_total[1h]) / rate(cosmic_council_problems_created_total[1h]) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: refinement-engine
+        annotations:
+          summary: "High refinement rate in Cosmic Council Refinement Engine"
+          description: "Average refinements per problem is {{ $value }}"

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cosmic-council
+  labels:
+    name: cosmic-council
+    app: cosmic-council
+    environment: production

@@ -1,0 +1,113 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cosmic-council-ingress
+  namespace: cosmic-council
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "4k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://cosmic-council.org,https://www.cosmic-council.org"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;";
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - cosmic-council.org
+    - www.cosmic-council.org
+    - api.cosmic-council.org
+    secretName: cosmic-council-tls
+  rules:
+  - host: cosmic-council.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cosmic-council-web-service
+            port:
+              number: 8001
+  - host: www.cosmic-council.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cosmic-council-web-service
+            port:
+              number: 8001
+  - host: api.cosmic-council.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cosmic-council-api-service
+            port:
+              number: 8000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cosmic-council-network-policy
+  namespace: cosmic-council
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: cosmic-council
+    ports:
+    - protocol: TCP
+      port: 8000
+    - protocol: TCP
+      port: 8001
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: cosmic-council
+    ports:
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80

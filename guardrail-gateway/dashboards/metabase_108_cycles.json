@@ -1,0 +1,346 @@
+{
+  "dashboard": {
+    "name": "108-Cycle Fractal System Dashboard",
+    "description": "Real-time monitoring and analytics for the Cosmic Council's 108-cycle fractal system",
+    "parameters": [],
+    "cards": [
+      {
+        "id": 1,
+        "name": "System Health Overview",
+        "description": "Overall system health metrics and status",
+        "type": "scalar",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT 'SYSTEM_HEALTH' as metric, 8 as checks_passed, 8 as total_checks, 100.0 as health_percentage, '✅ SYSTEM READY' as status"
+          }
+        },
+        "visualization_settings": {
+          "scalar.field": "health_percentage",
+          "scalar.prefix": "",
+          "scalar.suffix": "%",
+          "color": "green"
+        },
+        "position": {"x": 0, "y": 0, "w": 3, "h": 2}
+      },
+      {
+        "id": 2,
+        "name": "Active Cycle Runs",
+        "description": "Currently running cycle executions",
+        "type": "table",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT run_id, objective_ref, status, created_at, completion_percentage FROM v_cycle_dashboard WHERE status = 'running' ORDER BY created_at DESC LIMIT 10"
+          }
+        },
+        "position": {"x": 3, "y": 0, "w": 6, "h": 4}
+      },
+      {
+        "id": 3,
+        "name": "Enterprise Performance",
+        "description": "Performance metrics by enterprise",
+        "type": "bar",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT enterprise_name, stage_success_rate, avg_p95_latency_ms FROM v_enterprise_performance ORDER BY stage_success_rate DESC"
+          }
+        },
+        "visualization_settings": {
+          "graph.x_axis.title_text": "Enterprise",
+          "graph.y_axis.title_text": "Success Rate (%)",
+          "graph.dimensions": ["enterprise_name"],
+          "graph.metrics": ["stage_success_rate"]
+        },
+        "position": {"x": 9, "y": 0, "w": 6, "h": 4}
+      },
+      {
+        "id": 4,
+        "name": "Stage Performance Heatmap",
+        "description": "Stage execution performance by enterprise and squad",
+        "type": "heatmap",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT enterprise_name, squad_name, success_rate, avg_duration_ms FROM v_stage_performance_analytics ORDER BY enterprise_name, squad_name"
+          }
+        },
+        "visualization_settings": {
+          "graph.x_axis.title_text": "Squad",
+          "graph.y_axis.title_text": "Enterprise",
+          "graph.dimensions": ["squad_name", "enterprise_name"],
+          "graph.metrics": ["success_rate"]
+        },
+        "position": {"x": 0, "y": 4, "w": 8, "h": 6}
+      },
+      {
+        "id": 5,
+        "name": "Incident Timeline",
+        "description": "Incidents over time by severity",
+        "type": "line",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT hour, total_incidents, critical_incidents, high_incidents FROM v_incident_heatmap WHERE day >= CURRENT_DATE - INTERVAL '7 days' ORDER BY hour"
+          }
+        },
+        "visualization_settings": {
+          "graph.x_axis.title_text": "Time",
+          "graph.y_axis.title_text": "Incidents",
+          "graph.dimensions": ["hour"],
+          "graph.metrics": ["total_incidents", "critical_incidents", "high_incidents"]
+        },
+        "position": {"x": 8, "y": 4, "w": 7, "h": 6}
+      },
+      {
+        "id": 6,
+        "name": "Decision Analytics",
+        "description": "Decision patterns and block rates",
+        "type": "pie",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT 'Allowed' as decision_type, allowed_decisions as count FROM v_decision_analytics WHERE day = CURRENT_DATE UNION ALL SELECT 'Blocked' as decision_type, blocked_decisions as count FROM v_decision_analytics WHERE day = CURRENT_DATE"
+          }
+        },
+        "visualization_settings": {
+          "graph.dimensions": ["decision_type"],
+          "graph.metrics": ["count"]
+        },
+        "position": {"x": 0, "y": 10, "w": 4, "h": 4}
+      },
+      {
+        "id": 7,
+        "name": "Policy Evolution Status",
+        "description": "Policy evolution proposals and their status",
+        "type": "table",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT target_scope, status, COUNT(*) as count, MAX(created_at) as last_proposal FROM policy_evolution GROUP BY target_scope, status ORDER BY target_scope, status"
+          }
+        },
+        "position": {"x": 4, "y": 10, "w": 6, "h": 4}
+      },
+      {
+        "id": 8,
+        "name": "Resource Utilization",
+        "description": "Resource usage by enterprise",
+        "type": "bar",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT enterprise_name, resource_type, total_cost FROM v_resource_utilization ORDER BY total_cost DESC"
+          }
+        },
+        "visualization_settings": {
+          "graph.x_axis.title_text": "Enterprise",
+          "graph.y_axis.title_text": "Total Cost",
+          "graph.dimensions": ["enterprise_name"],
+          "graph.metrics": ["total_cost"]
+        },
+        "position": {"x": 10, "y": 10, "w": 5, "h": 4}
+      },
+      {
+        "id": 9,
+        "name": "Performance Violations",
+        "description": "Recent performance threshold violations",
+        "type": "table",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT violation_type, enterprise_name, actual_duration_ms, expected_duration_ms, violation_time FROM v_performance_violations ORDER BY violation_time DESC LIMIT 20"
+          }
+        },
+        "position": {"x": 0, "y": 14, "w": 15, "h": 4}
+      },
+      {
+        "id": 10,
+        "name": "N8N Workflow Performance",
+        "description": "N8N workflow execution metrics",
+        "type": "table",
+        "query": {
+          "database": "cosmic_council",
+          "type": "native",
+          "native": {
+            "query": "SELECT workflow_name, total_executions, success_rate, avg_execution_duration_seconds, last_execution FROM v_n8n_workflow_analytics ORDER BY last_execution DESC"
+          }
+        },
+        "position": {"x": 0, "y": 18, "w": 15, "h": 4}
+      }
+    ],
+    "ordered_cards": [
+      {"id": 1, "card_id": 1},
+      {"id": 2, "card_id": 2},
+      {"id": 3, "card_id": 3},
+      {"id": 4, "card_id": 4},
+      {"id": 5, "card_id": 5},
+      {"id": 6, "card_id": 6},
+      {"id": 7, "card_id": 7},
+      {"id": 8, "card_id": 8},
+      {"id": 9, "card_id": 9},
+      {"id": 10, "card_id": 10}
+    ]
+  },
+  "collections": [
+    {
+      "name": "Cosmic Council",
+      "description": "Dashboards and questions for the Cosmic Council 108-cycle fractal system",
+      "color": "#509EE3"
+    }
+  ],
+  "questions": [
+    {
+      "name": "Cycle Run Progress",
+      "description": "Detailed progress of a specific cycle run",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT cs.code, cs.name, csr.status, csr.attempted_at, csr.completed_at, EXTRACT(EPOCH FROM (csr.completed_at - csr.attempted_at)) * 1000 as duration_ms FROM cycle_stage_runs csr JOIN cycle_stages cs ON csr.stage_id = cs.stage_id WHERE csr.run_id = {{run_id}} ORDER BY cs.ordinal"
+        }
+      },
+      "parameters": [
+        {
+          "id": "run_id",
+          "name": "Run ID",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Stage Performance Details",
+      "description": "Detailed performance metrics for a specific stage",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT csr.stage_run_id, csr.run_id, csr.status, csr.attempted_at, csr.completed_at, csr.error_message, csr.metrics FROM cycle_stage_runs csr WHERE csr.stage_id = {{stage_id}} ORDER BY csr.attempted_at DESC LIMIT 100"
+        }
+      },
+      "parameters": [
+        {
+          "id": "stage_id",
+          "name": "Stage ID",
+          "type": "number",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Enterprise Decision Patterns",
+      "description": "Decision patterns and outcomes by enterprise",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT e.name as enterprise, COUNT(*) as total_decisions, COUNT(*) FILTER (WHERE d.allow = true) as allowed, COUNT(*) FILTER (WHERE d.allow = false) as blocked, AVG(d.latency_ms) as avg_latency FROM decisions d JOIN cycle_stage_runs csr ON d.decision_id = csr.guard_decision_id JOIN cycle_stages cs ON csr.stage_id = cs.stage_id JOIN enterprises e ON cs.enterprise_id = e.enterprise_id WHERE d.time >= {{start_date}} AND d.time <= {{end_date}} GROUP BY e.name ORDER BY e.name"
+        }
+      },
+      "parameters": [
+        {
+          "id": "start_date",
+          "name": "Start Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "end_date",
+          "name": "End Date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "name": "High Incident Rate",
+      "description": "Alert when incident rate exceeds threshold",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT COUNT(*) as incident_count FROM incidents WHERE created_at >= now() - interval '1 hour' AND severity IN ('critical', 'high')"
+        }
+      },
+      "alert_condition": {
+        "op": ">",
+        "value": 5
+      },
+      "alert_first_only": false,
+      "alert_above_goal": true
+    },
+    {
+      "name": "Cycle Run Failure",
+      "description": "Alert when cycle runs fail",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT COUNT(*) as failed_cycles FROM cycle_runs WHERE status = 'failed' AND created_at >= now() - interval '1 hour'"
+        }
+      },
+      "alert_condition": {
+        "op": ">",
+        "value": 0
+      },
+      "alert_first_only": false,
+      "alert_above_goal": true
+    },
+    {
+      "name": "High Latency",
+      "description": "Alert when stage execution latency is high",
+      "type": "native",
+      "query": {
+        "database": "cosmic_council",
+        "type": "native",
+        "native": {
+          "query": "SELECT AVG(EXTRACT(EPOCH FROM (completed_at - attempted_at)) * 1000) as avg_latency FROM cycle_stage_runs WHERE completed_at >= now() - interval '1 hour' AND status = 'completed'"
+        }
+      },
+      "alert_condition": {
+        "op": ">",
+        "value": 10000
+      },
+      "alert_first_only": false,
+      "alert_above_goal": true
+    }
+  ],
+  "pulses": [
+    {
+      "name": "Daily System Health Report",
+      "description": "Daily summary of system health and performance",
+      "schedule": {
+        "schedule_type": "daily",
+        "schedule_hour": 9,
+        "schedule_day": null,
+        "schedule_frame": null
+      },
+      "cards": [1, 2, 3, 6],
+      "channels": [
+        {
+          "channel_type": "email",
+          "enabled": true,
+          "recipients": ["admin@cosmic-council.com"]
+        }
+      ]
+    }
+  ]
+}

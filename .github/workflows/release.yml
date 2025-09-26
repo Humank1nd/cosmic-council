@@ -1,0 +1,309 @@
+name: Release Pipeline
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Create Release
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  # Build Release Image
+  build-release:
+    needs: create-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Generate Release Notes
+  generate-release-notes:
+    needs: create-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          # Generate changelog
+          if [ -n "$PREVIOUS_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --max-count=50)
+          fi
+
+          # Create release notes
+          cat > release_notes.md << EOF
+          ## What's New
+
+          $CHANGELOG
+
+          ## Installation
+
+          ### Docker
+          \`\`\`bash
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+          \`\`\`
+
+          ### Kubernetes
+          \`\`\`bash
+          kubectl apply -f k8s/
+          \`\`\`
+
+          ### Docker Compose
+          \`\`\`bash
+          docker-compose up -d
+          \`\`\`
+
+          ## Documentation
+
+          - [User Guide](https://cosmic-council.org/docs/user-guide)
+          - [API Documentation](https://cosmic-council.org/docs/api)
+          - [Deployment Guide](https://cosmic-council.org/docs/deployment)
+
+          ## Support
+
+          - [GitHub Issues](https://github.com/${{ github.repository }}/issues)
+          - [Discord Community](https://discord.gg/cosmic-council)
+          - [Email Support](mailto:support@cosmic-council.org)
+          EOF
+
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+          cat release_notes.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update Release
+        uses: actions/update-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+
+  # Deploy to Production
+  deploy-production:
+    needs: [build-release, generate-release-notes]
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "v1.28.0"
+
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > kubeconfig
+          export KUBECONFIG=kubeconfig
+
+      - name: Deploy to production
+        run: |
+          export KUBECONFIG=kubeconfig
+          kubectl config set-context --current --namespace=cosmic-council
+
+          # Update image tag
+          kubectl set image deployment/cosmic-council-api api=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -n cosmic-council
+          kubectl set image deployment/cosmic-council-web web=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -n cosmic-council
+
+          # Wait for rollout
+          kubectl rollout status deployment/cosmic-council-api -n cosmic-council
+          kubectl rollout status deployment/cosmic-council-web -n cosmic-council
+
+      - name: Run health checks
+        run: |
+          export KUBECONFIG=kubeconfig
+          kubectl config set-context --current --namespace=cosmic-council
+
+          # Get service URL
+          API_URL=$(kubectl get service cosmic-council-api-service -n cosmic-council -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          WEB_URL=$(kubectl get service cosmic-council-web-service -n cosmic-council -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+          # Run health checks
+          curl -f https://$API_URL/health
+          curl -f https://$WEB_URL/health
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: "#releases"
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+        if: always()
+
+  # Update Documentation
+  update-docs:
+    needs: deploy-production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+
+      - name: Build documentation
+        run: |
+          mkdocs build
+
+      - name: Deploy documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          cname: docs.cosmic-council.org
+
+  # Notify Community
+  notify-community:
+    needs: [deploy-production, update-docs]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🚀 **Cosmic Council Framework v${{ github.ref_name }} Released!**
+
+            New features and improvements are now live!
+
+            📖 [Read the release notes](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})
+            🌐 [Try it now](https://cosmic-council.org)
+            📚 [Documentation](https://docs.cosmic-council.org)
+
+      - name: Notify Twitter
+        uses: twitter-api-v2/action-tweet@v1
+        with:
+          status: |
+            🚀 Cosmic Council Framework v${{ github.ref_name }} is now live! 
+
+            Experience the power of AI-driven problem solving with our enhanced hexagon methodology.
+
+            Try it now: https://cosmic-council.org
+
+            #AI #ProblemSolving #Innovation
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+      - name: Notify Reddit
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const reddit = require('reddit');
+
+            const r = new reddit({
+              username: process.env.REDDIT_USERNAME,
+              password: process.env.REDDIT_PASSWORD,
+              appId: process.env.REDDIT_APP_ID,
+              appSecret: process.env.REDDIT_APP_SECRET,
+              userAgent: 'CosmicCouncilBot/1.0.0'
+            });
+
+            const post = await r.submit({
+              subreddit: 'MachineLearning',
+              title: `Cosmic Council Framework v${{ github.ref_name }} - AI-Driven Problem Solving`,
+              text: `
+              🚀 **Cosmic Council Framework v${{ github.ref_name }}** is now live!
+              
+              Experience the power of AI-driven problem solving with our enhanced hexagon methodology.
+              
+              **Key Features:**
+              - 6 Enterprise AI Agents
+              - 108-Cycle Fractal System
+              - Real-time Analytics Dashboard
+              - Comprehensive API
+              
+              **Try it now:** https://cosmic-council.org
+              **Documentation:** https://docs.cosmic-council.org
+              **GitHub:** https://github.com/${{ github.repository }}
+              
+              #AI #MachineLearning #ProblemSolving #Innovation
+              `
+            });
+
+            console.log('Reddit post created:', post);
+        env:
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          REDDIT_APP_ID: ${{ secrets.REDDIT_APP_ID }}
+          REDDIT_APP_SECRET: ${{ secrets.REDDIT_APP_SECRET }}

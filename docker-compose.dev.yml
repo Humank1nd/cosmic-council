@@ -1,0 +1,217 @@
+version: "3.8"
+
+services:
+  # Development PostgreSQL Database
+  postgres-dev:
+    image: postgres:13
+    container_name: cosmic-council-postgres-dev
+    environment:
+      POSTGRES_DB: cosmic_council_dev
+      POSTGRES_USER: cosmic_council
+      POSTGRES_PASSWORD: cosmic_council_dev_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - cosmic-council-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cosmic_council -d cosmic_council_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Development Perpetual Thinking Database
+  postgres-perpetual-dev:
+    image: postgres:13
+    container_name: cosmic-council-postgres-perpetual-dev
+    environment:
+      POSTGRES_DB: cosmic_council_perpetual_dev
+      POSTGRES_USER: cosmic_council
+      POSTGRES_PASSWORD: cosmic_council_dev_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_perpetual_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init_perpetual.sql:/docker-entrypoint-initdb.d/init_perpetual.sql
+    ports:
+      - "5435:5432"
+    networks:
+      - cosmic-council-dev-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U cosmic_council -d cosmic_council_perpetual_dev",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Development Redis Cache
+  redis-dev:
+    image: redis:6-alpine
+    container_name: cosmic-council-redis-dev
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - cosmic-council-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Development Cosmic Council API
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: cosmic-council-api-dev
+    environment:
+      - DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-dev:5432/cosmic_council_dev
+      - REDIS_URL=redis://redis-dev:6379/0
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - SECRET_KEY=dev-secret-key
+      - API_KEY=dev-api-key
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      # Perpetual Thinking System Configuration (Development)
+      - PERPETUAL_DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-perpetual-dev:5432/cosmic_council_perpetual_dev
+      - PERPETUAL_AI_ENABLED=true
+      - PERPETUAL_AI_PROVIDER=mock
+      - PERPETUAL_AI_MODEL=gpt-4
+      - PERPETUAL_AI_TEMPERATURE=0.7
+      - PERPETUAL_AI_MAX_TOKENS=2000
+      - PERPETUAL_MAX_CONCURRENT_SESSIONS=5
+      - PERPETUAL_SESSION_TIMEOUT=1800
+      - PERPETUAL_LEARNING_ENABLED=true
+      - PERPETUAL_ADAPTATION_ENABLED=true
+      - PERPETUAL_BREAKTHROUGH_DETECTION=true
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+      postgres-perpetual-dev:
+        condition: service_healthy
+      redis-dev:
+        condition: service_healthy
+    networks:
+      - cosmic-council-dev-network
+    volumes:
+      - .:/app
+      - /app/venv
+      - ./logs:/app/logs
+    command:
+      [
+        "python",
+        "-m",
+        "uvicorn",
+        "cosmic_council_api:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
+
+  # Development Cosmic Council Web Interface
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: cosmic-council-web-dev
+    environment:
+      - DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-dev:5432/cosmic_council_dev
+      - REDIS_URL=redis://redis-dev:6379/0
+      - API_URL=http://api-dev:8000
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+    ports:
+      - "8001:8001"
+    depends_on:
+      api-dev:
+        condition: service_healthy
+    networks:
+      - cosmic-council-dev-network
+    volumes:
+      - .:/app
+      - /app/venv
+      - ./logs:/app/logs
+    command: ["python", "web_interface.py"]
+
+  # Development Nginx
+  nginx-dev:
+    image: nginx:alpine
+    container_name: cosmic-council-nginx-dev
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./static:/var/www/static
+    depends_on:
+      - api-dev
+      - web-dev
+    networks:
+      - cosmic-council-dev-network
+
+  # Development Prometheus
+  prometheus-dev:
+    image: prom/prometheus:latest
+    container_name: cosmic-council-prometheus-dev
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml
+      - prometheus_dev_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=24h"
+      - "--web.enable-lifecycle"
+    networks:
+      - cosmic-council-dev-network
+
+  # Development Grafana
+  grafana-dev:
+    image: grafana/grafana:latest
+    container_name: cosmic-council-grafana-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_dev_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus-dev
+    networks:
+      - cosmic-council-dev-network
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  postgres_perpetual_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  prometheus_dev_data:
+    driver: local
+  grafana_dev_data:
+    driver: local
+
+networks:
+  cosmic-council-dev-network:
+    driver: bridge

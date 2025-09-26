@@ -1,0 +1,747 @@
+{
+  "name": "Stage Transition Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stage-transition",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "start-webhook",
+      "name": "HTTP Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "stage-transition-trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, $2::text) as status"
+      },
+      "id": "check-current-stage",
+      "name": "Check Current Stage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "stage-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "stage-ready-check",
+      "name": "Stage Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, $2::text) as status"
+      },
+      "id": "check-next-stage",
+      "name": "Check Next Stage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "next-stage-pending",
+              "leftValue": "={{ $json.status.completed }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "next-stage-check",
+      "name": "Next Stage Pending?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the {{ $json.to_stage }} agent in the Cosmic Council. Based on the data from the previous stage ({{ $json.from_stage }}), process the information and prepare for the next stage. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"Previous Stage: {{ $json.from_stage }}\\nNext Stage: {{ $json.to_stage }}\\nProblem ID: {{ $json.problem_id }}\\nStage Data: {{ $json.stage_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "stage-ai-agent",
+      "name": "Stage AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-research-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "research",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "research-stage-check",
+      "name": "Research Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 100]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO research_findings (core_problem_id, source, summary, relevance_to_problem, credibility_rating, relevance_rating, impact_rating) VALUES ($1::uuid, 'AI Analysis', $2::text, $3::text, $4::int, $5::int, $6::int)"
+      },
+      "id": "store-research-data",
+      "name": "Store Research Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 50],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-planning-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "planning",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "planning-stage-check",
+      "name": "Planning Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1780, 150]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO planning_action_plans (related_question_id, high_level_objective, detailed_steps, priority_level) VALUES ($1::uuid, $2::text, $3::jsonb, $4::text)"
+      },
+      "id": "store-planning-data",
+      "name": "Store Planning Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-development-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "development",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "development-stage-check",
+      "name": "Development Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO development_prototypes (action_plan_id, prototype_name, prototype_description, design_specifications, prototype_status) VALUES ($1::uuid, $2::text, $3::text, $4::jsonb, 'concept')"
+      },
+      "id": "store-development-data",
+      "name": "Store Development Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 150],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-budget-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "budget",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "budget-stage-check",
+      "name": "Budget Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 250]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO budget_allocations (prototype_id, allocation_name, allocated_amount, allocation_category, allocation_status) VALUES ($1::uuid, $2::text, $3::decimal, $4::text, 'pending')"
+      },
+      "id": "store-budget-data",
+      "name": "Store Budget Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-market-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "market",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "market-stage-check",
+      "name": "Market Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2440, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO market_communication_strategies (market_insight_id, strategy_name, target_audience, communication_channels, key_messages, strategy_status) VALUES ($1::uuid, $2::text, $3::jsonb, $4::text[], $5::text[], 'draft')"
+      },
+      "id": "store-market-data",
+      "name": "Store Market Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2660, 250],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-support-stage",
+              "leftValue": "={{ $json.to_stage }}",
+              "rightValue": "support",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "support-stage-check",
+      "name": "Support Stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2660, 350]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO support_continuous_improvements (performance_assessment_id, improvement_title, improvement_description, improvement_category, priority_level, next_cycle_focus) VALUES ($1::uuid, $2::text, $3::text, $4::text, $5::text, $6::boolean)"
+      },
+      "id": "store-support-data",
+      "name": "Store Support Data",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2880, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_complete_workflow_status($1::uuid) as workflow_status"
+      },
+      "id": "get-workflow-status",
+      "name": "Get Workflow Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [3100, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Stage transition completed successfully\", \"from_stage\": $json.from_stage, \"to_stage\": $json.to_stage, \"problem_id\": $json.problem_id, \"workflow_status\": $json.workflow_status, \"timestamp\": new Date().toISOString() } }}"
+      },
+      "id": "response",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3320, 300]
+    }
+  ],
+  "connections": {
+    "start-webhook": {
+      "main": [
+        [
+          {
+            "node": "check-current-stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-current-stage": {
+      "main": [
+        [
+          {
+            "node": "stage-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "stage-ready-check": {
+      "main": [
+        [
+          {
+            "node": "check-next-stage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-next-stage": {
+      "main": [
+        [
+          {
+            "node": "next-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next-stage-check": {
+      "main": [
+        [
+          {
+            "node": "stage-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "stage-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "research-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "research-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-research-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "planning-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-research-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "planning-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-planning-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "development-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-planning-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "development-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-development-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "budget-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-development-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "budget-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-budget-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "market-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-budget-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "market-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-market-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "support-stage-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-market-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "support-stage-check": {
+      "main": [
+        [
+          {
+            "node": "store-support-data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-support-data": {
+      "main": [
+        [
+          {
+            "node": "get-workflow-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-workflow-status": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "cosmic-council",
+      "name": "cosmic-council"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

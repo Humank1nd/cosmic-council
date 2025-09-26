@@ -1,0 +1,176 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cosmic-council-web
+  namespace: cosmic-council
+  labels:
+    app: cosmic-council-web
+    component: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cosmic-council-web
+  template:
+    metadata:
+      labels:
+        app: cosmic-council-web
+        component: web
+    spec:
+      containers:
+      - name: web
+        image: cosmic-council:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://cosmic_council:$(DATABASE_PASSWORD)@postgres-service:5432/cosmic_council"
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: DATABASE_PASSWORD
+        - name: REDIS_URL
+          value: "redis://redis-service:6379/0"
+        - name: API_URL
+          value: "http://cosmic-council-api-service:8000"
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: SECRET_KEY
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: JWT_SECRET
+        - name: JWT_ALGORITHM
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: JWT_ALGORITHM
+        - name: JWT_EXPIRATION
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: JWT_EXPIRATION
+        envFrom:
+        - configMapRef:
+            name: cosmic-council-config
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: static
+          mountPath: /app/static
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: logs
+        emptyDir: {}
+      - name: static
+        emptyDir: {}
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cosmic-council-web-service
+  namespace: cosmic-council
+  labels:
+    app: cosmic-council-web
+    component: web
+spec:
+  selector:
+    app: cosmic-council-web
+  ports:
+  - port: 8001
+    targetPort: 8001
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cosmic-council-web-hpa
+  namespace: cosmic-council
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cosmic-council-web
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 1
+        periodSeconds: 60
+      selectPolicy: Max
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cosmic-council-web-pdb
+  namespace: cosmic-council
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: cosmic-council-web

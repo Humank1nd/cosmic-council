@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cosmic-council-config
+  namespace: cosmic-council
+data:
+  # Application configuration
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  
+  # Database configuration
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "cosmic_council"
+  DATABASE_USER: "cosmic_council"
+  
+  # Redis configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  
+  # API configuration
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  
+  # Web interface configuration
+  WEB_HOST: "0.0.0.0"
+  WEB_PORT: "8001"
+  
+  # Monitoring configuration
+  PROMETHEUS_ENABLED: "true"
+  GRAFANA_ENABLED: "true"
+  
+  # Security configuration
+  CORS_ORIGINS: "https://cosmic-council.org,https://www.cosmic-council.org"
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_REQUESTS: "100"
+  RATE_LIMIT_WINDOW: "60"
+  
+  # Performance configuration
+  WORKER_PROCESSES: "4"
+  WORKER_CONNECTIONS: "1000"
+  MAX_REQUESTS: "1000"
+  TIMEOUT: "30"
+  
+  # Logging configuration
+  LOG_FORMAT: "json"
+  LOG_FILE: "/app/logs/app.log"
+  LOG_MAX_SIZE: "100MB"
+  LOG_MAX_BACKUPS: "5"
+  LOG_MAX_AGE: "30"
+  
+  # Cache configuration
+  CACHE_TTL: "3600"
+  CACHE_MAX_SIZE: "1000"
+  
+  # Session configuration
+  SESSION_SECRET: "cosmic-council-session-secret"
+  SESSION_TIMEOUT: "3600"
+  
+  # Email configuration
+  SMTP_HOST: "smtp.gmail.com"
+  SMTP_PORT: "587"
+  SMTP_USER: "noreply@cosmic-council.org"
+  SMTP_TLS: "true"
+  
+  # File upload configuration
+  MAX_FILE_SIZE: "10MB"
+  ALLOWED_FILE_TYPES: "pdf,doc,docx,txt,jpg,jpeg,png,gif"
+  UPLOAD_PATH: "/app/uploads"
+  
+  # Backup configuration
+  BACKUP_ENABLED: "true"
+  BACKUP_SCHEDULE: "0 2 * * *"
+  BACKUP_RETENTION: "30"
+  BACKUP_PATH: "/app/backups"
+  
+  # Health check configuration
+  HEALTH_CHECK_INTERVAL: "30s"
+  HEALTH_CHECK_TIMEOUT: "10s"
+  HEALTH_CHECK_RETRIES: "3"
+  
+  # Metrics configuration
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "9090"
+  METRICS_PATH: "/metrics"
+  
+  # Tracing configuration
+  TRACING_ENABLED: "true"
+  TRACING_SERVICE_NAME: "cosmic-council"
+  TRACING_JAEGER_ENDPOINT: "http://jaeger:14268/api/traces"
+  
+  # Perpetual Thinking System Configuration
+  PERPETUAL_AI_PROVIDER: "openai"
+  PERPETUAL_AI_MODEL: "gpt-4"
+  PERPETUAL_AI_TEMPERATURE: "0.7"
+  PERPETUAL_AI_MAX_TOKENS: "2000"
+  PERPETUAL_MAX_CONCURRENT_SESSIONS: "10"
+  PERPETUAL_SESSION_TIMEOUT: "3600"
+  PERPETUAL_LEARNING_ENABLED: "true"
+  PERPETUAL_ADAPTATION_ENABLED: "true"
+  PERPETUAL_BREAKTHROUGH_DETECTION: "true"
+  PERPETUAL_PATTERN_ANALYSIS_INTERVAL: "10"
+  PERPETUAL_CONVERGENCE_THRESHOLD: "0.8"
+  PERPETUAL_DIVERGENCE_THRESHOLD: "0.6"
+  PERPETUAL_LEARNING_RATE: "0.1"
+  PERPETUAL_ADAPTATION_THRESHOLD: "0.7"
+  PERPETUAL_BREAKTHROUGH_THRESHOLD: "0.9"

@@ -1,0 +1,173 @@
+openapi: 3.1.0
+info:
+  title: Guardrail Gateway API
+  version: 0.1.0
+  description: Policy-enforced, auditable trust spine for agentic multi-enterprise systems
+paths:
+  /v1/evaluate:
+    post:
+      summary: Evaluate policy decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvalInput'
+      responses:
+        '200':
+          description: Policy decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvalDecision'
+  /v1/simulate:
+    post:
+      summary: Simulate policy decision with diffs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulationInput'
+      responses:
+        '200':
+          description: Simulation result with policy diffs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationResult'
+  /v1/explain/{decision_id}:
+    get:
+      summary: Get decision explanation
+      parameters:
+        - name: decision_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Decision explanation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionExplanation'
+        '404':
+          description: Decision not found
+  /v1/policies:
+    get:
+      summary: List active policies
+      responses:
+        '200': 
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name: {type: string}
+    post:
+      summary: Create or update policy
+      responses:
+        '200': {description: Policy upserted}
+  /v1/autonomous-cycle:
+    post:
+      summary: Execute autonomous decision cycle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                problem: {type: string}
+                complexity: {type: string}
+                urgency: {type: string}
+      responses:
+        '200':
+          description: Autonomous cycle result
+  /v1/enterprises:
+    get:
+      summary: List all enterprises
+      responses:
+        '200':
+          description: Enterprise information
+components:
+  schemas:
+    EvalInput:
+      type: object
+      required: [agent, resource]
+      properties:
+        agent:
+          type: object
+          properties:
+            id: {type: string}
+            enterprise: {type: string}
+            squad: {type: string}
+        resource:
+          type: object
+          properties:
+            service: {type: string}
+            action: {type: string}
+        context:
+          type: object
+          description: Additional context for policy evaluation
+    EvalDecision:
+      type: object
+      properties:
+        allow: {type: boolean}
+        policies: {type: array, items: {type: string}}
+        explanation: {type: object}
+        obligations: {type: array, items: {type: string}}
+        decision_id: {type: string}
+        timestamp: {type: string, format: date-time}
+    SimulationInput:
+      type: object
+      required: [agent, resource]
+      properties:
+        agent:
+          type: object
+          properties:
+            id: {type: string}
+            enterprise: {type: string}
+            squad: {type: string}
+        resource:
+          type: object
+          properties:
+            service: {type: string}
+            action: {type: string}
+        context:
+          type: object
+        pretend_policy_version:
+          type: string
+          description: Policy version to simulate
+        pretend_context_overrides:
+          type: object
+          description: Context overrides for simulation
+        perturbation:
+          type: object
+          description: Perturbations to apply (e.g., risk changes)
+    SimulationResult:
+      type: object
+      properties:
+        current: {type: object}
+        proposed: {type: object}
+        changed_policies: {type: array, items: {type: object}}
+        risk_delta: {type: number}
+        obligations_delta: {type: array, items: {type: string}}
+        simulation_id: {type: string}
+    DecisionExplanation:
+      type: object
+      properties:
+        decision_id: {type: string}
+        agent: {type: object}
+        resource: {type: object}
+        allow: {type: boolean}
+        policies_applied: {type: array, items: {type: string}}
+        violations: {type: array, items: {type: object}}
+        obligations: {type: array, items: {type: string}}
+        explanation_text: {type: string}
+        timestamp: {type: string, format: date-time}
+        latency_ms: {type: integer}

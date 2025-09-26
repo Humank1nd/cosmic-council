@@ -1,0 +1,129 @@
+{
+  "name": "Cosmic Council Cycle Starter",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "start-cycle",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Cycle Start Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT start_cycle($1, $2) as cycle_id",
+        "additionalFields": {
+          "queryParams": "={{ $json.objective_ref }}, {{ $json.parent_cycle_id }}"
+        }
+      },
+      "id": "create-cycle",
+      "name": "Create Cycle",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO stage_executions (cycle_id, stage_code, status, execution_order) VALUES ($1, 'red_research', 'pending', 1)",
+        "additionalFields": {
+          "queryParams": "={{ $json.cycle_id }}"
+        }
+      },
+      "id": "init-red-stage",
+      "name": "Initialize Red Stage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://red-research-service:8000/process",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cycle_id",
+              "value": "={{ $json.cycle_id }}"
+            },
+            {
+              "name": "objective_ref",
+              "value": "={{ $('Cycle Start Webhook').item.json.objective_ref }}"
+            }
+          ]
+        }
+      },
+      "id": "trigger-red-research",
+      "name": "Trigger Red Research",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"cycle_id\": $json.cycle_id, \"status\": \"started\", \"next_stage\": \"red_research\" } }}"
+      },
+      "id": "response",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Cycle Start Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create Cycle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Cycle": {
+      "main": [
+        [
+          {
+            "node": "Initialize Red Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Red Stage": {
+      "main": [
+        [
+          {
+            "node": "Trigger Red Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Red Research": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1"
+}

@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: ["5432:5432"]
+  opa:
+    image: openpolicyagent/opa:latest
+    command: ["run", "--server", "--log-level=info", "/policies"]
+    volumes:
+      - ../../policies/bundles/guard:/policies/guard:ro
+    ports: ["8181:8181"]
+  gateway:
+    build: ../../services/gateway
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      OPA_URL: http://opa:8181/v1/data
+    ports: ["8080:8080"]
+    depends_on: [postgres, opa]

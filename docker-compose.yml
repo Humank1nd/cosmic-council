@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: cc-postgres
+    environment:
+      POSTGRES_USER: cosmic_council
+      POSTGRES_PASSWORD: cosmic_council
+      POSTGRES_DB: cosmic_council
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cosmic_council"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: cc-n8n
+    environment:
+      - GENERIC_TIMEZONE=UTC
+    ports:
+      - "5678:5678"
+    depends_on:
+      - postgres
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cc-gateway
+    command: ["python", "services/gateway/main.py"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cosmic_council
+      DB_USER: cosmic_council
+      DB_PASSWORD: cosmic_council
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  analytics:
+    build:
+      context: .
+    container_name: cc-analytics
+    command: ["python", "services/analytics/main.py"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cosmic_council
+      DB_USER: cosmic_council
+      DB_PASSWORD: cosmic_council
+      LOG_LEVEL: INFO
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  reflection:
+    build:
+      context: .
+    container_name: cc-reflection
+    command: ["python", "services/reflection/main.py"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cosmic_council
+      DB_USER: cosmic_council
+      DB_PASSWORD: cosmic_council
+      LOG_LEVEL: INFO
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

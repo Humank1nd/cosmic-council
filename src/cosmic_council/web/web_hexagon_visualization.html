@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Council - Interactive Hexagon Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+        }
+
+        .visualization-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .hexagon-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+
+        .hexagon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sector {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sector:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .sector.inactive {
+            background: rgba(128, 128, 128, 0.3);
+            color: #ccc;
+        }
+
+        .sector.active {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .sector.processing {
+            animation: pulse 1.5s infinite;
+            border-color: #ffa500;
+        }
+
+        .sector.completed {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .sector.error {
+            background: rgba(255, 0, 0, 0.5);
+            border-color: #ff0000;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Sector positions */
+        .sector-0 { /* Red Owl - Top */
+            transform: translate(-50%, -50%) translateY(-150px);
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+        }
+
+        .sector-1 { /* Orange Orangutan - Top Right */
+            transform: translate(-50%, -50%) translate(130px, -75px);
+            background: linear-gradient(135deg, #ffa500, #cc8400);
+        }
+
+        .sector-2 { /* Yellow Honeybee - Bottom Right */
+            transform: translate(-50%, -50%) translate(130px, 75px);
+            background: linear-gradient(135deg, #ffff00, #cccc00);
+            color: #333;
+        }
+
+        .sector-3 { /* Green Tortoise - Bottom */
+            transform: translate(-50%, -50%) translateY(150px);
+            background: linear-gradient(135deg, #008000, #006600);
+        }
+
+        .sector-4 { /* Blue Dolphin - Bottom Left */
+            transform: translate(-50%, -50%) translate(-130px, 75px);
+            background: linear-gradient(135deg, #0000ff, #0000cc);
+        }
+
+        .sector-5 { /* Purple Elephant - Top Left */
+            transform: translate(-50%, -50%) translate(-130px, -75px);
+            background: linear-gradient(135deg, #4b0082, #3d0066);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 5px;
+            left: 10px;
+            right: 10px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .confidence-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .confidence-high { background: #00ff00; }
+        .confidence-medium { background: #ffff00; }
+        .confidence-low { background: #ff0000; }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-panel h3 {
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .enterprise-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .enterprise-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+
+        .enterprise-info p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-inactive { background: #666; }
+        .status-active { background: #00ff00; }
+        .status-processing { background: #ffa500; }
+        .status-completed { background: #00ff00; }
+        .status-error { background: #ff0000; }
+
+        .problem-panel {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .problem-panel h3 {
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .problem-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .log-panel {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-panel h3 {
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .hexagon-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .hexagon {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .sector {
+                width: 120px;
+                height: 120px;
+                font-size: 10px;
+            }
+            
+            .sector-0 { transform: translate(-50%, -50%) translateY(-90px); }
+            .sector-1 { transform: translate(-50%, -50%) translate(80px, -45px); }
+            .sector-2 { transform: translate(-50%, -50%) translate(80px, 45px); }
+            .sector-3 { transform: translate(-50%, -50%) translateY(90px); }
+            .sector-4 { transform: translate(-50%, -50%) translate(-80px, 45px); }
+            .sector-5 { transform: translate(-50%, -50%) translate(-80px, -45px); }
+            
+            .info-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 Cosmic Council</h1>
+            <p>Interactive Hexagon Visualization System</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn primary" onclick="startCycle()">🚀 Start Cycle</button>
+            <button class="btn secondary" onclick="resetVisualization()">🔄 Reset</button>
+            <button class="btn" onclick="toggleAnimation()">⚡ Toggle Animation</button>
+            <button class="btn" onclick="showHelp()">❓ Help</button>
+            <button class="btn" onclick="loadSampleProblem()">📋 Load Sample Problem</button>
+        </div>
+
+        <div class="problem-panel">
+            <h3>📋 Current Problem</h3>
+            <div class="problem-details">
+                <div class="detail-item">
+                    <div class="detail-label">Title</div>
+                    <div class="detail-value" id="problem-title">No problem loaded</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Complexity</div>
+                    <div class="detail-value" id="problem-complexity">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Domain</div>
+                    <div class="detail-value" id="problem-domain">-</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Stakeholders</div>
+                    <div class="detail-value" id="problem-stakeholders">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="visualization-container">
+            <div class="hexagon-container">
+                <div class="hexagon"></div>
+                
+                <!-- Enterprise Sectors -->
+                <div class="sector sector-0 inactive" data-enterprise="red-owl" onclick="toggleSector('red-owl')">
+                    <div>
+                        <div>🔴 Red Owl</div>
+                        <div style="font-size: 10px;">Research</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-red-owl"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-red-owl"></div>
+                </div>
+
+                <div class="sector sector-1 inactive" data-enterprise="orange-orangutan" onclick="toggleSector('orange-orangutan')">
+                    <div>
+                        <div>🟠 Orange Orangutan</div>
+                        <div style="font-size: 10px;">Planning</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-orange-orangutan"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-orange-orangutan"></div>
+                </div>
+
+                <div class="sector sector-2 inactive" data-enterprise="yellow-honeybee" onclick="toggleSector('yellow-honeybee')">
+                    <div>
+                        <div>🟡 Yellow Honeybee</div>
+                        <div style="font-size: 10px;">Development</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-yellow-honeybee"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-yellow-honeybee"></div>
+                </div>
+
+                <div class="sector sector-3 inactive" data-enterprise="green-tortoise" onclick="toggleSector('green-tortoise')">
+                    <div>
+                        <div>🟢 Green Tortoise</div>
+                        <div style="font-size: 10px;">Resources</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-green-tortoise"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-green-tortoise"></div>
+                </div>
+
+                <div class="sector sector-4 inactive" data-enterprise="blue-dolphin" onclick="toggleSector('blue-dolphin')">
+                    <div>
+                        <div>🔵 Blue Dolphin</div>
+                        <div style="font-size: 10px;">Communication</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-blue-dolphin"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-blue-dolphin"></div>
+                </div>
+
+                <div class="sector sector-5 inactive" data-enterprise="purple-elephant" onclick="toggleSector('purple-elephant')">
+                    <div>
+                        <div>🟣 Purple Elephant</div>
+                        <div style="font-size: 10px;">Support</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-purple-elephant"></div>
+                    </div>
+                    <div class="confidence-indicator" id="confidence-purple-elephant"></div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h3>📊 Enterprise Status</h3>
+                <div id="enterprise-status">
+                    <!-- Enterprise status will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="log-panel">
+            <h3>📝 Activity Log</h3>
+            <div id="activity-log">
+                <div class="log-entry">
+                    <span class="log-timestamp">[00:00:00]</span>
+                    <span>Cosmic Council visualization initialized</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enterprise configuration
+        const enterprises = {
+            'red-owl': {
+                name: 'Red Owl',
+                animal: 'Owl',
+                principle: 'Curiosity',
+                role: 'Research & Inquiry'
+            },
+            'orange-orangutan': {
+                name: 'Orange Orangutan',
+                animal: 'Orangutan',
+                principle: 'Planning',
+                role: 'Logistics & Strategy'
+            },
+            'yellow-honeybee': {
+                name: 'Yellow Honeybee',
+                animal: 'Honeybee',
+                principle: 'Creativity',
+                role: 'Development & Innovation'
+            },
+            'green-tortoise': {
+                name: 'Green Tortoise',
+                animal: 'Tortoise',
+                principle: 'Sustainability',
+                role: 'Budget & Resources'
+            },
+            'blue-dolphin': {
+                name: 'Blue Dolphin',
+                animal: 'Dolphin',
+                principle: 'Clarity',
+                role: 'Communication & Marketing'
+            },
+            'purple-elephant': {
+                name: 'Purple Elephant',
+                animal: 'Elephant',
+                principle: 'Empathy',
+                role: 'Support & Feedback'
+            }
+        };
+
+        // Current state
+        let currentProblem = null;
+        let sectorStates = {};
+        let isAnimating = false;
+        let cycleInProgress = false;
+
+        // Initialize sector states
+        Object.keys(enterprises).forEach(enterprise => {
+            sectorStates[enterprise] = {
+                state: 'inactive',
+                progress: 0,
+                confidence: 0,
+                lastUpdate: new Date()
+            };
+        });
+
+        // Logging function
+        function log(message) {
+            const logContainer = document.getElementById('activity-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span><span>${message}</span>`;
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+            
+            // Keep only last 20 entries
+            while (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        // Update enterprise status panel
+        function updateEnterpriseStatus() {
+            const statusContainer = document.getElementById('enterprise-status');
+            statusContainer.innerHTML = '';
+
+            Object.keys(enterprises).forEach(enterprise => {
+                const enterpriseInfo = enterprises[enterprise];
+                const state = sectorStates[enterprise];
+                
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'enterprise-info';
+                
+                const statusClass = `status-${state.state}`;
+                const statusText = state.state.charAt(0).toUpperCase() + state.state.slice(1);
+                
+                statusDiv.innerHTML = `
+                    <h4><span class="status-indicator ${statusClass}"></span>${enterpriseInfo.name}</h4>
+                    <p>State: ${statusText}</p>
+                    <p>Progress: ${Math.round(state.progress * 100)}%</p>
+                    <p>Confidence: ${state.confidence.toFixed(2)}</p>
+                `;
+                
+                statusContainer.appendChild(statusDiv);
+            });
+        }
+
+        // Toggle sector state
+        function toggleSector(enterprise) {
+            if (cycleInProgress) {
+                log(`Cannot toggle ${enterprises[enterprise].name} - cycle in progress`);
+                return;
+            }
+
+            const currentState = sectorStates[enterprise].state;
+            const newState = currentState === 'inactive' ? 'active' : 'inactive';
+            
+            setSectorState(enterprise, newState);
+            log(`Toggled ${enterprises[enterprise].name} to ${newState}`);
+        }
+
+        // Set sector state
+        function setSectorState(enterprise, state, progress = 0, confidence = 0) {
+            sectorStates[enterprise] = {
+                state: state,
+                progress: progress,
+                confidence: confidence,
+                lastUpdate: new Date()
+            };
+
+            // Update visual state
+            const sector = document.querySelector(`[data-enterprise="${enterprise}"]`);
+            sector.className = `sector sector-${getSectorIndex(enterprise)} ${state}`;
+
+            // Update progress bar
+            const progressBar = document.getElementById(`progress-${enterprise}`);
+            progressBar.style.width = `${progress * 100}%`;
+
+            // Update confidence indicator
+            const confidenceIndicator = document.getElementById(`confidence-${enterprise}`);
+            confidenceIndicator.className = 'confidence-indicator';
+            if (confidence > 0) {
+                if (confidence >= 0.8) {
+                    confidenceIndicator.classList.add('confidence-high');
+                } else if (confidence >= 0.6) {
+                    confidenceIndicator.classList.add('confidence-medium');
+                } else {
+                    confidenceIndicator.classList.add('confidence-low');
+                }
+            }
+
+            updateEnterpriseStatus();
+        }
+
+        // Get sector index for CSS positioning
+        function getSectorIndex(enterprise) {
+            const indices = {
+                'red-owl': 0,
+                'orange-orangutan': 1,
+                'yellow-honeybee': 2,
+                'green-tortoise': 3,
+                'blue-dolphin': 4,
+                'purple-elephant': 5
+            };
+            return indices[enterprise];
+        }
+
+        // Start problem-solving cycle
+        async function startCycle() {
+            if (cycleInProgress) {
+                log('Cycle already in progress');
+                return;
+            }
+
+            if (!currentProblem) {
+                log('No problem loaded. Please load a problem first.');
+                return;
+            }
+
+            cycleInProgress = true;
+            log('Starting Cosmic Council problem-solving cycle...');
+
+            // Reset all sectors
+            Object.keys(enterprises).forEach(enterprise => {
+                setSectorState(enterprise, 'inactive', 0, 0);
+            });
+
+            // Processing order
+            const processingOrder = [
+                'red-owl',
+                'orange-orangutan', 
+                'yellow-honeybee',
+                'green-tortoise',
+                'blue-dolphin',
+                'purple-elephant'
+            ];
+
+            // Process each enterprise
+            for (let i = 0; i < processingOrder.length; i++) {
+                const enterprise = processingOrder[i];
+                const enterpriseInfo = enterprises[enterprise];
+                
+                log(`Processing ${enterpriseInfo.name}...`);
+                setSectorState(enterprise, 'processing', 0, 0);
+
+                // Simulate processing with progress updates
+                for (let progress = 0.2; progress <= 1.0; progress += 0.2) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    setSectorState(enterprise, 'processing', progress, 0);
+                }
+
+                // Simulate completion with confidence score
+                const confidence = 0.7 + (i * 0.05);
+                setSectorState(enterprise, 'completed', 1.0, confidence);
+                log(`${enterpriseInfo.name} completed with confidence ${confidence.toFixed(2)}`);
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            log('Cosmic Council cycle completed successfully!');
+            cycleInProgress = false;
+        }
+
+        // Reset visualization
+        function resetVisualization() {
+            if (cycleInProgress) {
+                log('Cannot reset during cycle');
+                return;
+            }
+
+            Object.keys(enterprises).forEach(enterprise => {
+                setSectorState(enterprise, 'inactive', 0, 0);
+            });
+            log('Visualization reset');
+        }
+
+        // Toggle animation
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            log(`Animation ${isAnimating ? 'enabled' : 'disabled'}`);
+        }
+
+        // Show help
+        function showHelp() {
+            const helpText = `
+Cosmic Council Hexagon Visualization Controls:
+
+Click on sectors to toggle their state
+- Gray: Inactive
+- Colored: Active  
+- Orange: Processing
+- Green: Completed
+- Red: Error
+
+Controls:
+- Start Cycle: Begin problem-solving process
+- Reset: Reset all sectors to inactive
+- Toggle Animation: Enable/disable animations
+- Load Sample Problem: Load a sample problem
+
+Progress bars show processing progress
+Confidence indicators show analysis confidence:
+- Green: High confidence (>0.8)
+- Yellow: Medium confidence (0.6-0.8)
+- Red: Low confidence (<0.6)
+            `;
+            alert(helpText);
+        }
+
+        // Load sample problem
+        function loadSampleProblem() {
+            currentProblem = {
+                title: 'AI-Powered Healthcare Transformation',
+                complexity: 'Complex',
+                domain: 'Healthcare & AI',
+                stakeholders: ['Healthcare Providers', 'Patients', 'Insurance Companies', 'Regulators']
+            };
+
+            document.getElementById('problem-title').textContent = currentProblem.title;
+            document.getElementById('problem-complexity').textContent = currentProblem.complexity;
+            document.getElementById('problem-domain').textContent = currentProblem.domain;
+            document.getElementById('problem-stakeholders').textContent = currentProblem.stakeholders.length;
+
+            log(`Loaded problem: ${currentProblem.title}`);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case '1':
+                    toggleSector('red-owl');
+                    break;
+                case '2':
+                    toggleSector('orange-orangutan');
+                    break;
+                case '3':
+                    toggleSector('yellow-honeybee');
+                    break;
+                case '4':
+                    toggleSector('green-tortoise');
+                    break;
+                case '5':
+                    toggleSector('blue-dolphin');
+                    break;
+                case '6':
+                    toggleSector('purple-elephant');
+                    break;
+                case ' ':
+                    event.preventDefault();
+                    startCycle();
+                    break;
+                case 'r':
+                case 'R':
+                    resetVisualization();
+                    break;
+                case 'h':
+                case 'H':
+                    showHelp();
+                    break;
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateEnterpriseStatus();
+            log('Cosmic Council visualization ready');
+        });
+    </script>
+</body>
+</html>

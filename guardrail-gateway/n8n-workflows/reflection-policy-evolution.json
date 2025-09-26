@@ -1,0 +1,512 @@
+{
+  "name": "Reflection & Policy Evolution",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "hourly-cron",
+      "name": "Hourly Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as total_incidents, COUNT(*) FILTER (WHERE severity = 'critical') as critical_incidents, COUNT(*) FILTER (WHERE severity = 'high') as high_incidents, COUNT(*) FILTER (WHERE created_at >= now() - interval '1 hour') as recent_incidents FROM incidents WHERE created_at >= now() - interval '24 hours'"
+      },
+      "id": "analyze-incidents",
+      "name": "Analyze Incidents",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as total_decisions, COUNT(*) FILTER (WHERE allow = false) as blocked_decisions, COUNT(*) FILTER (WHERE allow = true) as allowed_decisions, AVG(latency_ms) as avg_latency FROM decisions WHERE time >= now() - interval '24 hours'"
+      },
+      "id": "analyze-decisions",
+      "name": "Analyze Decisions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [680, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT enterprise, COUNT(*) as stage_failures, AVG(EXTRACT(EPOCH FROM (completed_at - attempted_at)) * 1000) as avg_duration FROM cycle_stage_runs csr JOIN cycle_stages cs ON csr.stage_id = cs.stage_id JOIN enterprises e ON cs.enterprise_id = e.enterprise_id WHERE csr.status = 'failed' AND csr.completed_at >= now() - interval '24 hours' GROUP BY enterprise"
+      },
+      "id": "analyze-stage-failures",
+      "name": "Analyze Stage Failures",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Analyze reflection metrics and determine if policy evolution is needed\nconst incidents = $input.first().json;\nconst decisions = $input.all()[1].json;\nconst stageFailures = $input.all()[2].json;\n\n// Calculate key metrics\nconst incidentRate = incidents.total_incidents > 0 ? (incidents.recent_incidents / incidents.total_incidents) * 100 : 0;\nconst falseBlockRate = decisions.total_decisions > 0 ? (decisions.blocked_decisions / decisions.total_decisions) * 100 : 0;\nconst avgLatency = decisions.avg_latency || 0;\n\n// Determine if policy evolution is needed\nconst needsEvolution = {\n  high_incident_rate: incidentRate > 5, // More than 5% incident rate\n  high_false_block: falseBlockRate > 10, // More than 10% false block rate\n  high_latency: avgLatency > 5000, // More than 5 second latency\n  critical_incidents: incidents.critical_incidents > 0\n};\n\nconst shouldProposeEvolution = Object.values(needsEvolution).some(Boolean);\n\n// Identify target scopes for evolution\nconst targetScopes = [];\nif (needsEvolution.high_incident_rate || needsEvolution.critical_incidents) {\n  targetScopes.push('guard/access');\n}\nif (needsEvolution.high_false_block) {\n  targetScopes.push('guard/brand');\n}\nif (needsEvolution.high_latency) {\n  targetScopes.push('guard/budget');\n}\n\nreturn {\n  metrics: {\n    incident_rate: incidentRate,\n    false_block_rate: falseBlockRate,\n    avg_latency: avgLatency,\n    total_incidents: incidents.total_incidents,\n    critical_incidents: incidents.critical_incidents\n  },\n  needs_evolution: needsEvolution,\n  should_propose_evolution: shouldProposeEvolution,\n  target_scopes: targetScopes,\n  analysis_timestamp: new Date().toISOString()\n};"
+      },
+      "id": "analyze-reflection-metrics",
+      "name": "Analyze Reflection Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "should-evolve",
+              "leftValue": "={{ $json.should_propose_evolution }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "evolution-needed-check",
+      "name": "Evolution Needed Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate policy evolution proposals\nconst analysis = $input.first().json;\nconst proposals = [];\n\nfor (const scope of analysis.target_scopes) {\n  const proposal = {\n    target_scope: scope,\n    current_version: '1.0.0', // This would be dynamic in production\n    proposed_version: '1.1.0-monitor',\n    rationale: generateRationale(scope, analysis.needs_evolution),\n    impact_analysis: generateImpactAnalysis(scope, analysis.metrics),\n    status: 'proposed'\n  };\n  proposals.push(proposal);\n}\n\nfunction generateRationale(scope, needs) {\n  const rationales = [];\n  if (needs.high_incident_rate) rationales.push('High incident rate detected');\n  if (needs.high_false_block) rationales.push('High false block rate observed');\n  if (needs.high_latency) rationales.push('Performance degradation detected');\n  if (needs.critical_incidents) rationales.push('Critical incidents require immediate attention');\n  \n  return `Policy evolution needed for ${scope}: ${rationales.join(', ')}`;\n}\n\nfunction generateImpactAnalysis(scope, metrics) {\n  return {\n    expected_incident_reduction: Math.min(metrics.incident_rate * 0.3, 50),\n    expected_false_block_reduction: Math.min(metrics.false_block_rate * 0.2, 30),\n    expected_latency_improvement: Math.min(metrics.avg_latency * 0.1, 1000),\n    risk_level: metrics.critical_incidents > 0 ? 'high' : 'medium'\n  };\n}\n\nreturn { proposals };"
+      },
+      "id": "generate-proposals",
+      "name": "Generate Proposals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "policy_evolution",
+        "columns": "target_scope,current_version,proposed_version,rationale,impact_analysis,status",
+        "additionalFields": {
+          "returnFields": "proposal_id"
+        }
+      },
+      "id": "insert-proposals",
+      "name": "Insert Proposals",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://gateway:8000/v1/simulate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pretend_policy_version",
+              "value": "={{ $json.proposed_version }}"
+            },
+            {
+              "name": "target_scope",
+              "value": "={{ $json.target_scope }}"
+            },
+            {
+              "name": "simulation_context",
+              "value": "={{ { \"incident_rate\": $json.impact_analysis.expected_incident_reduction, \"false_block_rate\": $json.impact_analysis.expected_false_block_reduction } }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "simulate-policy",
+      "name": "Simulate Policy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "simulation-success",
+              "leftValue": "={{ $json.simulation_success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "simulation-success-check",
+      "name": "Simulation Success Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "policy_evolution",
+        "updateKey": "proposal_id",
+        "columns": "status,sim_summary",
+        "additionalFields": {}
+      },
+      "id": "update-proposal-testing",
+      "name": "Update Proposal Testing",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "policy_evolution",
+        "updateKey": "proposal_id",
+        "columns": "status,sim_summary",
+        "additionalFields": {}
+      },
+      "id": "update-proposal-rejected",
+      "name": "Update Proposal Rejected",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://gateway:8000/v1/policy/publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "proposal_id",
+              "value": "={{ $json.proposal_id }}"
+            },
+            {
+              "name": "target_scope",
+              "value": "={{ $json.target_scope }}"
+            },
+            {
+              "name": "proposed_version",
+              "value": "={{ $json.proposed_version }}"
+            },
+            {
+              "name": "mode",
+              "value": "monitor"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "publish-monitor-mode",
+      "name": "Publish Monitor Mode",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2660, 100]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "policy_evolution",
+        "updateKey": "proposal_id",
+        "columns": "status,deployed_at",
+        "additionalFields": {}
+      },
+      "id": "update-proposal-canary",
+      "name": "Update Proposal Canary",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2880, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO reflection_cycles (enterprise, decision_id, reflection_type, insights, improvement_suggestions, status) VALUES ('purple', NULL, 'system_reflection', $1::jsonb, $2::jsonb, 'completed')"
+      },
+      "id": "record-reflection",
+      "name": "Record Reflection",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log reflection summary\nconst analysis = $input.first().json;\n\nconsole.log('Purple Elephant Reflection Summary:');\nconsole.log(`- Incident Rate: ${analysis.metrics.incident_rate.toFixed(2)}%`);\nconsole.log(`- False Block Rate: ${analysis.metrics.false_block_rate.toFixed(2)}%`);\nconsole.log(`- Average Latency: ${analysis.metrics.avg_latency.toFixed(0)}ms`);\nconsole.log(`- Critical Incidents: ${analysis.metrics.critical_incidents}`);\nconsole.log(`- Policy Evolution Needed: ${analysis.should_propose_evolution ? 'Yes' : 'No'}`);\n\nif (analysis.should_propose_evolution) {\n  console.log(`- Target Scopes: ${analysis.target_scopes.join(', ')}`);\n}\n\nreturn {\n  reflection_completed: true,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "log-reflection-summary",
+      "name": "Log Reflection Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 400]
+    }
+  ],
+  "connections": {
+    "Hourly Cron": {
+      "main": [
+        [
+          {
+            "node": "Analyze Incidents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Incidents": {
+      "main": [
+        [
+          {
+            "node": "Analyze Decisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Decisions": {
+      "main": [
+        [
+          {
+            "node": "Analyze Stage Failures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Stage Failures": {
+      "main": [
+        [
+          {
+            "node": "Analyze Reflection Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Reflection Metrics": {
+      "main": [
+        [
+          {
+            "node": "Evolution Needed Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Record Reflection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evolution Needed Check": {
+      "main": [
+        [
+          {
+            "node": "Generate Proposals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Proposals": {
+      "main": [
+        [
+          {
+            "node": "Insert Proposals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Proposals": {
+      "main": [
+        [
+          {
+            "node": "Simulate Policy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulate Policy": {
+      "main": [
+        [
+          {
+            "node": "Simulation Success Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulation Success Check": {
+      "main": [
+        [
+          {
+            "node": "Update Proposal Testing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Proposal Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Proposal Testing": {
+      "main": [
+        [
+          {
+            "node": "Publish Monitor Mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Monitor Mode": {
+      "main": [
+        [
+          {
+            "node": "Update Proposal Canary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Reflection": {
+      "main": [
+        [
+          {
+            "node": "Log Reflection Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-27T00:00:00.000Z",
+      "updatedAt": "2025-01-27T00:00:00.000Z",
+      "id": "cosmic-council",
+      "name": "cosmic-council"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-27T00:00:00.000Z",
+  "versionId": "1"
+}

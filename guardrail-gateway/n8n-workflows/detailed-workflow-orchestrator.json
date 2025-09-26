@@ -1,0 +1,1093 @@
+{
+  "name": "Detailed Workflow Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "start-detailed-workflow",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "start-webhook",
+      "name": "HTTP Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "detailed-workflow-starter"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT create_new_problem($1::text, $2::text, $3::text, $4::text, $5::text[], $6::text) as problem_id"
+      },
+      "id": "create-problem",
+      "name": "Create Core Problem",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'research') as status"
+      },
+      "id": "check-research-status",
+      "name": "Check Research Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [680, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "research-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "research-ready-check",
+      "name": "Research Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Red Owl (Research & Inquiry) agent in the Cosmic Council. Analyze the provided problem and research data to identify key findings, generate prioritized questions, and assess confidence level. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.problem_statement }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "research-ai-agent",
+      "name": "Research AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO research_findings (core_problem_id, source, summary, relevance_to_problem, credibility_rating, relevance_rating, impact_rating) VALUES ($1::uuid, 'AI Analysis', $2::text, $3::text, $4::int, $5::int, $6::int)"
+      },
+      "id": "store-research-findings",
+      "name": "Store Research Findings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1340, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'planning') as status"
+      },
+      "id": "check-planning-status",
+      "name": "Check Planning Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "planning-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "planning-ready-check",
+      "name": "Planning Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Orange Orangutan (Planning & Logistics) agent in the Cosmic Council. Based on research findings and prioritized questions, create detailed action plans, identify dependencies, set priorities and timelines. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.research_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "planning-ai-agent",
+      "name": "Planning AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO planning_action_plans (related_question_id, high_level_objective, detailed_steps, priority_level) VALUES ($1::uuid, $2::text, $3::jsonb, $4::text)"
+      },
+      "id": "store-action-plans",
+      "name": "Store Action Plans",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'development') as status"
+      },
+      "id": "check-development-status",
+      "name": "Check Development Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1560, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "development-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "development-ready-check",
+      "name": "Development Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1780, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Yellow Honeybee (Development & Creativity) agent in the Cosmic Council. Based on action plans, design prototypes, conduct testing, generate creative solutions. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.planning_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.8
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "development-ai-agent",
+      "name": "Development AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO development_prototypes (action_plan_id, prototype_name, prototype_description, design_specifications, prototype_status) VALUES ($1::uuid, $2::text, $3::text, $4::jsonb, 'concept')"
+      },
+      "id": "store-prototypes",
+      "name": "Store Prototypes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'budget') as status"
+      },
+      "id": "check-budget-status",
+      "name": "Check Budget Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 500],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "budget-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "budget-ready-check",
+      "name": "Budget Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Green Tortoise (Budget & Resources) agent in the Cosmic Council. Based on prototypes, allocate budget, conduct cost analysis, manage resources. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.development_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.6
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "budget-ai-agent",
+      "name": "Budget AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 400],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO budget_allocations (prototype_id, allocation_name, allocated_amount, allocation_category, allocation_status) VALUES ($1::uuid, $2::text, $3::decimal, $4::text, 'pending')"
+      },
+      "id": "store-budget-allocations",
+      "name": "Store Budget Allocations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2660, 400],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'market') as status"
+      },
+      "id": "check-market-status",
+      "name": "Check Market Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 600],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "market-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "market-ready-check",
+      "name": "Market Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2660, 600]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Blue Dolphin (Market & Communication) agent in the Cosmic Council. Based on budget allocations and prototypes, analyze market insights, develop communication strategies, set performance metrics. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.budget_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "market-ai-agent",
+      "name": "Market AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2880, 500],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO market_communication_strategies (market_insight_id, strategy_name, target_audience, communication_channels, key_messages, strategy_status) VALUES ($1::uuid, $2::text, $3::jsonb, $4::text[], $5::text[], 'draft')"
+      },
+      "id": "store-communication-strategies",
+      "name": "Store Communication Strategies",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [3100, 500],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_stage_completion_status($1::uuid, 'support') as status"
+      },
+      "id": "check-support-status",
+      "name": "Check Support Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2880, 700],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "support-ready",
+              "leftValue": "={{ $json.status.ready_for_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "support-ready-check",
+      "name": "Support Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [3100, 700]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.OPENAI_API_URL }}/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"system\", \"content\": \"You are the Purple Elephant (Support & Feedback) agent in the Cosmic Council. Based on market strategies and performance, collect feedback, conduct assessments, identify improvements, generate next cycle recommendations. Respond in JSON format with: confidence_score, data, insights, next_stage_input, agent_metadata\"}, {\"role\": \"user\", \"content\": \"{{ $json.market_data }}\"}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            },
+            {
+              "name": "max_tokens",
+              "value": 2000
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "support-ai-agent",
+      "name": "Support AI Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3320, 600],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO support_continuous_improvements (performance_assessment_id, improvement_title, improvement_description, improvement_category, priority_level, next_cycle_focus) VALUES ($1::uuid, $2::text, $3::text, $4::text, $5::text, $6::boolean)"
+      },
+      "id": "store-continuous-improvements",
+      "name": "Store Continuous Improvements",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [3540, 600],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_complete_workflow_status($1::uuid) as workflow_status"
+      },
+      "id": "get-final-status",
+      "name": "Get Final Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [3760, 600],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"problem_id\": $json.problem_id, \"workflow_status\": $json.workflow_status, \"timestamp\": new Date().toISOString() } }}"
+      },
+      "id": "response",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3980, 600]
+    }
+  ],
+  "connections": {
+    "start-webhook": {
+      "main": [
+        [
+          {
+            "node": "create-problem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-problem": {
+      "main": [
+        [
+          {
+            "node": "check-research-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-research-status": {
+      "main": [
+        [
+          {
+            "node": "research-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "research-ready-check": {
+      "main": [
+        [
+          {
+            "node": "research-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check-planning-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "research-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-research-findings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-research-findings": {
+      "main": [
+        [
+          {
+            "node": "check-planning-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-planning-status": {
+      "main": [
+        [
+          {
+            "node": "planning-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "planning-ready-check": {
+      "main": [
+        [
+          {
+            "node": "planning-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check-development-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "planning-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-action-plans",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-action-plans": {
+      "main": [
+        [
+          {
+            "node": "check-development-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-development-status": {
+      "main": [
+        [
+          {
+            "node": "development-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "development-ready-check": {
+      "main": [
+        [
+          {
+            "node": "development-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check-budget-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "development-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-prototypes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-prototypes": {
+      "main": [
+        [
+          {
+            "node": "check-budget-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-budget-status": {
+      "main": [
+        [
+          {
+            "node": "budget-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "budget-ready-check": {
+      "main": [
+        [
+          {
+            "node": "budget-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check-market-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "budget-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-budget-allocations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-budget-allocations": {
+      "main": [
+        [
+          {
+            "node": "check-market-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-market-status": {
+      "main": [
+        [
+          {
+            "node": "market-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "market-ready-check": {
+      "main": [
+        [
+          {
+            "node": "market-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check-support-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "market-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-communication-strategies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-communication-strategies": {
+      "main": [
+        [
+          {
+            "node": "check-support-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-support-status": {
+      "main": [
+        [
+          {
+            "node": "support-ready-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "support-ready-check": {
+      "main": [
+        [
+          {
+            "node": "support-ai-agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get-final-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "support-ai-agent": {
+      "main": [
+        [
+          {
+            "node": "store-continuous-improvements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-continuous-improvements": {
+      "main": [
+        [
+          {
+            "node": "get-final-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-final-status": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "cosmic-council",
+      "name": "cosmic-council"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

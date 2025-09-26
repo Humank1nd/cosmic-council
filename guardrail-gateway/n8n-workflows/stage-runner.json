@@ -1,0 +1,553 @@
+{
+  "name": "Stage Runner",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cron Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT sr.stage_run_id, sr.run_id, sr.stage_id, cs.code, cs.name, cs.enterprise_id, cs.squad_id, cs.pass_id, cr.context as run_context, cr.policy_bundle FROM cycle_stage_runs sr JOIN cycle_stages cs ON sr.stage_id = cs.stage_id JOIN cycle_runs cr ON sr.run_id = cr.run_id WHERE sr.status = 'pending' ORDER BY cs.ordinal LIMIT 1"
+      },
+      "id": "get-next-stage",
+      "name": "Get Next Stage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [460, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-stage",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-stage-check",
+      "name": "Has Stage Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "cycle_stage_runs",
+        "updateKey": "stage_run_id",
+        "columns": "status,attempted_at",
+        "additionalFields": {}
+      },
+      "id": "mark-stage-running",
+      "name": "Mark Stage Running",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [900, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build evaluation input for Guardrail Gateway\nconst stage = $input.first().json;\n\n// Get enterprise and squad names\nconst enterpriseNames = {\n  1: 'red', 2: 'orange', 3: 'yellow', 4: 'green', 5: 'blue', 6: 'purple'\n};\nconst squadNames = {\n  1: 'red', 2: 'orange', 3: 'yellow', 4: 'green', 5: 'blue', 6: 'purple'\n};\nconst passNames = {\n  1: 'decide', 2: 'validate', 3: 'reflect'\n};\n\nconst evalInput = {\n  agent: {\n    enterprise: enterpriseNames[stage.enterprise_id],\n    squad: squadNames[stage.squad_id],\n    pass: passNames[stage.pass_id],\n    stage_id: stage.stage_id,\n    stage_code: stage.code\n  },\n  resource: {\n    service: 'cosmic_council',\n    action: 'execute_stage',\n    stage: stage.code\n  },\n  context: {\n    run_id: stage.run_id,\n    stage_id: stage.stage_id,\n    run_context: stage.run_context || {},\n    policy_bundle: stage.policy_bundle,\n    timestamp: new Date().toISOString()\n  }\n};\n\nreturn {\n  stage_run_id: stage.stage_run_id,\n  run_id: stage.run_id,\n  stage_id: stage.stage_id,\n  eval_input: evalInput\n};"
+      },
+      "id": "build-eval-input",
+      "name": "Build Eval Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://gateway:8000/v1/evaluate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.eval_input }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "call-guardrail",
+      "name": "Call Guardrail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "decision-allow",
+              "leftValue": "={{ $json.allow }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "decision-check",
+      "name": "Decision Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "cycle_stage_runs",
+        "updateKey": "stage_run_id",
+        "columns": "status,completed_at,guard_decision_id,output,metrics",
+        "additionalFields": {}
+      },
+      "id": "update-stage-completed",
+      "name": "Update Stage Completed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "cycle_stage_runs",
+        "updateKey": "stage_run_id",
+        "columns": "status,completed_at,guard_decision_id,output,error_message",
+        "additionalFields": {}
+      },
+      "id": "update-stage-failed",
+      "name": "Update Stage Failed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1780, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT get_next_stage($1::smallint) as next_stage_id"
+      },
+      "id": "get-next-stage-id",
+      "name": "Get Next Stage ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2000, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-next-stage",
+              "leftValue": "={{ $json.next_stage_id }}",
+              "rightValue": null,
+              "operator": {
+                "type": "object",
+                "operation": "notEqual"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-next-stage-check",
+      "name": "Has Next Stage Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 100]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE cycle_stage_runs SET status = 'pending' WHERE run_id = $1::uuid AND stage_id = $2::smallint"
+      },
+      "id": "queue-next-stage",
+      "name": "Queue Next Stage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2440, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT calculate_cycle_metrics($1::uuid)"
+      },
+      "id": "update-cycle-metrics",
+      "name": "Update Cycle Metrics",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2660, 100],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle obligations from Guardrail decision\nconst decision = $input.first().json;\nconst stageData = $input.last().json;\n\nif (decision.obligations && decision.obligations.length > 0) {\n  const obligations = decision.obligations;\n  \n  for (const obligation of obligations) {\n    if (obligation.type === 'emit_budget_usage') {\n      // Emit budget telemetry\n      console.log('Emitting budget telemetry:', obligation.data);\n    } else if (obligation.type === 'emit_provenance') {\n      // Handle provenance obligation\n      console.log('Emitting provenance:', obligation.data);\n    }\n  }\n}\n\nreturn {\n  processed: true,\n  obligations_count: decision.obligations ? decision.obligations.length : 0\n};"
+      },
+      "id": "handle-obligations",
+      "name": "Handle Obligations",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as remaining_stages FROM cycle_stage_runs WHERE run_id = $1::uuid AND status = 'pending'"
+      },
+      "id": "check-remaining-stages",
+      "name": "Check Remaining Stages",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [2220, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-credentials",
+          "name": "PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-remaining-stages",
+              "leftValue": "={{ $json.remaining_stages }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cycle-complete-check",
+      "name": "Cycle Complete Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2440, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://gateway:8000/v1/cycle/complete",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "run_id",
+              "value": "={{ $json.run_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify-cycle-complete",
+      "name": "Notify Cycle Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2660, 300]
+    }
+  ],
+  "connections": {
+    "Cron Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Next Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Next Stage": {
+      "main": [
+        [
+          {
+            "node": "Has Stage Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Stage Check": {
+      "main": [
+        [
+          {
+            "node": "Mark Stage Running",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Stage Running": {
+      "main": [
+        [
+          {
+            "node": "Build Eval Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Eval Input": {
+      "main": [
+        [
+          {
+            "node": "Call Guardrail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Guardrail": {
+      "main": [
+        [
+          {
+            "node": "Decision Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Check": {
+      "main": [
+        [
+          {
+            "node": "Update Stage Completed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Stage Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Stage Completed": {
+      "main": [
+        [
+          {
+            "node": "Get Next Stage ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Next Stage ID": {
+      "main": [
+        [
+          {
+            "node": "Has Next Stage Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Next Stage Check": {
+      "main": [
+        [
+          {
+            "node": "Queue Next Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Queue Next Stage": {
+      "main": [
+        [
+          {
+            "node": "Update Cycle Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Stage Failed": {
+      "main": [
+        [
+          {
+            "node": "Handle Obligations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Obligations": {
+      "main": [
+        [
+          {
+            "node": "Check Remaining Stages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Remaining Stages": {
+      "main": [
+        [
+          {
+            "node": "Cycle Complete Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cycle Complete Check": {
+      "main": [
+        [
+          {
+            "node": "Notify Cycle Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-27T00:00:00.000Z",
+      "updatedAt": "2025-01-27T00:00:00.000Z",
+      "id": "cosmic-council",
+      "name": "cosmic-council"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-27T00:00:00.000Z",
+  "versionId": "1"
+}

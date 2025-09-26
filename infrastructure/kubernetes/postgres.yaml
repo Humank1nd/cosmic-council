@@ -1,0 +1,242 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: cosmic-council
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: standard
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: cosmic-council
+  labels:
+    app: postgres
+    component: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        component: database
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: cosmic-council-config
+              key: DATABASE_NAME
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: cosmic-council-config
+              key: DATABASE_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: DATABASE_PASSWORD
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-init
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - cosmic_council
+            - -d
+            - cosmic_council
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - cosmic_council
+            - -d
+            - cosmic_council
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      - name: postgres-init
+        configMap:
+          name: postgres-init-script
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: cosmic-council
+  labels:
+    app: postgres
+    component: database
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+  namespace: cosmic-council
+data:
+  init.sql: |
+    -- PostgreSQL initialization script for Cosmic Council Framework
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+    CREATE EXTENSION IF NOT EXISTS "btree_gin";
+    
+    -- Set timezone
+    SET timezone = 'UTC';
+    
+    -- Create custom types
+    DO $$ BEGIN
+        CREATE TYPE problem_complexity AS ENUM ('simple', 'moderate', 'complex', 'systemic');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+    
+    DO $$ BEGIN
+        CREATE TYPE problem_status AS ENUM ('pending', 'in_progress', 'completed', 'failed', 'cancelled');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+    
+    DO $$ BEGIN
+        CREATE TYPE cycle_status AS ENUM ('pending', 'running', 'completed', 'failed', 'cancelled');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+    
+    DO $$ BEGIN
+        CREATE TYPE solution_status AS ENUM ('draft', 'review', 'approved', 'implemented', 'rejected');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+    
+    DO $$ BEGIN
+        CREATE TYPE enterprise_type AS ENUM ('red_owl', 'orange_orangutan', 'yellow_honeybee', 'green_tortoise', 'blue_dolphin', 'purple_elephant');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+    
+    -- Create indexes for better performance
+    CREATE INDEX IF NOT EXISTS idx_problems_created_at ON problems(created_at);
+    CREATE INDEX IF NOT EXISTS idx_problems_complexity ON problems(complexity);
+    CREATE INDEX IF NOT EXISTS idx_problems_status ON problems(status);
+    CREATE INDEX IF NOT EXISTS idx_problems_domain ON problems(domain);
+    
+    CREATE INDEX IF NOT EXISTS idx_cycles_problem_id ON cycles(problem_id);
+    CREATE INDEX IF NOT EXISTS idx_cycles_status ON cycles(status);
+    CREATE INDEX IF NOT EXISTS idx_cycles_created_at ON cycles(created_at);
+    
+    CREATE INDEX IF NOT EXISTS idx_solutions_cycle_id ON solutions(cycle_id);
+    CREATE INDEX IF NOT EXISTS idx_solutions_status ON solutions(status);
+    
+    CREATE INDEX IF NOT EXISTS idx_enterprise_results_cycle_id ON enterprise_results(cycle_id);
+    CREATE INDEX IF NOT EXISTS idx_enterprise_results_enterprise_type ON enterprise_results(enterprise_type);
+    
+    -- Create full-text search indexes
+    CREATE INDEX IF NOT EXISTS idx_problems_search ON problems USING gin(to_tsvector('english', title || ' ' || description));
+    CREATE INDEX IF NOT EXISTS idx_solutions_search ON solutions USING gin(to_tsvector('english', title || ' ' || description));
+    
+    -- Create partial indexes for active records
+    CREATE INDEX IF NOT EXISTS idx_problems_active ON problems(created_at) WHERE status IN ('pending', 'in_progress');
+    CREATE INDEX IF NOT EXISTS idx_cycles_active ON cycles(created_at) WHERE status IN ('pending', 'running');
+    
+    -- Create composite indexes for common queries
+    CREATE INDEX IF NOT EXISTS idx_problems_complexity_status ON problems(complexity, status);
+    CREATE INDEX IF NOT EXISTS idx_cycles_problem_status ON cycles(problem_id, status);
+    CREATE INDEX IF NOT EXISTS idx_solutions_cycle_status ON solutions(cycle_id, status);
+    
+    -- Create function for updating updated_at timestamp
+    CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        RETURN NEW;
+    END;
+    $$ language 'plpgsql';
+    
+    -- Create triggers for updated_at
+    CREATE TRIGGER update_problems_updated_at BEFORE UPDATE ON problems FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    CREATE TRIGGER update_cycles_updated_at BEFORE UPDATE ON cycles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    CREATE TRIGGER update_solutions_updated_at BEFORE UPDATE ON solutions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    CREATE TRIGGER update_enterprise_results_updated_at BEFORE UPDATE ON enterprise_results FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    
+    -- Create views for common queries
+    CREATE OR REPLACE VIEW active_problems AS
+    SELECT * FROM problems WHERE status IN ('pending', 'in_progress') AND deleted_at IS NULL;
+    
+    CREATE OR REPLACE VIEW active_cycles AS
+    SELECT * FROM cycles WHERE status IN ('pending', 'running') AND deleted_at IS NULL;
+    
+    CREATE OR REPLACE VIEW problem_statistics AS
+    SELECT 
+        complexity,
+        status,
+        COUNT(*) as count,
+        AVG(EXTRACT(EPOCH FROM (updated_at - created_at))) as avg_duration_seconds
+    FROM problems 
+    WHERE deleted_at IS NULL
+    GROUP BY complexity, status;
+    
+    CREATE OR REPLACE VIEW cycle_statistics AS
+    SELECT 
+        status,
+        COUNT(*) as count,
+        AVG(EXTRACT(EPOCH FROM (end_time - start_time))) as avg_duration_seconds,
+        AVG(overall_confidence) as avg_confidence
+    FROM cycles 
+    WHERE deleted_at IS NULL
+    GROUP BY status;
+    
+    -- Grant permissions
+    GRANT ALL PRIVILEGES ON DATABASE cosmic_council TO cosmic_council;
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cosmic_council;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cosmic_council;
+    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO cosmic_council;
