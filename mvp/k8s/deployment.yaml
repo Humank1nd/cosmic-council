@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cosmic-council
+  namespace: cosmic-council
+  labels:
+    app: cosmic-council
+    version: v2.0.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cosmic-council
+  template:
+    metadata:
+      labels:
+        app: cosmic-council
+        version: v2.0.0
+    spec:
+      containers:
+      - name: cosmic-council
+        image: cosmic-council:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: DATABASE_PATH
+          value: "/app/data/cosmic_council.db"
+        - name: LOG_FILE_PATH
+          value: "/app/logs/cosmic_council.log"
+        - name: AI_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: cosmic-council-config
+              key: ai_provider
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: openai_api_key
+              optional: true
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cosmic-council-secrets
+              key: anthropic_api_key
+              optional: true
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: logs-volume
+          mountPath: /app/logs
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: cosmic-council-data
+      - name: logs-volume
+        emptyDir: {}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cosmic-council-service
+  namespace: cosmic-council
+  labels:
+    app: cosmic-council
+spec:
+  selector:
+    app: cosmic-council
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: cosmic-council
+  labels:
+    app: redis
+spec:
+  selector:
+    app: redis
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+  type: ClusterIP

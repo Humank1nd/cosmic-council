@@ -15,7 +15,7 @@ from enum import Enum
 import json
 
 # Import the Cosmic Council components
-from cosmic_council_core import (
+from src.core.types import (
     CosmicCouncil, ProblemStatement, ProblemComplexity, 
     EnterpriseType, CycleStatus
 )

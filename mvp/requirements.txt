@@ -1,0 +1,35 @@
+# Cosmic Council MVP - Phase 1 Requirements
+# Python 3.8+ compatible
+
+# Core AI dependencies
+openai>=1.0.0
+anthropic>=0.7.0
+
+# Web and async dependencies
+aiohttp>=3.8.0
+asyncio
+
+# Data processing
+dataclasses  # Built-in for Python 3.7+
+
+# Production Dependencies
+aiosqlite>=0.19.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# Caching and Performance
+redis>=4.5.0
+aioredis>=2.0.0
+
+# Monitoring and Metrics
+prometheus-client>=0.17.0
+
+# Container and Deployment
+gunicorn>=21.0.0
+
+# Optional: For better development experience
+# pytest>=7.0.0  # Uncomment if you want to use pytest instead of unittest
+# black>=22.0.0  # Uncomment for code formatting
+# flake8>=4.0.0  # Uncomment for linting

@@ -9,7 +9,7 @@ from enum import Enum
 from datetime import datetime
 import json
 
-from cosmic_council_core import ProblemStatement, ProblemComplexity
+from src.core.types import ProblemStatement, ProblemComplexity
 
 class CaseStudyCategory(Enum):
     """Categories of case studies"""

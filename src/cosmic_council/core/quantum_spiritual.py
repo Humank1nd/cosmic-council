@@ -41,7 +41,7 @@ from enhanced_quantum_perpetual_thinking_engine import (
 )
 
 # Import core Cosmic Council components
-from enhanced_cosmic_council_core import EnterpriseType, ProblemStatement, ProblemComplexity
+from src.core.types import EnterpriseType, ProblemStatement, ProblemComplexity
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

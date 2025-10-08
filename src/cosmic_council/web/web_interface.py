@@ -19,7 +19,7 @@ from pydantic import BaseModel
 import uvicorn
 
 # Import our existing components
-from cosmic_council_api import app as api_app
+from src.api.main import app as api_app
 from api_client import CosmicCouncilAPIClient, APIException
 
 # Configure logging

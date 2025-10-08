@@ -1,0 +1,2 @@
+-- Migration: 007_create_analytics_tables.sql
+-- TODO: Add migration SQL

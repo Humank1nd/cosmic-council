@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['gateway-service:8000']
+
+  - job_name: 'analytics'
+    static_configs:
+      - targets: ['analytics-service:8001']
+
+  - job_name: 'reflection'
+    static_configs:
+      - targets: ['reflection-service:8002']

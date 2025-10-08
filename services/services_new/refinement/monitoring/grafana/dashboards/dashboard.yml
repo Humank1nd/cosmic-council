@@ -1,0 +1,13 @@
+# Cosmic Council Refinement Engine - Grafana Dashboard Configuration
+apiVersion: 1
+
+providers:
+  - name: 'cosmic-council-dashboards'
+    orgId: 1
+    folder: 'Cosmic Council'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

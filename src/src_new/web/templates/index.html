@@ -1,0 +1,662 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cosmic Council{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <h1 class="welcome-title">Welcome to Cosmic Council</h1>
+            <p class="welcome-subtitle">Your intelligent problem-solving framework is ready to tackle complex challenges</p>
+            <div class="welcome-actions">
+                <button class="btn btn-primary btn-lg" onclick="createNewProblem()">
+                    <i class="fas fa-plus"></i>
+                    Create New Problem
+                </button>
+                <button class="btn btn-secondary btn-lg" onclick="startWorkflow()">
+                    <i class="fas fa-play"></i>
+                    Start Workflow
+                </button>
+            </div>
+        </div>
+        <div class="welcome-visual">
+            <div class="hexagon-large">
+                <div class="hexagon-inner">
+                    <i class="fas fa-infinity"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="totalProblems">0</h3>
+                <p class="stat-label">Total Problems</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12% this month</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-sync-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="totalCycles">0</h3>
+                <p class="stat-label">Active Cycles</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8% this week</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="totalSolutions">0</h3>
+                <p class="stat-label">Solutions Generated</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+15% this month</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="successRate">0%</h3>
+                <p class="stat-label">Success Rate</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+5% this month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+        <!-- Recent Problems -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Recent Problems</h2>
+                <a href="/problems" class="btn btn-sm btn-secondary">View All</a>
+            </div>
+            <div class="card-content">
+                <div class="problems-list" id="recentProblems">
+                    <!-- Problems will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Cycles -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Active Cycles</h2>
+                <a href="/cycles" class="btn btn-sm btn-secondary">View All</a>
+            </div>
+            <div class="card-content">
+                <div class="cycles-list" id="activeCycles">
+                    <!-- Cycles will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Status -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">Enterprise Status</h2>
+                <a href="/hexagon" class="btn btn-sm btn-secondary">View Hexagon</a>
+            </div>
+            <div class="card-content">
+                <div class="enterprises-grid" id="enterpriseStatus">
+                    <!-- Enterprise status will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Chart -->
+        <div class="dashboard-card dashboard-card-wide">
+            <div class="card-header">
+                <h2 class="card-title">Problem Solving Trends</h2>
+                <div class="chart-controls">
+                    <button class="btn btn-sm btn-secondary active" data-period="7d">7 Days</button>
+                    <button class="btn btn-sm btn-secondary" data-period="30d">30 Days</button>
+                    <button class="btn btn-sm btn-secondary" data-period="90d">90 Days</button>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="chart-container">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="actions-grid">
+            <button class="action-card" onclick="createProblem()">
+                <div class="action-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <h3>Create Problem</h3>
+                <p>Start a new problem-solving session</p>
+            </button>
+
+            <button class="action-card" onclick="startCycle()">
+                <div class="action-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>Start Cycle</h3>
+                <p>Begin a new problem-solving cycle</p>
+            </button>
+
+            <button class="action-card" onclick="viewAnalytics()">
+                <div class="action-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>View Analytics</h3>
+                <p>Analyze system performance</p>
+            </button>
+
+            <button class="action-card" onclick="openHexagon()">
+                <div class="action-icon">
+                    <i class="fas fa-shapes"></i>
+                </div>
+                <h3>Hexagon View</h3>
+                <p>Interactive hexagon visualization</p>
+            </button>
+
+            <button class="action-card" onclick="startWorkflow()">
+                <div class="action-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>Workflow</h3>
+                <p>Step-by-step problem solving</p>
+            </button>
+
+            <button class="action-card" onclick="viewSolutions()">
+                <div class="action-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Solutions</h3>
+                <p>Browse generated solutions</p>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Problem Modal -->
+<div id="createProblemModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Create New Problem</h3>
+            <button class="modal-close" onclick="closeCreateProblemModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="createProblemForm" data-action="/api/web/problems" data-validate='{"title":{"required":true,"minLength":5},"description":{"required":true,"minLength":10},"domain":{"required":true},"complexity":{"required":true}}'>
+                <div class="form-group">
+                    <label class="form-label" for="title">Problem Title</label>
+                    <input type="text" id="title" name="title" class="form-input" placeholder="Enter problem title" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea id="description" name="description" class="form-textarea" placeholder="Describe the problem in detail" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="domain">Domain</label>
+                    <select id="domain" name="domain" class="form-select" required>
+                        <option value="">Select domain</option>
+                        <option value="Business & Technology">Business & Technology</option>
+                        <option value="Healthcare & AI">Healthcare & AI</option>
+                        <option value="Education">Education</option>
+                        <option value="Environment">Environment</option>
+                        <option value="Social Issues">Social Issues</option>
+                        <option value="Personal Development">Personal Development</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="complexity">Complexity</label>
+                    <select id="complexity" name="complexity" class="form-select" required>
+                        <option value="">Select complexity</option>
+                        <option value="simple">Simple</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="complex">Complex</option>
+                        <option value="systemic">Systemic</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="priority">Priority</label>
+                    <select id="priority" name="priority" class="form-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeCreateProblemModal()">Cancel</button>
+            <button type="submit" form="createProblemForm" class="btn btn-primary">Create Problem</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Dashboard-specific styles */
+.dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.welcome-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-2xl);
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-2xl);
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-tertiary));
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+}
+
+.welcome-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--spacing-md);
+}
+
+.welcome-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.6;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.hexagon-large {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    animation: float 3s ease-in-out infinite;
+}
+
+.hexagon-inner {
+    width: 100px;
+    height: 100px;
+    background: var(--bg-primary);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 2.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    border-color: var(--border-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    margin: var(--spacing-xs) 0;
+}
+
+.stat-change {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.stat-change.positive {
+    color: var(--success-color);
+}
+
+.stat-change.negative {
+    color: var(--error-color);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.dashboard-card-wide {
+    grid-column: 1 / -1;
+}
+
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+.chart-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.chart-controls .btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.quick-actions {
+    margin-top: var(--spacing-2xl);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.action-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 auto var(--spacing-md);
+}
+
+.action-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.action-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+    .welcome-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .welcome-actions {
+        justify-content: center;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Dashboard-specific JavaScript
+function createNewProblem() {
+    document.getElementById('createProblemModal').style.display = 'flex';
+}
+
+function closeCreateProblemModal() {
+    document.getElementById('createProblemModal').style.display = 'none';
+}
+
+function createProblem() {
+    createNewProblem();
+}
+
+function startCycle() {
+    window.location.href = '/cycles';
+}
+
+function viewAnalytics() {
+    window.location.href = '/analytics';
+}
+
+function openHexagon() {
+    window.location.href = '/hexagon';
+}
+
+function startWorkflow() {
+    window.location.href = '/workflow';
+}
+
+function viewSolutions() {
+    window.location.href = '/solutions';
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        const analytics = await API.analytics.getAll();
+        if (analytics.success) {
+            updateDashboardStats(analytics.data);
+        }
+        
+        const problems = await API.problems.getAll({ limit: 5 });
+        if (problems.success) {
+            updateRecentProblems(problems.data.problems);
+        }
+        
+        const enterprises = await API.enterprises.getAll();
+        if (enterprises.success) {
+            updateEnterpriseStatus(enterprises.data.enterprises);
+        }
+    } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+        Notifications.error('Failed to load dashboard data');
+    }
+}
+
+function updateDashboardStats(data) {
+    document.getElementById('totalProblems').textContent = data.problems.total_problems || 0;
+    document.getElementById('totalCycles').textContent = data.cycles.total_cycles || 0;
+    document.getElementById('totalSolutions').textContent = data.solutions.total_solutions || 0;
+    
+    // Calculate success rate
+    const successRate = data.cycles.total_cycles > 0 ? 
+        Math.round((data.cycles.by_status.completed || 0) / data.cycles.total_cycles * 100) : 0;
+    document.getElementById('successRate').textContent = successRate + '%';
+}
+
+function updateRecentProblems(problems) {
+    const container = document.getElementById('recentProblems');
+    if (problems.length === 0) {
+        container.innerHTML = '<p class="text-muted">No recent problems</p>';
+        return;
+    }
+    
+    container.innerHTML = problems.map(problem => `
+        <div class="problem-item">
+            <div class="problem-info">
+                <h4>${problem.title}</h4>
+                <p>${problem.domain} • ${problem.complexity}</p>
+            </div>
+            <div class="problem-status">
+                <span class="badge badge-${problem.status === 'active' ? 'success' : 'warning'}">${problem.status}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateEnterpriseStatus(enterprises) {
+    const container = document.getElementById('enterpriseStatus');
+    container.innerHTML = enterprises.map(enterprise => `
+        <div class="enterprise-item">
+            <div class="enterprise-icon enterprise-${enterprise.type.split('_')[0]}">
+                <i class="fas fa-${getEnterpriseIcon(enterprise.type)}"></i>
+            </div>
+            <div class="enterprise-info">
+                <h4>${enterprise.name}</h4>
+                <p>${enterprise.description}</p>
+            </div>
+            <div class="enterprise-status">
+                <span class="badge badge-success">Active</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getEnterpriseIcon(type) {
+    const iconMap = {
+        'red_owl': 'search',
+        'orange_orangutan': 'route',
+        'yellow_honeybee': 'lightbulb',
+        'green_tortoise': 'leaf',
+        'blue_dolphin': 'comments',
+        'purple_elephant': 'heart'
+    };
+    return iconMap[type] || 'circle';
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+    
+    // Set up chart controls
+    document.querySelectorAll('.chart-controls .btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.chart-controls .btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            // Update chart based on selected period
+        });
+    });
+});
+</script>
+{% endblock %}

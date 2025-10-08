@@ -495,7 +495,7 @@ async def demo_ai_enhanced_workflow():
     print()
     
     # Create sample problem
-    from enhanced_cosmic_council_core import ProblemStatement, ProblemComplexity
+    from src.core.types import ProblemStatement, ProblemComplexity
     
     sample_problem = ProblemStatement(
         title="AI-Powered Healthcare Transformation",

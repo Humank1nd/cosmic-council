@@ -1,0 +1,2 @@
+-- Migration: 006_create_user_tables.sql
+-- TODO: Add migration SQL

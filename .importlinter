@@ -1,0 +1,36 @@
+[
+  contract:api-layer
+]
+name = API layer depends only on core services
+type = layers
+layers =
+    src/api
+    src/core
+    src/database
+    src/integrations
+    src/utils
+ignore_imports =
+    src.api.middleware
+    src.api.schemas
+
+[
+  contract:core-domain
+]
+name = Core domain is isolated from infrastructure
+type = forbidden
+source_modules = src/core
+forbidden_modules = src.database, src.integrations, src.api
+
+[
+  contract:agents-isolation
+]
+name = Agents depend only on core interfaces
+type = layers
+layers =
+    src/agents
+    src/core
+    src/utils
+ignore_imports =
+    src.agents.tools
+    src.agents.strategies
+

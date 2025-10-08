@@ -1,0 +1,175 @@
+# Cosmic Council Framework - Codex Configuration
+# This configuration optimizes Codex for the Cosmic Council project
+
+[default]
+# Approval policy for shell commands
+approval_policy = "on-failure"  # untrusted, on-failure, never
+
+# Sandbox mode for file operations
+sandbox = "workspace-write"  # read-only, workspace-write, danger-full-access
+
+# Default model to use
+model = "o1-preview"  # o1-preview, o1-mini, gpt-4, etc.
+
+# Working directory
+cwd = "."
+
+# Base instructions for all Codex sessions
+base_instructions = """
+You are working with the Cosmic Council AI-Powered Problem Solving System, a modular, scalable framework for complex problem solving using AI agents.
+
+## Project Structure
+- src/api/ - API layer (routes, middleware, schemas)
+- src/core/ - Core business logic (models, services, workflows)
+- src/agents/ - AI agent system
+- src/database/ - Database layer (models, repositories, migrations)
+- src/integrations/ - External system integrations
+- src/utils/ - Utility functions
+- src/web/ - Web interface components
+
+## Coding Standards
+- Use feature-based directory structure
+- Keep files under 300 lines
+- One class per file (except for related classes)
+- Use snake_case for functions and variables
+- Use PascalCase for classes
+- Add type hints for all functions and methods
+- Add docstrings for all public methods and classes
+- Use async/await for I/O operations
+- Implement proper error handling with specific exception types
+- Add comprehensive tests for new functionality
+
+## Import Organization
+```python
+# Standard library imports first
+import asyncio
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+
+# Third-party imports second
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+# Local imports last
+from ..core.models import Problem
+from ..services import ProblemService
+```
+
+## Testing Requirements
+- Mirror source structure in tests/
+- One test file per source file
+- Use descriptive test names
+- Mock external dependencies
+- Test both success and failure cases
+- Use pytest framework
+- Add fixtures for common test data
+
+## Security Guidelines
+- Validate all inputs
+- Use proper authentication and authorization
+- Sanitize user inputs
+- Follow security best practices
+- Never hardcode secrets or API keys
+
+## Performance Guidelines
+- Use async/await for I/O operations
+- Implement proper caching where appropriate
+- Monitor performance metrics
+- Optimize database queries
+- Use connection pooling
+
+Always follow these standards when making changes to the codebase.
+"""
+
+# Include plan tool in conversations
+include_plan_tool = true
+
+# Configuration profiles for different environments
+[profiles.development]
+approval_policy = "on-failure"
+sandbox = "workspace-write"
+model = "o1-mini"
+base_instructions = """
+Development environment - focus on rapid iteration and testing.
+Be more permissive with changes but still maintain code quality.
+"""
+
+[profiles.staging]
+approval_policy = "on-failure"
+sandbox = "workspace-write"
+model = "o1-preview"
+base_instructions = """
+Staging environment - production-like setup for testing.
+Be cautious with changes and ensure stability.
+"""
+
+[profiles.production]
+approval_policy = "untrusted"
+sandbox = "read-only"
+model = "o1-preview"
+base_instructions = """
+Production environment - maximum safety and stability.
+Only make changes after thorough review and testing.
+"""
+
+# MCP servers for multi-agent integration
+[mcp_servers.cosmic-council]
+command = "python"
+args = ["-m", "src.cosmic_council.mcp_server"]
+env = { "OPENAI_API_KEY" = "your-openai-api-key-here" }
+
+[mcp_servers.database]
+command = "python"
+args = ["-m", "src.database.mcp_server"]
+env = { "DATABASE_URL" = "postgresql://cosmic_council:cosmic_council@localhost:5432/cosmic_council" }
+
+[mcp_servers.testing]
+command = "python"
+args = ["-m", "src.testing.mcp_server"]
+env = { "TEST_DATABASE_URL" = "postgresql://cosmic_council:cosmic_council@localhost:5432/cosmic_council_test" }
+
+# Tool-specific configurations
+[tools.code_analysis]
+enabled = true
+focus_areas = ["performance", "security", "maintainability", "testing"]
+
+[tools.test_generation]
+enabled = true
+test_types = ["unit", "integration", "e2e"]
+coverage_threshold = 80
+
+[tools.documentation]
+enabled = true
+auto_update = true
+formats = ["markdown", "openapi", "readme"]
+
+[tools.deployment]
+enabled = true
+environments = ["development", "staging", "production"]
+auto_rollback = true
+
+# Logging configuration
+[logging]
+level = "info"  # debug, info, warn, error
+file = "~/.codex/log/cosmic-council.log"
+max_size = "10MB"
+max_files = 5
+
+# Performance settings
+[performance]
+max_execution_time = 600  # 10 minutes
+max_memory_usage = "2GB"
+parallel_execution = true
+max_parallel_tasks = 3
+
+# Security settings
+[security]
+allowed_commands = [
+    "python", "pip", "pytest", "black", "flake8", "mypy",
+    "docker", "docker-compose", "kubectl", "git"
+]
+blocked_commands = [
+    "rm", "del", "format", "fdisk", "mkfs", "dd"
+]
+require_confirmation = true

@@ -1,0 +1,29 @@
+# Cosmic Council Refinement Engine - Grafana Datasource Configuration
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      queryTimeout: 60s
+      timeInterval: 5s
+    secureJsonData: {}
+    version: 1
+
+  - name: Cosmic Council Metrics
+    type: prometheus
+    access: proxy
+    url: http://refinement-engine:9090
+    isDefault: false
+    editable: true
+    jsonData:
+      httpMethod: POST
+      queryTimeout: 60s
+      timeInterval: 5s
+    secureJsonData: {}
+    version: 1

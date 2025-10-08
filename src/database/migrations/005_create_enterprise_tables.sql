@@ -1,0 +1,2 @@
+-- Migration: 005_create_enterprise_tables.sql
+-- TODO: Add migration SQL

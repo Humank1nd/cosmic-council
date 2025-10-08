@@ -19,8 +19,8 @@ import uvicorn
 from production_config import get_config
 from error_handling import handle_error, ErrorContext, ErrorSeverity, ErrorCategory
 from health_monitoring import get_health_monitor, run_health_checks, get_system_health, record_request
-from cosmic_council_simplified import CosmicCouncil, ProblemStatement, ProblemComplexity
-from cosmic_council_simplified.enterprise import EnterpriseType
+from src.core.services import CosmicCouncil, ProblemStatement, ProblemComplexity
+from src.agents.enterprises import EnterpriseType
 from rules_engine import list_rules, evaluate_rules, follow_up_question
 from structured_interaction import structured_engine, StructuredResponse
 from manual import get_manual, get_examples

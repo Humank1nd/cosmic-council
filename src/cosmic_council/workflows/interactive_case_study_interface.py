@@ -7,7 +7,7 @@ import asyncio
 from typing import Dict, Any, List, Optional
 from case_study_templates import CaseStudyTemplateLibrary, CaseStudyTemplate, CaseStudyCategory, CaseStudyComplexity
 from case_study_generator import CaseStudyGenerator, CaseStudyGenerationRequest, GeneratedCaseStudy
-from cosmic_council_core import ProblemStatement, ProblemComplexity
+from src.core.types import ProblemStatement, ProblemComplexity
 
 class InteractiveCaseStudyInterface:
     """Interactive interface for case study management"""

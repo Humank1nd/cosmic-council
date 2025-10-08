@@ -10,7 +10,7 @@ from interactive_exercises import (
     SolutionBrainstormingExercise, ActionPlanningExercise,
     ExerciseType, DifficultyLevel, EnterpriseType
 )
-from cosmic_council_core import ProblemStatement, ProblemComplexity
+from src.core.types import ProblemStatement, ProblemComplexity
 
 class InteractiveExerciseInterface:
     """User-friendly interface for interactive exercises"""

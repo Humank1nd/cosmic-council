@@ -1,0 +1,134 @@
+# Cosmic Council - AI Coding Standards
+
+## Project Overview
+This is the Cosmic Council AI-Powered Problem Solving System - a modular, scalable framework for complex problem solving using AI agents.
+
+## File Organization
+- Use feature-based directory structure
+- Keep files under 300 lines
+- One class per file (except for related classes)
+- Clear separation of concerns
+- Follow the established directory structure:
+  - `src/api/` - API layer (routes, middleware, schemas)
+  - `src/core/` - Core business logic (models, services, workflows)
+  - `src/agents/` - AI agent system
+  - `src/database/` - Database layer (models, repositories, migrations)
+  - `src/integrations/` - External system integrations
+  - `src/utils/` - Utility functions
+  - `src/web/` - Web interface components
+
+## Naming Conventions
+- Python: snake_case for functions and variables
+- Classes: PascalCase
+- Files: snake_case with descriptive names
+- No prefixes: unified_, enhanced_, working_
+- Constants: UPPER_SNAKE_CASE
+- Private methods: _leading_underscore
+
+## Code Structure
+- Single responsibility principle
+- Clear imports at the top (standard library, third-party, local)
+- Type hints for all functions and methods
+- Docstrings for all public methods and classes
+- Use dataclasses for simple data structures
+- Use Pydantic models for API schemas
+
+## Import Organization
+```python
+# Standard library imports first
+import asyncio
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+
+# Third-party imports second
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+# Local imports last
+from ..core.models import Problem
+from ..services import ProblemService
+```
+
+## Error Handling
+- Use specific exception types
+- Log errors with context
+- Return meaningful error messages
+- Use HTTP status codes appropriately
+- Implement graceful degradation
+
+## Testing
+- Mirror source structure in tests/
+- One test file per source file
+- Use descriptive test names
+- Mock external dependencies
+- Test both success and failure cases
+
+## Documentation
+- Use docstrings for all public APIs
+- Include type information in docstrings
+- Document complex business logic
+- Keep README files updated
+
+## Performance
+- Use async/await for I/O operations
+- Implement proper caching where appropriate
+- Monitor performance metrics
+- Optimize database queries
+
+## Security
+- Validate all inputs
+- Use proper authentication and authorization
+- Sanitize user inputs
+- Follow security best practices
+
+## Examples
+
+### Good Class Structure
+```python
+class ProblemService:
+    """Service for managing problems in the Cosmic Council system."""
+    
+    def __init__(self, repository=None):
+        self.repository = repository
+        self.logger = logging.getLogger(__name__)
+    
+    async def create_problem(self, problem_data: Dict[str, Any]) -> Problem:
+        """Create a new problem.
+        
+        Args:
+            problem_data: Dictionary containing problem information
+            
+        Returns:
+            Problem: The created problem instance
+            
+        Raises:
+            ValueError: If problem data is invalid
+        """
+        # Implementation here
+```
+
+### Good API Route
+```python
+@router.post("/", response_model=ProblemResponse, status_code=status.HTTP_201_CREATED)
+async def create_problem(
+    request: CreateProblemRequest,
+    problem_service: ProblemService = Depends(get_problem_service)
+):
+    """Create a new problem."""
+    try:
+        problem_data = request.dict()
+        problem = await problem_service.create_problem(problem_data)
+        return ProblemResponse.from_model(problem)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+```
+
+## AI-Friendly Guidelines
+- Keep functions small and focused
+- Use descriptive names
+- Avoid deep nesting
+- Make dependencies explicit
+- Use consistent patterns
+- Document complex logic
+- Separate concerns clearly

@@ -1,0 +1,26 @@
+line-length = 100
+target-version = "py311"
+
+[lint]
+# Start strict: enable most rules, then carve out pragmatic ignores.
+select = ["ALL"]
+ignore = [
+  # Docstrings: enforce via review/targets, not blanket.
+  "D100","D101","D102","D103","D104","D105","D106","D107",
+  # Type annotations: mypy is the source of truth; allow incremental adoption.
+  "ANN101","ANN102","ANN401",
+  # Flake8-errmsg overly strict for legacy strings.
+  "EM101","EM102",
+  # Allow TODO markers during staged migration.
+  "TD003",
+]
+fix = true
+
+[lint.per-file-ignores]
+"tests/**" = ["S101", "T201", "PLR2004", "ANN*", "D*"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+

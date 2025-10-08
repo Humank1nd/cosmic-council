@@ -36,7 +36,7 @@ from ..database.unified_database_service import (
     MarketInsight, MarketCommunicationStrategy, MarketPerformanceMetric,
     SupportUserFeedback, SupportPerformanceAssessment, SupportContinuousImprovement
 )
-from ..database.unified_database_manager import get_database_manager
+from ..database.unified_database_manager import get_database_connection
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -1069,7 +1069,7 @@ try:
     )
     from ..integrations.meta_cyclical_architecture import MetaCyclicalArchitecture, MetaCycleType
     from ...applications.enhanced_master_orchestration_system import EnhancedMasterOrchestrationSystem, OrchestrationMode
-    from ..database.unified_database_service import UnifiedDatabaseService, PerpetualDatabaseService
+    from ..database.unified_database_service import DatabaseService, PerpetualDatabaseService
     from ..integrations.perpetual_guardrail_integration import (
         PerpetualGuardrailIntegration, PerpetualPolicyEnforcer,
         PerpetualPolicyType, PerpetualActionType, PerpetualPolicyContext

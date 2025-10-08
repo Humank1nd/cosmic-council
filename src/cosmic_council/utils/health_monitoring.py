@@ -95,7 +95,7 @@ class HealthMonitor:
         start_time = time.time()
         
         try:
-            from database_setup import get_database_manager
+            from database_setup import get_database_connection
             db_manager = get_database_manager()
             
             if db_manager.test_connection():

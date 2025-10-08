@@ -8,7 +8,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
-from database_connection import get_database_manager, get_session_context
+from database_connection import get_database_connection, get_session_context
 from database_models import Base
 
 # Configure logging

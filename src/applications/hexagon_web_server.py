@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Import Cosmic Council components
-from cosmic_council_core import (
+from src.core.types import (
     CosmicCouncil, ProblemStatement, ProblemComplexity, 
     EnterpriseType, CycleStatus
 )

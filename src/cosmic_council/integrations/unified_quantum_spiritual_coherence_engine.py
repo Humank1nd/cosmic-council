@@ -18,7 +18,7 @@ import json
 import uuid
 
 # Import components
-from enhanced_cosmic_council_core import ProblemStatement, ProblemComplexity
+from src.core.types import ProblemStatement, ProblemComplexity
 from quantum_spiritual_integration import (
     QuantumSpiritualEngine, QuantumState, SpiritualDimension,
     GemstoneType, SacredNumber

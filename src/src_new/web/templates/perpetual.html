@@ -1,0 +1,1467 @@
+{% extends "base.html" %}
+
+{% block title %}Perpetual Thinking - Cosmic Council{% endblock %}
+
+{% block content %}
+<div class="perpetual-thinking">
+    <!-- Header Section -->
+    <div class="perpetual-header">
+        <div class="header-content">
+            <h1 class="page-title">
+                <i class="fas fa-infinity"></i>
+                Perpetual Thinking Engine
+            </h1>
+            <p class="page-subtitle">AI-enhanced infinite reasoning and continuous learning system</p>
+            <div class="header-actions">
+                <button class="btn btn-primary btn-lg" onclick="createPerpetualSession()">
+                    <i class="fas fa-plus"></i>
+                    Start Perpetual Session
+                </button>
+                <button class="btn btn-secondary btn-lg" onclick="viewAISessions()">
+                    <i class="fas fa-robot"></i>
+                    AI Sessions
+                </button>
+            </div>
+        </div>
+        <div class="header-visual">
+            <div class="perpetual-visualization">
+                <!-- White Rabbit (Input) and Black/Rainbow Snake (Output/Flow) Perpetual Motion -->
+                <div class="perpetual-motion-container">
+                    <div class="white-rabbit-track">
+                        <div class="white-rabbit" id="whiteRabbit">
+                            <div class="rabbit-body">🐰</div>
+                            <div class="rabbit-trail"></div>
+                        </div>
+                        <div class="io-label input-label">White Rabbit · Input</div>
+                        <div class="cycle-markers">
+                            <div class="marker marker-1" data-phase="emergence">E</div>
+                            <div class="marker marker-2" data-phase="exploration">X</div>
+                            <div class="marker marker-3" data-phase="connection">C</div>
+                            <div class="marker marker-4" data-phase="flow">F</div>
+                            <div class="marker marker-5" data-phase="synthesis">S</div>
+                            <div class="marker marker-6" data-phase="transformation">T</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Black Snake (Output) line -->
+                    <div class="black-snake-container">
+                        <div class="black-snake" id="blackSnake">
+                            <div class="black-head"></div>
+                            <div class="black-body"></div>
+                            <div class="black-tail"></div>
+                        </div>
+                        <div class="io-label output-label">Black Snake · Output</div>
+                    </div>
+
+                    <div class="rainbow-snake-container">
+                        <div class="rainbow-snake" id="rainbowSnake">
+                            <div class="snake-segment red"></div>
+                            <div class="snake-segment orange"></div>
+                            <div class="snake-segment yellow"></div>
+                            <div class="snake-segment green"></div>
+                            <div class="snake-segment blue"></div>
+                            <div class="snake-segment purple"></div>
+                        </div>
+                        <div class="enterprise-connections">
+                            <div class="connection red-orange"></div>
+                            <div class="connection orange-yellow"></div>
+                            <div class="connection yellow-green"></div>
+                            <div class="connection green-blue"></div>
+                            <div class="connection blue-purple"></div>
+                            <div class="connection purple-red"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="eternal-dance-indicator">
+                        <div class="dance-harmony" id="danceHarmony">
+                            <div class="harmony-ring"></div>
+                            <div class="harmony-text">Eternal Dance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Legacy thinking cycles for backward compatibility -->
+                <div class="thinking-cycles">
+                    <div class="cycle cycle-1"></div>
+                    <div class="cycle cycle-2"></div>
+                    <div class="cycle cycle-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="system-status">
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="status-content">
+                    <h3 class="status-title">AI Enhancement</h3>
+                    <p class="status-value" id="aiEnhancementStatus">Active</p>
+                    <p class="status-description">AI-powered reasoning enabled</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="status-content">
+                    <h3 class="status-title">Active Sessions</h3>
+                    <p class="status-value" id="activeSessionsCount">0</p>
+                    <p class="status-description">Perpetual thinking sessions</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="status-content">
+                    <h3 class="status-title">Learning Rate</h3>
+                    <p class="status-value" id="learningRate">0.85</p>
+                    <p class="status-description">Adaptation effectiveness</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="status-content">
+                    <h3 class="status-title">Breakthroughs</h3>
+                    <p class="status-value" id="breakthroughCount">0</p>
+                    <p class="status-description">Paradigm shifts detected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="perpetual-grid">
+        <!-- Active Sessions -->
+        <div class="perpetual-card">
+            <div class="card-header">
+                <h2 class="card-title">Active Perpetual Sessions</h2>
+                <button class="btn btn-sm btn-secondary" onclick="refreshSessions()">
+                    <i class="fas fa-refresh"></i>
+                    Refresh
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="sessions-list" id="activeSessionsList">
+                    <!-- Sessions will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Analytics -->
+        <div class="perpetual-card">
+            <div class="card-header">
+                <h2 class="card-title">AI Analytics</h2>
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="viewDetailedAnalytics()">
+                        <i class="fas fa-chart-bar"></i>
+                        Details
+                    </button>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="analytics-grid">
+                    <div class="analytics-item">
+                        <div class="analytics-label">AI Effectiveness</div>
+                        <div class="analytics-value" id="aiEffectiveness">0.0</div>
+                        <div class="analytics-chart">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="aiEffectivenessBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-item">
+                        <div class="analytics-label">Synergy Score</div>
+                        <div class="analytics-value" id="synergyScore">0.0</div>
+                        <div class="analytics-chart">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="synergyScoreBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-item">
+                        <div class="analytics-label">Wisdom Density</div>
+                        <div class="analytics-value" id="wisdomDensity">0.0</div>
+                        <div class="analytics-chart">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="wisdomDensityBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-item">
+                        <div class="analytics-label">Learning Velocity</div>
+                        <div class="analytics-value" id="learningVelocity">0.0</div>
+                        <div class="analytics-chart">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="learningVelocityBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pattern Recognition -->
+        <div class="perpetual-card">
+            <div class="card-header">
+                <h2 class="card-title">Pattern Recognition</h2>
+                <button class="btn btn-sm btn-secondary" onclick="analyzePatterns()">
+                    <i class="fas fa-search"></i>
+                    Analyze
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="patterns-list" id="patternsList">
+                    <!-- Patterns will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Breakthrough Moments -->
+        <div class="perpetual-card">
+            <div class="card-header">
+                <h2 class="card-title">Breakthrough Moments</h2>
+                <button class="btn btn-sm btn-secondary" onclick="viewAllBreakthroughs()">
+                    <i class="fas fa-lightbulb"></i>
+                    View All
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="breakthroughs-list" id="breakthroughsList">
+                    <!-- Breakthroughs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time Activity Feed -->
+    <div class="activity-feed">
+        <div class="feed-header">
+            <h2 class="feed-title">Real-time Activity</h2>
+            <div class="feed-controls">
+                <button class="btn btn-sm btn-secondary" onclick="toggleFeed()">
+                    <i class="fas fa-pause" id="feedToggleIcon"></i>
+                    <span id="feedToggleText">Pause</span>
+                </button>
+            </div>
+        </div>
+        <div class="feed-content" id="activityFeed">
+            <!-- Activity items will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Create Perpetual Session Modal -->
+<div id="createPerpetualSessionModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3>Create Perpetual Thinking Session</h3>
+            <button class="modal-close" onclick="closeCreatePerpetualSessionModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="createPerpetualSessionForm" data-action="/api/v1/perpetual/sessions">
+                <div class="form-group">
+                    <label class="form-label" for="sessionName">Session Name</label>
+                    <input type="text" id="sessionName" name="session_name" class="form-input" 
+                           placeholder="Enter session name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="initialInput">Initial Input</label>
+                    <textarea id="initialInput" name="initial_input" class="form-textarea" 
+                              placeholder="What would you like to explore perpetually?" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="aiEnhancementLevel">AI Enhancement Level</label>
+                    <select id="aiEnhancementLevel" name="ai_enhancement_level" class="form-select">
+                        <option value="basic">Basic - Minimal AI assistance</option>
+                        <option value="enhanced" selected>Enhanced - Full AI integration</option>
+                        <option value="advanced">Advanced - AI with learning</option>
+                        <option value="perpetual">Perpetual - Full AI perpetual mode</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="mode">Orchestration Mode</label>
+                    <select id="mode" name="mode" class="form-select">
+                        <option value="collaborative" selected>Collaborative - Human-AI partnership</option>
+                        <option value="autonomous">Autonomous - AI-driven exploration</option>
+                        <option value="guided">Guided - Human-guided AI assistance</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">AI Features</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="ai_learning_enabled" checked>
+                            <span class="checkbox-text">Enable AI Learning</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="ai_adaptation_enabled" checked>
+                            <span class="checkbox-text">Enable AI Adaptation</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="ai_breakthrough_detection" checked>
+                            <span class="checkbox-text">Enable Breakthrough Detection</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="goals">Session Goals (Optional)</label>
+                    <textarea id="goals" name="goals" class="form-textarea" 
+                              placeholder="What are your goals for this session? (one per line)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="successCriteria">Success Criteria (Optional)</label>
+                    <textarea id="successCriteria" name="success_criteria" class="form-textarea" 
+                              placeholder="How will you measure success? (one per line)"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeCreatePerpetualSessionModal()">Cancel</button>
+            <button type="submit" form="createPerpetualSessionForm" class="btn btn-primary">
+                <i class="fas fa-infinity"></i>
+                Start Perpetual Session
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Session Details Modal -->
+<div id="sessionDetailsModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3 id="sessionDetailsTitle">Session Details</h3>
+            <button class="modal-close" onclick="closeSessionDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="session-details" id="sessionDetailsContent">
+                <!-- Session details will be loaded here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeSessionDetailsModal()">Close</button>
+            <button type="button" class="btn btn-warning" onclick="pauseSession()">
+                <i class="fas fa-pause"></i>
+                Pause Session
+            </button>
+            <button type="button" class="btn btn-danger" onclick="stopSession()">
+                <i class="fas fa-stop"></i>
+                Stop Session
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Perpetual Thinking specific styles */
+.perpetual-thinking {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.perpetual-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-2xl);
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-2xl);
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-tertiary));
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+}
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.6;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.perpetual-visualization {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.thinking-cycles {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.cycle {
+    position: absolute;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: rotate 4s linear infinite;
+}
+
+.cycle-1 {
+    width: 100px;
+    height: 100px;
+    top: 25px;
+    left: 25px;
+    border-color: var(--primary-color);
+    animation-duration: 4s;
+}
+
+.cycle-2 {
+    width: 80px;
+    height: 80px;
+    top: 35px;
+    left: 35px;
+    border-color: var(--secondary-color);
+    animation-duration: 3s;
+    animation-direction: reverse;
+}
+
+.cycle-3 {
+    width: 60px;
+    height: 60px;
+    top: 45px;
+    left: 45px;
+    border-color: var(--accent-color);
+    animation-duration: 2s;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.system-status {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.status-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: all var(--transition-normal);
+}
+
+.status-card:hover {
+    border-color: var(--border-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.status-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.status-content {
+    flex: 1;
+}
+
+.status-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.status-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.status-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.perpetual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.perpetual-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.analytics-item {
+    text-align: center;
+}
+
+.analytics-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.analytics-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-sm);
+    transition: width var(--transition-normal);
+}
+
+.activity-feed {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.feed-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.feed-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-primary);
+    transition: all var(--transition-normal);
+}
+
+.activity-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.session-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.session-item:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-tertiary);
+}
+
+.session-info {
+    flex: 1;
+}
+
+.session-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.session-details {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.session-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.status-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background: var(--success-color);
+    color: white;
+}
+
+.status-badge.paused {
+    background: var(--warning-color);
+    color: white;
+}
+
+.status-badge.completed {
+    background: var(--info-color);
+    color: white;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.modal-large {
+    max-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .perpetual-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        justify-content: center;
+    }
+    
+    .header-actions {
+        justify-content: center;
+    }
+    
+    .perpetual-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .analytics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Perpetual Thinking specific JavaScript
+let feedActive = true;
+let feedInterval;
+
+function createPerpetualSession() {
+    document.getElementById('createPerpetualSessionModal').style.display = 'flex';
+}
+
+function closeCreatePerpetualSessionModal() {
+    document.getElementById('createPerpetualSessionModal').style.display = 'none';
+}
+
+function viewAISessions() {
+    // Navigate to AI sessions view
+    window.location.href = '/perpetual/ai-sessions';
+}
+
+function refreshSessions() {
+    loadActiveSessions();
+}
+
+function viewDetailedAnalytics() {
+    // Show detailed analytics modal
+    console.log('View detailed analytics');
+}
+
+function analyzePatterns() {
+    // Trigger pattern analysis
+    console.log('Analyze patterns');
+}
+
+function viewAllBreakthroughs() {
+    // Show all breakthroughs modal
+    console.log('View all breakthroughs');
+}
+
+function toggleFeed() {
+    feedActive = !feedActive;
+    const icon = document.getElementById('feedToggleIcon');
+    const text = document.getElementById('feedToggleText');
+    
+    if (feedActive) {
+        icon.className = 'fas fa-pause';
+        text.textContent = 'Pause';
+        startActivityFeed();
+    } else {
+        icon.className = 'fas fa-play';
+        text.textContent = 'Resume';
+        clearInterval(feedInterval);
+    }
+}
+
+function closeSessionDetailsModal() {
+    document.getElementById('sessionDetailsModal').style.display = 'none';
+}
+
+function pauseSession() {
+    // Pause the current session
+    console.log('Pause session');
+}
+
+function stopSession() {
+    // Stop the current session
+    console.log('Stop session');
+}
+
+// Load perpetual thinking data
+async function loadPerpetualData() {
+    try {
+        // Load system status
+        const status = await API.perpetual.getStatus();
+        if (status.success) {
+            updateSystemStatus(status.data);
+        }
+        
+        // Load active sessions
+        await loadActiveSessions();
+        
+        // Load AI analytics
+        await loadAIAnalytics();
+        
+        // Load patterns
+        await loadPatterns();
+        
+        // Load breakthroughs
+        await loadBreakthroughs();
+        
+    } catch (error) {
+        console.error('Failed to load perpetual data:', error);
+        Notifications.error('Failed to load perpetual thinking data');
+    }
+}
+
+async function loadActiveSessions() {
+    try {
+        const sessions = await API.perpetual.getSessions();
+        if (sessions.success) {
+            updateActiveSessions(sessions.data.sessions);
+        }
+    } catch (error) {
+        console.error('Failed to load active sessions:', error);
+    }
+}
+
+async function loadAIAnalytics() {
+    try {
+        // This would load AI session analytics
+        // For now, we'll use mock data
+        updateAIAnalytics({
+            ai_effectiveness: 0.85,
+            synergy_score: 0.78,
+            wisdom_density: 0.72,
+            learning_velocity: 0.68
+        });
+    } catch (error) {
+        console.error('Failed to load AI analytics:', error);
+    }
+}
+
+async function loadPatterns() {
+    try {
+        // Load pattern recognition data
+        updatePatterns([]);
+    } catch (error) {
+        console.error('Failed to load patterns:', error);
+    }
+}
+
+async function loadBreakthroughs() {
+    try {
+        // Load breakthrough moments
+        updateBreakthroughs([]);
+    } catch (error) {
+        console.error('Failed to load breakthroughs:', error);
+    }
+}
+
+function updateSystemStatus(data) {
+    document.getElementById('activeSessionsCount').textContent = data.active_sessions || 0;
+    document.getElementById('learningRate').textContent = '0.85'; // Mock data
+    document.getElementById('breakthroughCount').textContent = '0'; // Mock data
+}
+
+function updateActiveSessions(sessions) {
+    const container = document.getElementById('activeSessionsList');
+    if (sessions.length === 0) {
+        container.innerHTML = '<p class="text-muted">No active sessions</p>';
+        return;
+    }
+    
+    container.innerHTML = sessions.map(session => `
+        <div class="session-item" onclick="viewSessionDetails('${session.session_id}')">
+            <div class="session-info">
+                <h4 class="session-name">${session.session_name}</h4>
+                <p class="session-details">${session.mode} • Cycle ${session.current_cycle_number}</p>
+            </div>
+            <div class="session-status">
+                <span class="status-badge ${session.status}">${session.status}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateAIAnalytics(data) {
+    document.getElementById('aiEffectiveness').textContent = data.ai_effectiveness.toFixed(2);
+    document.getElementById('synergyScore').textContent = data.synergy_score.toFixed(2);
+    document.getElementById('wisdomDensity').textContent = data.wisdom_density.toFixed(2);
+    document.getElementById('learningVelocity').textContent = data.learning_velocity.toFixed(2);
+    
+    // Update progress bars
+    document.getElementById('aiEffectivenessBar').style.width = (data.ai_effectiveness * 100) + '%';
+    document.getElementById('synergyScoreBar').style.width = (data.synergy_score * 100) + '%';
+    document.getElementById('wisdomDensityBar').style.width = (data.wisdom_density * 100) + '%';
+    document.getElementById('learningVelocityBar').style.width = (data.learning_velocity * 100) + '%';
+}
+
+function updatePatterns(patterns) {
+    const container = document.getElementById('patternsList');
+    if (patterns.length === 0) {
+        container.innerHTML = '<p class="text-muted">No patterns detected</p>';
+        return;
+    }
+    
+    container.innerHTML = patterns.map(pattern => `
+        <div class="pattern-item">
+            <div class="pattern-type">${pattern.type}</div>
+            <div class="pattern-description">${pattern.description}</div>
+        </div>
+    `).join('');
+}
+
+function updateBreakthroughs(breakthroughs) {
+    const container = document.getElementById('breakthroughsList');
+    if (breakthroughs.length === 0) {
+        container.innerHTML = '<p class="text-muted">No breakthroughs yet</p>';
+        return;
+    }
+    
+    container.innerHTML = breakthroughs.map(breakthrough => `
+        <div class="breakthrough-item">
+            <div class="breakthrough-type">${breakthrough.type}</div>
+            <div class="breakthrough-description">${breakthrough.description}</div>
+        </div>
+    `).join('');
+}
+
+function viewSessionDetails(sessionId) {
+    // Load and show session details
+    document.getElementById('sessionDetailsModal').style.display = 'flex';
+    document.getElementById('sessionDetailsTitle').textContent = 'Session Details';
+    document.getElementById('sessionDetailsContent').innerHTML = '<p>Loading session details...</p>';
+}
+
+function startActivityFeed() {
+    if (feedInterval) {
+        clearInterval(feedInterval);
+    }
+    
+    feedInterval = setInterval(() => {
+        if (feedActive) {
+            addActivityItem('System', 'AI enhancement cycle completed', 'just now');
+        }
+    }, 5000);
+}
+
+function addActivityItem(type, message, time) {
+    const container = document.getElementById('activityFeed');
+    const activityItem = document.createElement('div');
+    activityItem.className = 'activity-item';
+    activityItem.innerHTML = `
+        <div class="activity-icon">
+            <i class="fas fa-${getActivityIcon(type)}"></i>
+        </div>
+        <div class="activity-content">
+            <p class="activity-text">${message}</p>
+            <p class="activity-time">${time}</p>
+        </div>
+    `;
+    
+    container.insertBefore(activityItem, container.firstChild);
+    
+    // Keep only last 10 items
+    while (container.children.length > 10) {
+        container.removeChild(container.lastChild);
+    }
+}
+
+function getActivityIcon(type) {
+    const iconMap = {
+        'System': 'cog',
+        'AI': 'robot',
+        'Breakthrough': 'lightbulb',
+        'Pattern': 'search',
+        'Session': 'infinity'
+    };
+    return iconMap[type] || 'circle';
+}
+
+// Form handling
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle perpetual session creation form
+    const form = document.getElementById('createPerpetualSessionForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Convert goals and success criteria to arrays
+            if (data.goals) {
+                data.goals = data.goals.split('\n').filter(g => g.trim());
+            }
+            if (data.success_criteria) {
+                data.success_criteria = data.success_criteria.split('\n').filter(c => c.trim());
+            }
+            
+            try {
+                const response = await API.perpetual.createSession(data);
+                if (response.success) {
+                    Notifications.success('Perpetual session created successfully');
+                    closeCreatePerpetualSessionModal();
+                    loadActiveSessions();
+                } else {
+                    Notifications.error('Failed to create perpetual session');
+                }
+            } catch (error) {
+                console.error('Error creating perpetual session:', error);
+                Notifications.error('Failed to create perpetual session');
+            }
+        });
+    }
+    
+    // Initialize perpetual thinking interface
+    loadPerpetualData();
+    startActivityFeed();
+});
+
+// Perpetual Motion Visualization JavaScript
+let rabbitPosition = 0;
+let rabbitSpeed = 0.5; // pixels per frame
+let currentPhase = 0;
+let harmonyLevel = 0.8;
+
+function initPerpetualMotion() {
+    startRabbitAnimation();
+    updateHarmonyIndicator();
+    setInterval(updatePerpetualMotion, 100);
+}
+
+function startRabbitAnimation() {
+    const rabbit = document.getElementById('whiteRabbit');
+    const track = document.querySelector('.white-rabbit-track');
+    const trackWidth = track.offsetWidth - 40; // Account for rabbit width
+    
+    function animateRabbit() {
+        rabbitPosition += rabbitSpeed;
+        if (rabbitPosition >= trackWidth) {
+            rabbitPosition = 0;
+        }
+        
+        rabbit.style.left = rabbitPosition + 'px';
+        
+        // Update phase markers
+        updatePhaseMarkers();
+        
+        requestAnimationFrame(animateRabbit);
+    }
+    
+    animateRabbit();
+}
+
+function updatePhaseMarkers() {
+    const markers = document.querySelectorAll('.marker');
+    const track = document.querySelector('.white-rabbit-track');
+    const trackWidth = track.offsetWidth;
+    const rabbit = document.getElementById('whiteRabbit');
+    const rabbitLeft = parseInt(rabbit.style.left) || 0;
+    
+    markers.forEach((marker, index) => {
+        const markerPosition = (index * trackWidth / 6) + 10;
+        const distance = Math.abs(rabbitLeft - markerPosition);
+        
+        if (distance < 20) {
+            marker.classList.add('active');
+            currentPhase = index;
+        } else {
+            marker.classList.remove('active');
+        }
+    });
+}
+
+function updateHarmonyIndicator() {
+    const harmonyRing = document.querySelector('.harmony-ring');
+    const harmonyText = document.querySelector('.harmony-text');
+    
+    // Simulate harmony level changes
+    harmonyLevel = 0.7 + 0.3 * Math.sin(Date.now() * 0.001);
+    
+    // Update visual representation
+    const opacity = 0.3 + (harmonyLevel * 0.5);
+    if (harmonyRing) harmonyRing.style.opacity = opacity;
+    
+    // Update text
+    if (harmonyText) harmonyText.textContent = `Harmony: ${(harmonyLevel * 100).toFixed(0)}%`;
+}
+
+function updatePerpetualMotion() {
+    updateHarmonyIndicator();
+    
+    // Update snake segments based on harmony
+    const snakeSegments = document.querySelectorAll('.snake-segment');
+    snakeSegments.forEach((segment, index) => {
+        const delay = index * 0.1;
+        const intensity = harmonyLevel * (0.8 + 0.2 * Math.sin(Date.now() * 0.002 + delay));
+        segment.style.opacity = intensity;
+    });
+
+            // Pulse black snake output to reflect throughput metaphorically
+            const blackBody = document.querySelector('.black-body');
+            if (blackBody) {
+                const pulse = 0.8 + 0.2 * Math.sin(Date.now() * 0.003);
+                blackBody.style.opacity = pulse.toFixed(2);
+            }
+}
+
+// Initialize perpetual motion when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initPerpetualMotion, 1000); // Delay to ensure DOM is ready
+});
+</script>
+
+<!-- Perpetual Motion Visualization Styles -->
+<style>
+    .perpetual-motion-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        margin: 20px 0;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+        .io-label {
+            position: absolute;
+            top: -22px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-label { left: 24px; }
+        .output-label { right: 24px; }
+
+    .white-rabbit-track {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        height: 60px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .white-rabbit {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        transition: left 0.5s ease-in-out;
+        z-index: 10;
+    }
+
+    .rabbit-body {
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        animation: rabbitGlow 2s ease-in-out infinite alternate;
+    }
+
+    .rabbit-trail {
+        position: absolute;
+        top: 50%;
+        left: -20px;
+        width: 20px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6));
+        border-radius: 1px;
+    }
+
+    @keyframes rabbitGlow {
+        0% { filter: brightness(1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
+        100% { filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); }
+    }
+
+    .cycle-markers {
+        position: absolute;
+        top: -10px;
+        left: 0;
+        right: 0;
+        height: 80px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .marker {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .marker.active {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: #fff;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        transform: scale(1.2);
+    }
+
+        .black-snake-container {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            right: 20px;
+            height: 20px;
+        }
+
+        .black-snake {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .black-head, .black-body, .black-tail {
+            position: absolute;
+            top: 8px;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.9), rgba(0,0,0,0.6));
+            box-shadow: 0 0 8px rgba(0,0,0,0.6);
+        }
+
+        .black-head { left: 0; width: 12px; border-radius: 4px 0 0 4px; }
+        .black-body { left: 12px; right: 12px; animation: blackFlow 3s linear infinite; }
+        .black-tail { right: 0; width: 12px; border-radius: 0 4px 4px 0; }
+
+        @keyframes blackFlow {
+            0% { filter: brightness(0.9); }
+            50% { filter: brightness(1.1); }
+            100% { filter: brightness(0.9); }
+        }
+
+    .rainbow-snake-container {
+        position: absolute;
+        top: 100px;
+        left: 20px;
+        right: 20px;
+        height: 80px;
+    }
+
+    .rainbow-snake {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .snake-segment {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        position: relative;
+        animation: snakePulse 3s ease-in-out infinite;
+    }
+
+    .snake-segment.red { background: #ff4444; animation-delay: 0s; }
+    .snake-segment.orange { background: #ff8844; animation-delay: 0.5s; }
+    .snake-segment.yellow { background: #ffdd44; animation-delay: 1s; }
+    .snake-segment.green { background: #44ff44; animation-delay: 1.5s; }
+    .snake-segment.blue { background: #4444ff; animation-delay: 2s; }
+    .snake-segment.purple { background: #8844ff; animation-delay: 2.5s; }
+
+    @keyframes snakePulse {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.3); opacity: 1; }
+    }
+
+    .enterprise-connections {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        z-index: 1;
+    }
+
+    .connection {
+        position: absolute;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        animation: connectionFlow 4s linear infinite;
+    }
+
+    .connection.red-orange { left: 8.33%; width: 16.66%; animation-delay: 0s; }
+    .connection.orange-yellow { left: 25%; width: 16.66%; animation-delay: 0.67s; }
+    .connection.yellow-green { left: 41.66%; width: 16.66%; animation-delay: 1.33s; }
+    .connection.green-blue { left: 58.33%; width: 16.66%; animation-delay: 2s; }
+    .connection.blue-purple { left: 75%; width: 16.66%; animation-delay: 2.67s; }
+    .connection.purple-red { left: 91.66%; width: 8.33%; animation-delay: 3.33s; }
+
+    @keyframes connectionFlow {
+        0% { opacity: 0; transform: scaleX(0); }
+        50% { opacity: 1; transform: scaleX(1); }
+        100% { opacity: 0; transform: scaleX(0); }
+    }
+
+    .eternal-dance-indicator {
+        position: absolute;
+        top: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 100px;
+    }
+
+    .dance-harmony {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .harmony-ring {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        animation: harmonyPulse 2s ease-in-out infinite;
+    }
+
+    .harmony-ring::before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: harmonyPulse 2s ease-in-out infinite reverse;
+    }
+
+    @keyframes harmonyPulse {
+        0%, 100% { transform: scale(1); opacity: 0.3; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .harmony-text {
+        position: relative;
+        z-index: 2;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .perpetual-motion-container {
+            height: 250px;
+        }
+        
+            .black-snake-container { top: 65px; }
+
+        .white-rabbit-track {
+            height: 50px;
+        }
+        
+        .rabbit-body {
+            font-size: 20px;
+        }
+        
+        .snake-segment {
+            width: 25px;
+            height: 25px;
+        }
+        
+        .eternal-dance-indicator {
+            top: 180px;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .harmony-ring {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+{% endblock %}

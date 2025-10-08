@@ -9,7 +9,7 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
 from case_study_templates import CaseStudyTemplateLibrary, CaseStudyTemplate, CaseStudyCategory, CaseStudyComplexity
-from cosmic_council_core import ProblemStatement, ProblemComplexity
+from src.core.types import ProblemStatement, ProblemComplexity
 
 @dataclass
 class CaseStudyGenerationRequest:

@@ -8,7 +8,7 @@ from src.cosmic_council import (
     CosmicCouncil, ProblemStatement, ProblemComplexity, 
     EnterpriseType, CycleStatus
 )
-from src.cosmic_council.core.core import EnhancedCosmicCouncil
+from src.core.types import EnhancedCosmicCouncil
 
 async def demo_business_problem():
     """Demo: Business case study - New Product Development"""

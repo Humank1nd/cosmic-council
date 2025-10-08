@@ -21,11 +21,11 @@ from perpetual_motion_symbolism import (
     RainbowSnakeInterconnectedness, BlackSnakeOutputFlow,
     PerpetualMotionType
 )
-from enhanced_cosmic_council_core import (
+from src.core.types import (
     CosmicCouncil, ProblemStatement, ProblemComplexity,
     EnterpriseType, CycleResult
 )
-from parallel_cosmic_council_processor import (
+from src.core.services import (
     ParallelCosmicCouncilProcessor, ProcessingMode
 )
 

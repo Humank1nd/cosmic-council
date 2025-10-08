@@ -454,7 +454,7 @@ class WorkingEnhancedOrangeOrangutanAgent:
 # Test the working enhanced agents
 async def test_working_enhanced_agents():
     """Test the working enhanced agents"""
-    from enhanced_cosmic_council_core import ProblemStatement, ProblemComplexity
+    from src.core.types import ProblemStatement, ProblemComplexity
     
     print("=== Testing Working Enhanced Agents ===")
     

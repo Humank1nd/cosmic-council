@@ -11,7 +11,7 @@ from enum import Enum
 from datetime import datetime
 import json
 
-from cosmic_council_core import ProblemStatement, ProblemComplexity, EnterpriseType
+from src.core.types import ProblemStatement, ProblemComplexity, EnterpriseType
 from case_study_templates import CaseStudyTemplateLibrary, CaseStudyTemplate
 
 class ExerciseType(Enum):

@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy bandit import-linter detect-secrets
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Compute changed files (PR only)
+        if: github.event_name == 'pull_request'
+        id: changes
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **/*.py
+
+      - name: Ruff (ratchet on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED="${{ steps.changes.outputs.all_changed_files }}"
+          if [ -z "$CHANGED" ]; then echo "No Python changes"; exit 0; fi
+          ruff check $CHANGED --output-format=github
+          ruff format --check $CHANGED
+
+      - name: Ruff (full on main)
+        if: github.event_name != 'pull_request'
+        run: |
+          ruff check . --output-format=github
+          ruff format --check .
+      - name: Mypy (ratchet on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED="${{ steps.changes.outputs.all_changed_files }}"
+          if [ -z "$CHANGED" ]; then echo "No Python changes"; exit 0; fi
+          mypy --warn-unused-ignores --show-error-codes $CHANGED
+
+      - name: Mypy (full on main)
+        if: github.event_name != 'pull_request'
+        run: mypy .
+      - name: Bandit (security)
+        if: github.event_name != 'pull_request'
+        run: bandit -c bandit.yaml -r .
+      - name: Bandit (ratchet on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          CHANGED="${{ steps.changes.outputs.all_changed_files }}"
+          if [ -z "$CHANGED" ]; then echo "No Python changes"; exit 0; fi
+          bandit -c bandit.yaml -r $CHANGED
+      - name: Import Linter (architecture contracts)
+        if: github.event_name != 'pull_request'
+        run: lint-imports -c .importlinter
+      - name: Import Linter (report on PR)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: lint-imports -c .importlinter
+      - name: Detect Secrets (fail on new)
+        run: |
+          if [ -f .secrets.baseline ]; then BASELINE="--baseline .secrets.baseline"; else BASELINE=""; fi
+          detect-secrets scan $BASELINE > .secrets.scan
+          if [ -f .secrets.baseline ]; then detect-secrets audit .secrets.scan --baseline .secrets.baseline || exit 1; else echo "No baseline present; skipping audit"; fi
