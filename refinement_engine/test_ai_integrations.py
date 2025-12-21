@@ -7,7 +7,7 @@ import asyncio
 import os
 import sys
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 import json
 
@@ -457,7 +457,7 @@ class AIIntegrationTester:
         
         try:
             # Test multiple requests to measure performance
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             
             # Create multiple concurrent requests
             tasks = []
@@ -483,7 +483,7 @@ class AIIntegrationTester:
             # Execute concurrent requests
             responses = await asyncio.gather(*tasks, return_exceptions=True)
             
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             duration = (end_time - start_time).total_seconds()
             
             # Analyze results

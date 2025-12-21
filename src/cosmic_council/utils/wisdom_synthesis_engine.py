@@ -10,7 +10,7 @@ Council framework into a unified wisdom system.
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -56,7 +56,7 @@ class WisdomInsight:
     synthesis_level: SynthesisLevel = SynthesisLevel.INDIVIDUAL
     confidence: float = 0.0
     relevance: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class WisdomPattern:
@@ -68,7 +68,7 @@ class WisdomPattern:
     insights: List[WisdomInsight] = field(default_factory=list)
     strength: float = 0.0
     frequency: int = 0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class WisdomSynthesis:
@@ -81,7 +81,7 @@ class WisdomSynthesis:
     patterns: List[WisdomPattern] = field(default_factory=list)
     synthesis_text: str = ""
     confidence: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class EternalDance:
@@ -93,7 +93,7 @@ class EternalDance:
     active_patterns: List[WisdomPattern] = field(default_factory=list)
     dance_rhythm: float = 1.0
     is_active: bool = False
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class WisdomSynthesisEngine:
     """🌀 Wisdom Synthesis Engine
@@ -152,7 +152,7 @@ class WisdomSynthesisEngine:
                               synthesis_level: SynthesisLevel = SynthesisLevel.HOLISTIC,
                               knowledge_flow: KnowledgeFlow = KnowledgeFlow.CYCLICAL) -> WisdomSynthesis:
         """Synthesize wisdom from insights"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         logger.info(f"🌀 Synthesizing wisdom at {synthesis_level.value} level")
         
@@ -177,7 +177,7 @@ class WisdomSynthesisEngine:
         
         self.syntheses.append(synthesis)
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         logger.info(f"🌀 Wisdom synthesis completed in {processing_time:.2f}s")
         
         return synthesis

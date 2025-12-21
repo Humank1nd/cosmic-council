@@ -25,8 +25,8 @@ TEST_STRUCTURE_MAPPING = {
     
     # Agent tests
     'test_agents/': 'agents/',
-    'test_enhanced_enterprise_agents.py': 'agents/test_enterprises.py',
-    'test_red_research.py': 'agents/test_enterprises/test_red_owl.py',
+    'test_enhanced_enterprise_agents.py': 'agents/test_supra_enterprise.py',
+    'test_red_research.py': 'agents/test_supra_enterprise/test_red_owl.py',
     
     # Utility tests
     'test_utils/': 'utils/',
@@ -62,7 +62,7 @@ def create_new_test_structure():
         "unit/database",
         "unit/api",
         "unit/agents",
-        "unit/agents/enterprises",
+        "unit/agents/supra_enterprise",
         "unit/agents/orchestration",
         "unit/utils",
         "integration/api",
@@ -111,8 +111,8 @@ def migrate_test_files():
         # Unit tests
         ("tests/unit/test_cosmic_council_core.py", "tests_new/unit/core/test_types.py"),
         ("tests/unit/test_problem_solving_workflow.py", "tests_new/unit/core/test_services.py"),
-        ("tests/unit/test_enhanced_enterprise_agents.py", "tests_new/unit/agents/test_enterprises.py"),
-        ("tests/unit/test_red_research.py", "tests_new/unit/agents/enterprises/test_red_owl.py"),
+        ("tests/unit/test_enhanced_enterprise_agents.py", "tests_new/unit/agents/test_supra_enterprise.py"),
+        ("tests/unit/test_red_research.py", "tests_new/unit/agents/supra_enterprise/test_red_owl.py"),
         
         # Integration tests
         ("tests/integration/test_api_endpoints.py", "tests_new/integration/api/test_endpoints.py"),
@@ -312,13 +312,13 @@ class TestAPI:
 ''',
         
         # Agent tests
-        "unit/agents/test_enterprises/test_red_owl.py": '''"""
+        "unit/agents/test_supra_enterprise/test_red_owl.py": '''"""
 Unit tests for Red Owl agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch
-from src.agents.enterprises.red_owl import RedOwlAgent
+from src.agents.supra_enterprise.red_owl import RedOwlAgent
 
 
 class TestRedOwlAgent:

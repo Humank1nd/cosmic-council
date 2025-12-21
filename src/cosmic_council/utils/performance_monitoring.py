@@ -25,7 +25,7 @@ import logging
 import json
 import psutil
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -69,7 +69,7 @@ class PerformanceMetric:
     name: str
     value: Union[int, float]
     metric_type: MetricType
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     tags: Dict[str, str] = field(default_factory=dict)
     unit: Optional[str] = None
     description: Optional[str] = None
@@ -84,7 +84,7 @@ class PerformanceAlert:
     metric_name: str
     threshold: float
     current_value: float
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     resolved: bool = False
     resolved_at: Optional[datetime] = None
 
@@ -263,7 +263,7 @@ class MetricsStorage:
         """Clean up old metrics"""
         with self._lock:
             cursor = self.connection.cursor()
-            cutoff_date = datetime.utcnow() - timedelta(days=days)
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
             cursor.execute("DELETE FROM metrics WHERE timestamp < ?", (cutoff_date.isoformat(),))
             deleted_count = cursor.rowcount
             self.connection.commit()
@@ -319,7 +319,7 @@ class SystemMonitor:
     
     async def _collect_system_metrics(self):
         """Collect system performance metrics"""
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
         
         # CPU metrics
         cpu_percent = psutil.cpu_percent(interval=0.1)
@@ -436,7 +436,7 @@ class ApplicationMonitor:
     def record_request(self, endpoint: str, method: str, response_time: float, 
                       status_code: int, request_size: int = 0, response_size: int = 0):
         """Record API request metrics"""
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
         
         # Store request metrics
         self.storage.store_metric(PerformanceMetric(
@@ -496,7 +496,7 @@ class ApplicationMonitor:
     def record_database_query(self, query: str, execution_time: float, rows_returned: int, 
                              cache_hit: bool = False):
         """Record database query metrics"""
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
         
         self.storage.store_metric(PerformanceMetric(
             name="app.database.query_time",
@@ -519,7 +519,7 @@ class ApplicationMonitor:
     def record_cycle_execution(self, cycle_id: str, duration: float, success: bool, 
                               enterprise_type: str = None):
         """Record problem-solving cycle execution metrics"""
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
         
         self.storage.store_metric(PerformanceMetric(
             name="app.cycles.duration",
@@ -663,7 +663,7 @@ class AlertManager:
             metric_name=metric.name,
             threshold=rule["threshold"],
             current_value=metric.value,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         # Store alert
@@ -887,7 +887,7 @@ class PerformanceMonitor:
     
     def get_performance_summary(self) -> Dict[str, Any]:
         """Get current performance summary"""
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - timedelta(hours=1)
         
         # Get recent metrics
@@ -913,7 +913,7 @@ class PerformanceMonitor:
     
     def generate_report(self, hours: int = 24) -> PerformanceReport:
         """Generate performance report for specified time period"""
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - timedelta(hours=hours)
         return self.analytics.generate_performance_report(start_time, end_time)
 

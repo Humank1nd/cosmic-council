@@ -359,9 +359,9 @@ class TestPerpetualAPIEndpoints:
             
             assert response.status_code == 200
             data = response.json()
-            assert data["status"] == "healthy"
-            assert "perpetual_ai_engine" in data["components"]
-            assert data["components"]["perpetual_ai_engine"] == "available"
+            payload = data.get("data", data)
+            assert payload["overall_status"] == "healthy"
+            assert payload["ai_enhanced_perpetual_system"] is True
 
     @pytest.mark.asyncio
     async def test_api_info_includes_perpetual_endpoints(self, client):
@@ -370,12 +370,11 @@ class TestPerpetualAPIEndpoints:
         
         assert response.status_code == 200
         data = response.json()
-        assert "perpetual" in data["endpoints"]
-        
-        perpetual_endpoints = data["endpoints"]["perpetual"]
-        assert "sessions" in perpetual_endpoints
-        assert "ai" in perpetual_endpoints
-        assert "status" in perpetual_endpoints
+        payload = data.get("data", data)
+        endpoints = payload["endpoints"]
+        assert "perpetual_sessions" in endpoints
+        assert "perpetual_status" in endpoints
+        assert "ai_sessions_list" in endpoints
 
     @pytest.mark.asyncio
     async def test_error_handling_in_api_endpoints(self, client):

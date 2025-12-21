@@ -229,7 +229,7 @@ async def get_cycle_analytics(
         analytics_logger.error(f"❌ Get cycle analytics failed: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get cycle analytics: {str(e)}")
 
-@app.get("/v1/analytics/enterprises", response_model=List[EnterprisePerformance])
+@app.get("/v1/analytics/supra_enterprise", response_model=List[EnterprisePerformance])
 async def get_enterprise_performance_analytics(
     time_period: str = Query("7d", regex="^(1d|7d|30d|90d|1y)$"),
     db: DatabaseManager = Depends(get_db_manager)

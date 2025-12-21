@@ -7,7 +7,7 @@ import asyncio
 import time
 import json
 from typing import Dict, Any, Optional, List, Callable
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 from enum import Enum
 import psutil
@@ -84,7 +84,7 @@ class HealthChecker:
         self.logger = structlog.get_logger(__name__)
         
         # System start time
-        self.start_time = datetime.utcnow()
+        self.start_time = datetime.now(timezone.utc)
         
         # Health check registry
         self.health_checks: Dict[str, Callable] = {}
@@ -167,7 +167,7 @@ class HealthChecker:
                     status=HealthStatus.UNHEALTHY,
                     message="Health check failed with exception",
                     response_time_ms=0.0,
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(timezone.utc),
                     error=str(result)
                 )
                 checks.append(error_check)
@@ -178,9 +178,9 @@ class HealthChecker:
         # Create system health object
         system_health = SystemHealth(
             status=overall_status,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             checks=checks,
-            uptime_seconds=(datetime.utcnow() - self.start_time).total_seconds(),
+            uptime_seconds=(datetime.now(timezone.utc) - self.start_time).total_seconds(),
             version=self.config.get("version", "1.0.0"),
             environment=self.config.get("environment", "development"),
             total_checks=len(checks),
@@ -217,7 +217,7 @@ class HealthChecker:
                     status=HealthStatus.UNKNOWN,
                     message="Health check returned invalid result",
                     response_time_ms=(time.time() - start_time) * 1000,
-                    timestamp=datetime.utcnow()
+                    timestamp=datetime.now(timezone.utc)
                 )
             
             # Update response time
@@ -232,7 +232,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"Health check failed: {str(e)}",
                 response_time_ms=(time.time() - start_time) * 1000,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -264,7 +264,7 @@ class HealthChecker:
     
     async def _check_alerts(self, system_health: SystemHealth):
         """Check for alert conditions."""
-        current_time = datetime.utcnow()
+        current_time = datetime.now(timezone.utc)
         
         # Check response time alerts
         for check in system_health.checks:
@@ -300,7 +300,7 @@ class HealthChecker:
     
     async def _send_alert(self, message: str, alert_type: str):
         """Send an alert."""
-        current_time = datetime.utcnow()
+        current_time = datetime.now(timezone.utc)
         
         # Check cooldown
         last_alert = self.last_alert_time.get(alert_type)
@@ -340,7 +340,7 @@ class HealthChecker:
                 status=HealthStatus.HEALTHY,
                 message="Database connection successful",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "response_time_ms": response_time,
                     "connection_pool_size": 10,  # Would get from actual config
@@ -354,7 +354,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"Database connection failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -374,7 +374,7 @@ class HealthChecker:
                 status=HealthStatus.HEALTHY,
                 message="Redis connection successful",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "response_time_ms": response_time,
                     "redis_version": "6.2.0"  # Would get from actual Redis
@@ -387,7 +387,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"Redis connection failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -414,7 +414,7 @@ class HealthChecker:
                     status=HealthStatus.HEALTHY,
                     message=f"AI services available: {', '.join(available_providers)}",
                     response_time_ms=response_time,
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(timezone.utc),
                     details={
                         "available_providers": available_providers,
                         "total_providers": len(ai_manager.providers)
@@ -426,7 +426,7 @@ class HealthChecker:
                     status=HealthStatus.DEGRADED,
                     message="No AI providers available",
                     response_time_ms=response_time,
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(timezone.utc),
                     details={
                         "available_providers": [],
                         "total_providers": len(ai_manager.providers)
@@ -439,7 +439,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"AI services check failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -467,7 +467,7 @@ class HealthChecker:
                 status=HealthStatus.HEALTHY,
                 message="Security system operational",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "initialized": is_initialized,
                     "user_count": user_count,
@@ -482,7 +482,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"Security system check failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -510,7 +510,7 @@ class HealthChecker:
                 status=status,
                 message=f"System resources: CPU {cpu_percent:.1f}%, Memory {memory.percent:.1f}%, Disk {((disk.used / disk.total) * 100):.1f}%",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "cpu_usage_percent": cpu_percent,
                     "memory_usage_percent": memory.percent,
@@ -526,7 +526,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"System resources check failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -545,7 +545,7 @@ class HealthChecker:
                 status=HealthStatus.HEALTHY,
                 message="API endpoints responding",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "endpoints_tested": ["/health", "/metrics", "/problems"],
                     "response_time_ms": response_time
@@ -558,7 +558,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"API endpoints check failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     
@@ -577,7 +577,7 @@ class HealthChecker:
                 status=HealthStatus.HEALTHY,
                 message="External dependencies available",
                 response_time_ms=response_time,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 details={
                     "dependencies_checked": ["prometheus", "sentry", "external_apis"],
                     "response_time_ms": response_time
@@ -590,7 +590,7 @@ class HealthChecker:
                 status=HealthStatus.UNHEALTHY,
                 message=f"External dependencies check failed: {str(e)}",
                 response_time_ms=0.0,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 error=str(e)
             )
     

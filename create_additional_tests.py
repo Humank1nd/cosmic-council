@@ -261,13 +261,13 @@ class TestAgentCoordinator:
 ''',
         
         # Enterprise agent tests
-        "unit/agents/enterprises/test_orange_orangutan.py": '''"""
+        "unit/agents/supra_enterprise/test_orange_orangutan.py": '''"""
 Unit tests for Orange Orangutan agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
-from src.agents.enterprises.orange_orangutan import OrangeOrangutanAgent
+from src.agents.supra_enterprise.orange_orangutan import OrangeOrangutanAgent
 
 
 class TestOrangeOrangutanAgent:
@@ -295,13 +295,13 @@ class TestOrangeOrangutanAgent:
             assert result["result"] == "plan_complete"
 ''',
         
-        "unit/agents/enterprises/test_yellow_honeybee.py": '''"""
+        "unit/agents/supra_enterprise/test_yellow_honeybee.py": '''"""
 Unit tests for Yellow Honeybee agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
-from src.agents.enterprises.yellow_honeybee import YellowHoneybeeAgent
+from src.agents.supra_enterprise.yellow_honeybee import YellowHoneybeeAgent
 
 
 class TestYellowHoneybeeAgent:
@@ -329,13 +329,13 @@ class TestYellowHoneybeeAgent:
             assert result["result"] == "development_complete"
 ''',
         
-        "unit/agents/enterprises/test_green_tortoise.py": '''"""
+        "unit/agents/supra_enterprise/test_green_tortoise.py": '''"""
 Unit tests for Green Tortoise agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
-from src.agents.enterprises.green_tortoise import GreenTortoiseAgent
+from src.agents.supra_enterprise.green_tortoise import GreenTortoiseAgent
 
 
 class TestGreenTortoiseAgent:
@@ -363,13 +363,13 @@ class TestGreenTortoiseAgent:
             assert result["result"] == "budget_complete"
 ''',
         
-        "unit/agents/enterprises/test_blue_dolphin.py": '''"""
+        "unit/agents/supra_enterprise/test_blue_dolphin.py": '''"""
 Unit tests for Blue Dolphin agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
-from src.agents.enterprises.blue_dolphin import BlueDolphinAgent
+from src.agents.supra_enterprise.blue_dolphin import BlueDolphinAgent
 
 
 class TestBlueDolphinAgent:
@@ -397,13 +397,13 @@ class TestBlueDolphinAgent:
             assert result["result"] == "market_analysis_complete"
 ''',
         
-        "unit/agents/enterprises/test_purple_elephant.py": '''"""
+        "unit/agents/supra_enterprise/test_purple_elephant.py": '''"""
 Unit tests for Purple Elephant agent.
 """
 
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
-from src.agents.enterprises.purple_elephant import PurpleElephantAgent
+from src.agents.supra_enterprise.purple_elephant import PurpleElephantAgent
 
 
 class TestPurpleElephantAgent:

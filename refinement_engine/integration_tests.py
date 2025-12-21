@@ -8,7 +8,7 @@ import asyncio
 import json
 import time
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch, AsyncMock
 import uuid
 
@@ -198,8 +198,8 @@ class TestDatabaseIntegration(IntegrationTestBase):
         await db_manager.update_layer_run(
             layer_run_id,
             status="completed",
-            started_at=datetime.utcnow(),
-            finished_at=datetime.utcnow(),
+            started_at=datetime.now(timezone.utc),
+            finished_at=datetime.now(timezone.utc),
             total_cost_usd=50.0,
             total_latency_ms=30000
         )

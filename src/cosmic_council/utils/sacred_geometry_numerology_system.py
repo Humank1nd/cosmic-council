@@ -6,7 +6,7 @@ Comprehensive system for integrating sacred geometry, numerology, and cosmic mat
 import asyncio
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -72,7 +72,7 @@ class SacredGeometry:
     energy_frequency: float
     chakra_association: str
     elemental_connection: str
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class NumerologyReading:
@@ -90,7 +90,7 @@ class NumerologyReading:
     personal_year: int
     spiritual_insights: List[str]
     cosmic_alignment: float
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class SacredGeometryPattern:
@@ -106,7 +106,7 @@ class SacredGeometryPattern:
     energy_frequency: float
     meditation_benefits: List[str]
     healing_properties: List[str]
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SacredGeometryEngine:
     """
@@ -534,7 +534,7 @@ class NumerologyEngine:
                                        system: NumerologySystem = NumerologySystem.PYTHAGOREAN) -> NumerologyReading:
         """Perform a complete numerology reading"""
         
-        reading_id = f"numerology_reading_{datetime.utcnow().timestamp()}"
+        reading_id = f"numerology_reading_{datetime.now(timezone.utc).timestamp()}"
         
         # Calculate life path number
         life_path_number = self._calculate_life_path_number(birth_date, system)

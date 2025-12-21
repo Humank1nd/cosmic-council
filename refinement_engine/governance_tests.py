@@ -6,7 +6,7 @@ Tests for order integrity, decision points, and system governance.
 import pytest
 import asyncio
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from .layer_orchestration import LayerOrchestrator, LayerRunStatus
@@ -610,7 +610,7 @@ class GovernanceTests:
         """
         all_results = {
             "test_suite": "governance_tests",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "tests": [],
             "overall_passed": True,
             "summary": {

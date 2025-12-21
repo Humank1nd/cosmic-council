@@ -25,7 +25,7 @@ import time
 import logging
 import psutil
 import gc
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Callable, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -67,7 +67,7 @@ class PerformanceConfig:
 @dataclass
 class PerformanceMetrics:
     """Performance metrics tracking"""
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     active_cycles: int = 0
     completed_cycles: int = 0
     failed_cycles: int = 0
@@ -117,7 +117,7 @@ class PerformanceMonitor:
             cpu = psutil.cpu_percent()
             
             # Update current metrics
-            self.current_metrics.timestamp = datetime.utcnow()
+            self.current_metrics.timestamp = datetime.now(timezone.utc)
             self.current_metrics.memory_usage = memory.percent / 100.0
             self.current_metrics.cpu_usage = cpu / 100.0
             
@@ -426,7 +426,7 @@ class OptimizedCycleExecutor:
             "cycle_id": cycle_data.get('id'),
             "status": "completed",
             "result": "simulated_result",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     
     async def _queue_processor(self):
@@ -648,7 +648,7 @@ async def demo_performance_optimization():
                 "id": f"test_cycle_{i}",
                 "problem": f"Test problem {i}",
                 "complexity": "moderate",
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
             
             cycle_id = await optimizer.submit_cycle(cycle_data)

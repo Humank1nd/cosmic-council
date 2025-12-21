@@ -22,6 +22,9 @@ from openai import AsyncOpenAI
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
+# Import LLM provider interface for pluggable AI models
+from ..integrations.llm_provider import BaseLLMProvider, LLMRequest, LLMMessage
+
 # Import the unified database models
 from ..core.models import (
     ResearchCoreProblem, ResearchFinding, ResearchPrioritizedQuestion,
@@ -287,6 +290,7 @@ class UnifiedCosmicCouncilAgent(ABC):
                  agent_type: AgentType,
                  mode: AgentMode = AgentMode.BASIC,
                  openai_client: Optional[AsyncOpenAI] = None,
+                 llm_provider: Optional[BaseLLMProvider] = None,
                  session_factory: Optional[sessionmaker] = None,
                  config: Dict[str, Any] = None):
         """
@@ -295,13 +299,16 @@ class UnifiedCosmicCouncilAgent(ABC):
         Args:
             agent_type: Type of agent (ROYGBV)
             mode: Agent execution mode
-            openai_client: OpenAI client for AI processing
+            openai_client: OpenAI client for AI processing (deprecated, use llm_provider)
+            llm_provider: LLM provider for AI processing (preferred - works with any model)
             session_factory: Database session factory
             config: Agent configuration
         """
         self.agent_type = agent_type
         self.mode = mode
-        self.openai_client = openai_client
+        # Support both old OpenAI client and new provider interface
+        self.openai_client = openai_client  # For backward compatibility
+        self.llm_provider = llm_provider  # New preferred interface
         self.session_factory = session_factory
         self.config = config or {}
         self.status = AgentStatus.IDLE
@@ -636,24 +643,40 @@ class UnifiedCosmicCouncilAgent(ABC):
             return await self._process_basic(context)
 
     async def _generate_ai_insights(self, context: AgentContext) -> List[str]:
-        """Generate AI insights using OpenAI client"""
-        if not self.openai_client:
+        """Generate AI insights using LLM provider (works with any AI model)"""
+        # Prefer new provider interface, fall back to OpenAI client for backward compatibility
+        if not self.llm_provider and not self.openai_client:
             return []
         
         try:
             prompt = self._create_ai_prompt(context)
             
-            response = await self.openai_client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": f"You are the {self.name} agent of the Cosmic Council."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=self.max_tokens,
-                temperature=self.temperature
-            )
+            # Use new provider interface if available
+            if self.llm_provider:
+                request = LLMRequest(
+                    messages=[
+                        LLMMessage(role="system", content=f"You are the {self.name} agent of the Cosmic Council."),
+                        LLMMessage(role="user", content=prompt)
+                    ],
+                    model=self.config.get('model'),
+                    max_tokens=self.max_tokens,
+                    temperature=self.temperature
+                )
+                response = await self.llm_provider.generate(request)
+                ai_content = response.content
+            else:
+                # Fallback to OpenAI client for backward compatibility
+                response = await self.openai_client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": f"You are the {self.name} agent of the Cosmic Council."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=self.max_tokens,
+                    temperature=self.temperature
+                )
+                ai_content = response.choices[0].message.content
             
-            ai_content = response.choices[0].message.content
             return [f"AI Insight: {ai_content}"]
             
         except Exception as e:
@@ -864,22 +887,25 @@ class UnifiedCosmicCouncilAgentOrchestrator:
     
     def __init__(self, 
                  openai_api_key: Optional[str] = None,
+                 llm_provider: Optional[BaseLLMProvider] = None,
                  session_factory: Optional[sessionmaker] = None,
                  mode: AgentMode = AgentMode.BASIC):
         """
         Initialize the unified agent orchestrator
         
         Args:
-            openai_api_key: OpenAI API key for AI processing
+            openai_api_key: OpenAI API key for AI processing (deprecated, use llm_provider)
+            llm_provider: LLM provider for AI processing (preferred - works with any model)
             session_factory: Database session factory
             mode: Agent execution mode
         """
         self.mode = mode
         self.openai_client = None
+        self.llm_provider = llm_provider
         self.session_factory = session_factory
         
-        # Initialize OpenAI client if API key provided
-        if openai_api_key:
+        # Initialize OpenAI client if API key provided (for backward compatibility)
+        if openai_api_key and not llm_provider:
             self.openai_client = AsyncOpenAI(api_key=openai_api_key)
         
         # Initialize agents
@@ -894,7 +920,8 @@ class UnifiedCosmicCouncilAgentOrchestrator:
             self.agents[agent_type] = UnifiedCosmicCouncilAgent(
                 agent_type=agent_type,
                 mode=self.mode,
-                openai_client=self.openai_client,
+                openai_client=self.openai_client,  # For backward compatibility
+                llm_provider=self.llm_provider,  # New preferred interface
                 session_factory=self.session_factory
             )
 

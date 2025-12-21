@@ -5,7 +5,7 @@ Provides human and agent-readable explanations for policy decisions
 
 import uuid
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from .schemas import DecisionExplanation, ViolationCode, Agent, Resource
 from .storage import engine
 from sqlalchemy import text
@@ -86,7 +86,7 @@ class DecisionExplainer:
                 violations=violations,
                 obligations=decision_data.get('obligations', []),
                 explanation_text=explanation_text,
-                timestamp=decision_data.get('time', datetime.utcnow()),
+                timestamp=decision_data.get('time', datetime.now(timezone.utc)),
                 latency_ms=decision_data.get('latency_ms', 0)
             )
             

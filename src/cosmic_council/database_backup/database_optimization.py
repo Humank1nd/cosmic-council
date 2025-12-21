@@ -23,7 +23,7 @@ import asyncio
 import time
 import logging
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -80,7 +80,7 @@ class QueryMetrics:
     execution_time: float
     rows_returned: int
     cache_hit: bool = False
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     connection_id: Optional[str] = None
     error: Optional[str] = None
 

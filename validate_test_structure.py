@@ -30,7 +30,7 @@ def validate_test_structure():
         "unit/database",
         "unit/api",
         "unit/agents",
-        "unit/agents/enterprises",
+        "unit/agents/supra_enterprise",
         "unit/agents/orchestration",
         "unit/utils",
         "integration/api",
@@ -185,7 +185,7 @@ def create_test_summary():
         f.write("│   │   ├── test_cycles.py\n")
         f.write("│   │   └── test_solutions.py\n")
         f.write("│   ├── agents/             # Agent tests\n")
-        f.write("│   │   ├── test_enterprises/\n")
+        f.write("│   │   ├── test_supra_enterprise/\n")
         f.write("│   │   │   ├── test_red_owl.py\n")
         f.write("│   │   │   ├── test_orange_orangutan.py\n")
         f.write("│   │   │   ├── test_yellow_honeybee.py\n")

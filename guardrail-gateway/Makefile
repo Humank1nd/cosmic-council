@@ -27,7 +27,7 @@ curl-autonomous:
 	  -d '{"problem":"How can we optimize our AI agent collaboration for better decision making?","complexity":"high","urgency":"medium"}' | jq .
 
 curl-enterprises:
-	curl -s localhost:8080/v1/enterprises | jq .
+	curl -s localhost:8080/v1/supra_enterprise | jq .
 
 # Test matrix scenarios
 test-risk-block:

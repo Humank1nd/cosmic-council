@@ -44,7 +44,7 @@ class ProblemStatement:
     stakeholders: List[str] = field(default_factory=list)
     constraints: Dict[str, Any] = field(default_factory=dict)
     success_criteria: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass

@@ -4,6 +4,7 @@ Tests the AI-enhanced perpetual thinking engine and related components
 """
 
 import pytest
+import pytest_asyncio
 import asyncio
 import uuid
 from datetime import datetime, timezone
@@ -25,7 +26,7 @@ from ai_llm_integration import AILLMIntegration, LLMConfig, LLMProvider, LLMMode
 class TestPerpetualAIThinkingEngine:
     """Test the Perpetual AI Thinking Engine"""
 
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def ai_engine(self):
         """Create a Perpetual AI Thinking Engine for testing"""
         ai_config = LLMConfig(

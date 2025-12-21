@@ -23,7 +23,7 @@ from .unified_perpetual_thinking_system import (
 from .meta_cyclical_architecture import (
     MetaCyclicalArchitecture, MetaCycleType, MetaCycle
 )
-from ...applications.enhanced_master_orchestration_system import (
+from applications.enhanced_master_orchestration_system import (
     EnhancedMasterOrchestrationSystem, OrchestrationMode, OrchestrationSession
 )
 from .perpetual_guardrail_integration import (

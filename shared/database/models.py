@@ -3,7 +3,7 @@ Base database models and mixins for the Cosmic Council system.
 Provides common model functionality and database abstractions.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from enum import Enum
 import uuid
@@ -22,12 +22,12 @@ class TimestampMixin:
     """Mixin for models that need timestamp tracking."""
     
     def __init__(self):
-        self.created_at: datetime = field(default_factory=datetime.utcnow)
-        self.updated_at: datetime = field(default_factory=datetime.utcnow)
+        self.created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+        self.updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     
     def touch(self) -> None:
         """Update the updated_at timestamp."""
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
 
 class StatusMixin:
     """Mixin for models that need status tracking."""
@@ -46,8 +46,8 @@ class BaseModel(ABC):
     
     def __init__(self):
         self.id: str = str(uuid.uuid4())
-        self.created_at: datetime = datetime.utcnow()
-        self.updated_at: datetime = datetime.utcnow()
+        self.created_at: datetime = datetime.now(timezone.utc)
+        self.updated_at: datetime = datetime.now(timezone.utc)
         self.status: Status = Status.DRAFT
         self.metadata: Dict[str, Any] = field(default_factory=dict)
     
@@ -64,14 +64,14 @@ class BaseModel(ABC):
     def from_dict(self, data: Dict[str, Any]) -> None:
         """Populate the model from a dictionary."""
         self.id = data.get('id', str(uuid.uuid4()))
-        self.created_at = datetime.fromisoformat(data.get('created_at', datetime.utcnow().isoformat()))
-        self.updated_at = datetime.fromisoformat(data.get('updated_at', datetime.utcnow().isoformat()))
+        self.created_at = datetime.fromisoformat(data.get('created_at', datetime.now(timezone.utc).isoformat()))
+        self.updated_at = datetime.fromisoformat(data.get('updated_at', datetime.now(timezone.utc).isoformat()))
         self.status = Status(data.get('status', Status.DRAFT.value))
         self.metadata = data.get('metadata', {})
     
     def touch(self) -> None:
         """Update the updated_at timestamp."""
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
     
     def set_status(self, status: Status) -> None:
         """Set the status and update timestamp."""

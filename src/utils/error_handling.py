@@ -5,7 +5,7 @@ Error handling utilities for the Cosmic Council system.
 import logging
 import traceback
 from typing import Any, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -17,7 +17,7 @@ class CosmicCouncilError(Exception):
         self.message = message
         self.error_code = error_code or "UNKNOWN_ERROR"
         self.details = details or {}
-        self.timestamp = datetime.utcnow()
+        self.timestamp = datetime.now(timezone.utc)
         self.error_id = str(uuid.uuid4())
 
 
@@ -99,7 +99,7 @@ def log_error(error: Exception, logger: logging.Logger) -> None:
     error_context = {
         "error_type": type(error).__name__,
         "error_message": str(error),
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
     
     if isinstance(error, CosmicCouncilError):
@@ -125,7 +125,7 @@ def create_error_response(
             "message": message,
             "details": details or {},
             "error_id": error_id or str(uuid.uuid4()),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     }
 

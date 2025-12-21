@@ -96,7 +96,7 @@ class ProblemStatement:
     stakeholders: List[str] = field(default_factory=list)
     constraints: Dict[str, Any] = field(default_factory=dict)
     success_criteria: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
@@ -126,7 +126,7 @@ class EnhancedEnterpriseResult:
     processing_time: float = 0.0
     dependencies: List[str] = field(default_factory=list)
     next_actions: List[str] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     personality_response: str = ""
     applied_rules: List[CosmicCouncilRule] = field(default_factory=list)
     wisdom_insights: List[str] = field(default_factory=list)
@@ -144,7 +144,7 @@ class LearningMemory:
     success_indicators: Dict[str, Any]
     lessons_learned: List[str]
     improvement_suggestions: List[str]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class EnhancedCycleResult:
@@ -155,7 +155,7 @@ class EnhancedCycleResult:
     enterprise_results: Dict[EnterpriseType, EnhancedEnterpriseResult] = field(default_factory=dict)
     final_synthesis: Dict[str, Any] = field(default_factory=dict)
     feedback_loop: Dict[str, Any] = field(default_factory=dict)
-    start_time: datetime = field(default_factory=datetime.utcnow)
+    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     end_time: Optional[datetime] = None
     total_processing_time: float = 0.0
     overall_confidence: float = 0.0
@@ -197,7 +197,7 @@ class EnhancedEnterpriseAgent:
     
     async def process_problem_enhanced(self, problem: ProblemStatement, context: Dict[str, Any] = None) -> EnhancedEnterpriseResult:
         """Process a problem through this enterprise's lens with full personality and learning"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Learn from previous cycles
@@ -239,7 +239,7 @@ class EnhancedEnterpriseAgent:
             # Generate questions for next cycle influenced by rules and learning
             next_cycle_questions = await self._generate_next_cycle_questions(problem, insights, enhanced_context)
             
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             # Create result
             result = EnhancedEnterpriseResult(
@@ -264,7 +264,7 @@ class EnhancedEnterpriseAgent:
             
         except Exception as e:
             logger.error(f"Error processing problem in {self.personality.name}: {e}")
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             return EnhancedEnterpriseResult(
                 enterprise=self.enterprise_type,
@@ -849,7 +849,7 @@ class EnhancedEnterpriseAgent:
         
         # Store adaptation history
         self.adaptation_history.append({
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "problem_type": problem.title,
             "adaptations_applied": context.get("adaptations_applied", {}),
             "learning_insights": context.get("learning_insights", {})
@@ -2152,7 +2152,7 @@ class EnhancedCosmicCouncil:
     async def solve_problem_enhanced(self, problem: ProblemStatement, context: Dict[str, Any] = None) -> EnhancedCycleResult:
         """Execute an enhanced problem-solving cycle through all enterprises"""
         cycle_result = EnhancedCycleResult(problem=problem, status=CycleStatus.RUNNING)
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         logger.info(f"Starting Enhanced Cosmic Council cycle for problem: {problem.title}")
         
@@ -2193,7 +2193,7 @@ class EnhancedCosmicCouncil:
             cycle_result.next_cycle_questions = await self._generate_next_cycle_questions(cycle_result)
             
             # Calculate overall metrics
-            cycle_result.end_time = datetime.utcnow()
+            cycle_result.end_time = datetime.now(timezone.utc)
             cycle_result.total_processing_time = (cycle_result.end_time - start_time).total_seconds()
             cycle_result.overall_confidence = self._calculate_overall_confidence(cycle_result)
             cycle_result.status = CycleStatus.COMPLETED
@@ -2203,7 +2203,7 @@ class EnhancedCosmicCouncil:
         except Exception as e:
             logger.error(f"Error in Enhanced Cosmic Council cycle: {e}")
             cycle_result.status = CycleStatus.FAILED
-            cycle_result.end_time = datetime.utcnow()
+            cycle_result.end_time = datetime.now(timezone.utc)
             cycle_result.total_processing_time = (cycle_result.end_time - start_time).total_seconds()
         
         return cycle_result

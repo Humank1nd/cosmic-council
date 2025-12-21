@@ -7,7 +7,7 @@ import asyncio
 import os
 import sys
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional, List, Set
 import json
 import time
@@ -117,7 +117,7 @@ class SecurityFeatureTester:
                 password_hash="dummy_hash",
                 role=UserRole.USER,
                 permissions={Permission.READ_PROBLEM, Permission.CREATE_PROBLEM},
-                created_at=datetime.utcnow()
+                created_at=datetime.now(timezone.utc)
             )
             
             # Create access token

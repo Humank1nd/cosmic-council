@@ -23,7 +23,7 @@
 | `from cosmic_council_core\s+import` | `from src.core.types import` |
 | `from cosmic_council_simplified\s+import` | `from src.core.services import` |
 | `from parallel_cosmic_council_processor\s+import` | `from src.core.services import` |
-| `from cosmic_council_simplified\.enterprise\s+import` | `from src.agents.enterprises import` |
+| `from cosmic_council_simplified\.enterprise\s+import` | `from src.agents.supra_enterprise import` |
 
 ## Next Steps
 

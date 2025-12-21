@@ -3,7 +3,7 @@ Analytics service for providing insights and metrics in the Cosmic Council syste
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import logging
 
 from ..models.cycle import Cycle, CycleResult
@@ -25,7 +25,7 @@ class AnalyticsService:
         """Get overall system metrics"""
         try:
             metrics = {
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'total_problems': 0,
                 'total_solutions': 0,
                 'total_cycles': 0,
@@ -81,7 +81,7 @@ class AnalyticsService:
         try:
             analytics = {
                 'problem_id': problem_id,
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'total_cycles': 0,
                 'successful_cycles': 0,
                 'average_cycle_duration': 0.0,
@@ -147,7 +147,7 @@ class AnalyticsService:
     async def get_enterprise_performance(self, enterprise_type: str, days: int = 30) -> Dict[str, Any]:
         """Get performance metrics for a specific enterprise"""
         try:
-            end_date = datetime.utcnow()
+            end_date = datetime.now(timezone.utc)
             start_date = end_date - timedelta(days=days)
             
             performance = {
@@ -209,7 +209,7 @@ class AnalyticsService:
         try:
             analytics = {
                 'cycle_id': cycle_id,
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'cycle_status': '',
                 'total_enterprises': 0,
                 'completed_enterprises': 0,
@@ -252,7 +252,7 @@ class AnalyticsService:
     async def get_performance_trends(self, days: int = 30) -> Dict[str, Any]:
         """Get performance trends over time"""
         try:
-            end_date = datetime.utcnow()
+            end_date = datetime.now(timezone.utc)
             start_date = end_date - timedelta(days=days)
             
             trends = {

@@ -13,18 +13,40 @@ from pathlib import Path
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+from openai import AsyncOpenAI
+import anthropic
 
-# Import our existing components
-from src.api.main import app as api_app
-from api_client import CosmicCouncilAPIClient, APIException
-
-# Configure logging
+# Configure logging first
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Import our existing components
+try:
+    from src.api.main import app as api_app
+except ImportError:
+    # API app not available, continue without it
+    api_app = None
+    logger.warning("API app not available, continuing without it")
+
+try:
+    from src.applications.api_client import CosmicCouncilAPIClient, APIException
+except ImportError:
+    # Fallback: create a simple client class if not available
+    logger.warning("API client not available, using fallback")
+    class APIException(Exception):
+        pass
+    
+    class CosmicCouncilAPIClient:
+        def __init__(self, *args, **kwargs):
+            pass
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, *args):
+            pass
 
 # Create FastAPI application for web interface
 app = FastAPI(
@@ -43,15 +65,24 @@ app.add_middleware(
 )
 
 # Setup static files and templates
-static_dir = Path(__file__).parent / "static"
+# Use project root static directory (where CSS files are)
+project_root = Path(__file__).parent.parent.parent.parent
+static_dir = project_root / "static"
 templates_dir = Path(__file__).parent / "templates"
+react_build_dir = project_root / "static" / "react"
 
 # Create directories if they don't exist
 static_dir.mkdir(exist_ok=True)
 templates_dir.mkdir(exist_ok=True)
+react_build_dir.mkdir(parents=True, exist_ok=True)
 
-# Mount static files
+# Mount static files (from project root static directory)
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+# Mount React build assets (Vite outputs to assets/ subdirectory)
+react_assets_dir = react_build_dir / "assets"
+if react_assets_dir.exists():
+    app.mount("/assets", StaticFiles(directory=str(react_assets_dir)), name="react-assets")
 
 # Setup templates
 templates = Jinja2Templates(directory=str(templates_dir))
@@ -124,16 +155,49 @@ class SolutionFormData(BaseModel):
     estimated_duration: Optional[int] = None
     risk_level: Optional[str] = None
 
+class LLMRequest(BaseModel):
+    """Simple LLM proxy request body"""
+    provider: str
+    model: str
+    api_key: str
+    prompt: str
+    temperature: float = 0.7
+
+MODEL_CATALOG = [
+    {"provider": "openai", "model": "gpt-4.1", "label": "OpenAI - GPT-4.1"},
+    {"provider": "openai", "model": "gpt-4o-mini", "label": "OpenAI - GPT-4o Mini"},
+    {"provider": "openai", "model": "gpt-3.5-turbo", "label": "OpenAI - GPT-3.5 Turbo"},
+    {"provider": "anthropic", "model": "claude-3-5-sonnet-20240620", "label": "Anthropic - Claude 3.5 Sonnet"},
+    {"provider": "anthropic", "model": "claude-3-opus-20240229", "label": "Anthropic - Claude 3 Opus"},
+]
+
 # Web interface routes
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Home page with dashboard overview"""
+    """Home page - serve React app if built, otherwise fallback to template"""
+    react_index = react_build_dir / "index.html"
+    if react_index.exists():
+        # Read and return the React index.html
+        with open(react_index, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    # Fallback to template if React not built yet
     return templates.TemplateResponse("index.html", {
         "request": request,
         "title": "Cosmic Council - Problem Solving Framework",
         "page": "home"
     })
+
+@app.get("/react", response_class=HTMLResponse)
+async def react_app(request: Request):
+    """Explicit React app route"""
+    react_index = react_build_dir / "index.html"
+    if react_index.exists():
+        with open(react_index, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    raise HTTPException(status_code=404, detail="React app not built. Run 'npm run build' in the frontend directory.")
 
 @app.get("/problems", response_class=HTMLResponse)
 async def problems_page(request: Request):
@@ -197,6 +261,67 @@ async def perpetual_page(request: Request):
         "title": "Perpetual Thinking - Cosmic Council",
         "page": "perpetual"
     })
+
+@app.get("/llm-wrapper", response_class=HTMLResponse)
+async def llm_wrapper_page():
+    """Serve the lightweight LLM wrapper page"""
+    wrapper_path = Path(__file__).parent / "web_llm_wrapper.html"
+    if not wrapper_path.exists():
+        raise HTTPException(status_code=404, detail="LLM wrapper page not found")
+    return FileResponse(str(wrapper_path))
+
+@app.get("/api/llm/models")
+async def list_llm_models():
+    """List supported LLM models for the dropdown"""
+    return {"models": MODEL_CATALOG}
+
+@app.post("/api/llm/infer")
+async def proxy_llm(request: LLMRequest):
+    """Proxy a prompt to the selected LLM provider using provided API key"""
+    provider = request.provider.lower()
+
+    if provider == "openai":
+        try:
+            client = AsyncOpenAI(api_key=request.api_key)
+            response = await client.chat.completions.create(
+                model=request.model,
+                messages=[{"role": "user", "content": request.prompt}],
+                temperature=request.temperature,
+                max_tokens=500,
+            )
+            message = response.choices[0].message.content or ""
+            return {
+                "output": message,
+                "provider": provider,
+                "model": request.model,
+                "usage": getattr(response, "usage", None),
+            }
+        except Exception as exc:
+            logger.error("OpenAI proxy error: %s", exc)
+            raise HTTPException(status_code=400, detail=f"OpenAI error: {exc}") from exc
+
+    if provider == "anthropic":
+        try:
+            client = anthropic.AsyncAnthropic(api_key=request.api_key)
+            response = await client.messages.create(
+                model=request.model,
+                max_tokens=500,
+                temperature=request.temperature,
+                messages=[{"role": "user", "content": request.prompt}],
+            )
+            content_blocks = getattr(response, "content", [])
+            text_chunks = [block.text for block in content_blocks if hasattr(block, "text")]
+            return {
+                "output": "".join(text_chunks),
+                "provider": provider,
+                "model": request.model,
+                "usage": getattr(response, "usage", None),
+            }
+        except Exception as exc:
+            logger.error("Anthropic proxy error: %s", exc)
+            raise HTTPException(status_code=400, detail=f"Anthropic error: {exc}") from exc
+
+    raise HTTPException(status_code=400, detail=f"Unsupported provider: {provider}")
 
 # API proxy endpoints for web interface
 
@@ -363,7 +488,7 @@ async def get_analytics_web():
         logger.error(f"Error getting analytics: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.get("/api/web/enterprises")
+@app.get("/api/web/supra_enterprise")
 async def get_enterprises_web():
     """Get enterprises via web interface"""
     try:

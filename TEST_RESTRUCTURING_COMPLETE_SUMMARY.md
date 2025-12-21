@@ -30,7 +30,7 @@ tests_new/
 │   │   ├── test_cycles.py         # Cycle API tests
 │   │   └── test_solutions.py      # Solution API tests
 │   ├── agents/                    # Agent tests
-│   │   ├── test_enterprises/      # Enterprise agent tests
+│   │   ├── test_supra_enterprise/      # Enterprise agent tests
 │   │   │   ├── test_red_owl.py    # Red Owl agent tests
 │   │   │   ├── test_orange_orangutan.py
 │   │   │   ├── test_yellow_honeybee.py

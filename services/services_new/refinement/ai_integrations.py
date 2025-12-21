@@ -6,7 +6,7 @@ Implements actual AI integrations for LLMs, RAG, optimization, and other toolcha
 import asyncio
 import logging
 from typing import Dict, Any, Optional, List, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import os
 from dataclasses import dataclass
@@ -83,7 +83,7 @@ class OpenAIProvider(AIProvider):
         temperature: float = 0.7
     ) -> AIResponse:
         """Generate response using OpenAI GPT."""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Build messages
@@ -100,7 +100,7 @@ class OpenAIProvider(AIProvider):
             )
             
             # Calculate metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
             # Estimate cost (rough approximation)
@@ -127,7 +127,7 @@ class OpenAIProvider(AIProvider):
                 content="",
                 confidence=0.0,
                 cost_usd=0.0,
-                latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 metadata={},
                 error=str(e)
             )
@@ -168,7 +168,7 @@ class AnthropicProvider(AIProvider):
         temperature: float = 0.7
     ) -> AIResponse:
         """Generate response using Anthropic Claude."""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Build message
@@ -185,7 +185,7 @@ class AnthropicProvider(AIProvider):
             )
             
             # Calculate metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
             # Estimate cost
@@ -212,7 +212,7 @@ class AnthropicProvider(AIProvider):
                 content="",
                 confidence=0.0,
                 cost_usd=0.0,
-                latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 metadata={},
                 error=str(e)
             )
@@ -354,7 +354,7 @@ class RAGProvider:
         Returns:
             AI response with retrieved context
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Check if we have a working vector store
@@ -364,7 +364,7 @@ class RAGProvider:
                     content=f"RAG system not available. Question: {question}",
                     confidence=0.5,
                     cost_usd=0.0,
-                    latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                    latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                     metadata={"fallback": True, "reason": "no_vector_store"}
                 )
             
@@ -383,7 +383,7 @@ class RAGProvider:
                     result = f"No relevant documents found for: {question}"
             
             # Calculate metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
             return AIResponse(
@@ -403,7 +403,7 @@ class RAGProvider:
                 content="",
                 confidence=0.0,
                 cost_usd=0.0,
-                latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 metadata={},
                 error=str(e)
             )
@@ -433,7 +433,7 @@ class GraphAnalysisProvider:
         Returns:
             Analysis results
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Create graph
@@ -464,7 +464,7 @@ class GraphAnalysisProvider:
             insights = self._generate_graph_insights(analysis, problem_statement)
             
             # Calculate metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
             return AIResponse(
@@ -481,7 +481,7 @@ class GraphAnalysisProvider:
                 content="",
                 confidence=0.0,
                 cost_usd=0.0,
-                latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 metadata={},
                 error=str(e)
             )
@@ -559,7 +559,7 @@ class OptimizationProvider:
         Returns:
             Optimization results
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             if problem_type == "linear":
@@ -570,7 +570,7 @@ class OptimizationProvider:
                 raise ValueError(f"Unsupported problem type: {problem_type}")
             
             # Calculate metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
             return AIResponse(
@@ -587,7 +587,7 @@ class OptimizationProvider:
                 content="",
                 confidence=0.0,
                 cost_usd=0.0,
-                latency_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                latency_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 metadata={},
                 error=str(e)
             )

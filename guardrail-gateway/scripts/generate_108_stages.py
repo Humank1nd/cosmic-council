@@ -6,7 +6,7 @@ Generates all 108 stages and transitions with proper codes and metadata
 
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Any
 
 # Enterprise definitions
@@ -189,7 +189,7 @@ def generate_cycle_template() -> Dict[str, Any]:
         "description": "The complete Cosmic Council fractal cycle with 6 enterprises × 6 squads × 3 redundancy passes",
         "version": "1.0.0",
         "active": True,
-        "created_at": datetime.utcnow().isoformat()
+        "created_at": datetime.now(timezone.utc).isoformat()
     }
 
 def generate_n8n_templates() -> List[Dict[str, Any]]:

@@ -9,7 +9,7 @@ import hashlib
 import hmac
 import time
 from typing import Dict, Any, Optional, List, Set, Union
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 from enum import Enum
 import json
@@ -65,7 +65,7 @@ class User:
     role: UserRole
     permissions: Set[Permission] = field(default_factory=set)
     is_active: bool = True
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_login: Optional[datetime] = None
     failed_login_attempts: int = 0
     locked_until: Optional[datetime] = None
@@ -80,7 +80,7 @@ class APIKey:
     user_id: str
     permissions: Set[Permission] = field(default_factory=set)
     is_active: bool = True
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_used: Optional[datetime] = None
     expires_at: Optional[datetime] = None
 
@@ -94,7 +94,7 @@ class SecurityContext:
     request_id: str = ""
     ip_address: str = ""
     user_agent: str = ""
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Pydantic models for validation
@@ -295,11 +295,11 @@ class SecurityManager:
     
     def create_access_token(self, user_id: str, permissions: Set[Permission]) -> str:
         """Create JWT access token."""
-        expire = datetime.utcnow() + timedelta(minutes=self.access_token_expire_minutes)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=self.access_token_expire_minutes)
         payload = {
             "sub": user_id,
             "exp": expire,
-            "iat": datetime.utcnow(),
+            "iat": datetime.now(timezone.utc),
             "permissions": [p.value for p in permissions]
         }
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
@@ -327,7 +327,7 @@ class SecurityManager:
             return None
         
         # Check if user is locked
-        if user.locked_until and user.locked_until > datetime.utcnow():
+        if user.locked_until and user.locked_until > datetime.now(timezone.utc):
             self.logger.warning(f"Login attempt for locked user: {username}")
             return None
         
@@ -343,7 +343,7 @@ class SecurityManager:
             
             # Lock user if max attempts exceeded
             if user.failed_login_attempts >= self.config["max_login_attempts"]:
-                user.locked_until = datetime.utcnow() + timedelta(
+                user.locked_until = datetime.now(timezone.utc) + timedelta(
                     minutes=self.config["lockout_duration_minutes"]
                 )
                 self.logger.warning(f"User {username} locked due to failed login attempts")
@@ -353,7 +353,7 @@ class SecurityManager:
         # Reset failed login attempts on successful login
         user.failed_login_attempts = 0
         user.locked_until = None
-        user.last_login = datetime.utcnow()
+        user.last_login = datetime.now(timezone.utc)
         
         return user
     
@@ -437,7 +437,7 @@ class SecurityManager:
             name=name,
             user_id=user_id,
             permissions=permissions,
-            expires_at=datetime.utcnow() + timedelta(days=self.config["api_key_expire_days"])
+            expires_at=datetime.now(timezone.utc) + timedelta(days=self.config["api_key_expire_days"])
         )
         
         # Store API key
@@ -459,11 +459,11 @@ class SecurityManager:
             return None
         
         # Check if API key has expired
-        if api_key_record.expires_at and api_key_record.expires_at < datetime.utcnow():
+        if api_key_record.expires_at and api_key_record.expires_at < datetime.now(timezone.utc):
             return None
         
         # Update last used
-        api_key_record.last_used = datetime.utcnow()
+        api_key_record.last_used = datetime.now(timezone.utc)
         
         return api_key_record
     

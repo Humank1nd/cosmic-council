@@ -50,7 +50,7 @@ Root endpoint with API information
       "solutions": "/api/v1/solutions",
       "workflows": "/api/v1/workflows",
       "analytics": "/api/v1/analytics",
-      "enterprises": "/api/v1/enterprises"
+      "enterprises": "/api/v1/supra_enterprise"
     }
   }
 }
@@ -253,7 +253,7 @@ Get solution analytics and statistics
 
 ### Enterprise Management
 
-#### GET /api/v1/enterprises
+#### GET /api/v1/supra_enterprise
 Get all enterprises
 ```json
 {

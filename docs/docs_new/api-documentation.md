@@ -396,7 +396,7 @@ GET /analytics/solutions
 #### Get Enterprise Information
 
 ```http
-GET /enterprises
+GET /supra_enterprise
 ```
 
 **Response:**
@@ -423,7 +423,7 @@ GET /enterprises
 #### Get Enterprise Performance
 
 ```http
-GET /enterprises/{enterprise_id}/performance
+GET /supra_enterprise/{enterprise_id}/performance
 ```
 
 **Response:**

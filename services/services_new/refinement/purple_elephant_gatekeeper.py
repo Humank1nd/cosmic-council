@@ -9,7 +9,7 @@ import asyncio
 import json
 import uuid
 from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from enum import Enum
 
@@ -140,7 +140,7 @@ class ReflectorAgent:
             empathy_insights=empathy_insights,
             sector_analysis=sector_analysis,
             confidence_indicators=confidence_indicators,
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
         
         # Store in database
@@ -939,7 +939,7 @@ class AdaptiveThresholds:
             "actual_alignment": alignment,
             "outcome": decision_outcome,
             "quality": actual_quality,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         })
         
         # Adjust thresholds based on outcome
@@ -1050,7 +1050,7 @@ class GatekeeperAgent:
             routing_decision=routing_decision,
             routing_target=routing_target,
             rationale=rationale,
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
         
         # Store decision in database using real database integration

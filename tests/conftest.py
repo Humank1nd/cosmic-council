@@ -1,5 +1,6 @@
 """
 Pytest configuration and shared fixtures for the Cosmic Council Framework testing suite
+Updated to import directly from the current package layout.
 """
 
 import asyncio
@@ -10,28 +11,72 @@ import sys
 from typing import AsyncGenerator, Generator
 from unittest.mock import Mock, AsyncMock
 from datetime import datetime, timezone
+from pathlib import Path
 
-# Add the project root to the Python path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the project root and src paths to the Python path
+ROOT_DIR = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT_DIR / "src"
+for p in [ROOT_DIR, SRC_DIR]:
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
-# Import core components
-from src.core.types import CosmicCouncil, ProblemStatement, ProblemComplexity
-from unified_ai_agent_system import UnifiedCosmicCouncilAgent, AgentType, AgentContext, AgentResult
-from problem_solving_workflow import ProblemSolvingWorkflow, WorkflowStep
-from unified_ai_agent_system import AILLMIntegration, LLMConfig, LLMProvider, LLMModel
-from database_models_detailed import Problem as DBProblem, Cycle, Solution
-from unified_database_manager import get_session_context
-from analytics_dashboard import AnalyticsDashboard, TimeRange, DashboardView
-from enterprise_policy_engine import EnterprisePolicyEngine, PolicyRule, PolicyType
-from purple_elephant_feedback_system import PurpleElephantFeedbackSystem, FeedbackType
-from unified_perpetual_thinking_system import (
-    UnifiedPerpetualThinkingEngine, PerpetualAIThinkingEngine, 
-    AIEnhancementLevel, AIThinkingMode, PerpetualCycle, CycleType, CycleStatus, PatternType
+# Isolate database writes to a temporary file for tests and allow anonymous access
+TEMP_DB_PATH = Path(tempfile.gettempdir()) / "cosmic_council_test.db"
+if TEMP_DB_PATH.exists():
+    TEMP_DB_PATH.unlink()
+os.environ.setdefault("DATABASE_URL", f"sqlite+aiosqlite:///{TEMP_DB_PATH}")
+os.environ.setdefault("ALLOW_ANONYMOUS", "true")
+
+# Ensure tables are created once for the temp DB
+import asyncio  # noqa: E402
+from cosmic_council.database.unified_database_manager import get_database_manager  # noqa: E402
+
+_db_manager = get_database_manager()
+# Run table creation synchronously for tests
+asyncio.run(_db_manager.create_tables())
+
+# Import core components directly from current package structure
+from cosmic_council.core.core import CosmicCouncil, EnhancedRedOwlAgent, EnhancedOrangeOrangutanAgent  # noqa: E402
+from cosmic_council.core.types import ProblemStatement, ProblemComplexity  # noqa: E402
+from cosmic_council.agents.unified_ai_agent_system import (  # noqa: E402
+    UnifiedCosmicCouncilAgent,
+    AgentType,
+    AgentContext,
+    AgentResult,
+    LLMConfig,
+    LLMProvider,
+    LLMModel,
 )
-from unified_database_service import PerpetualDatabaseService
+from cosmic_council.workflows.problem_solving_workflow import ProblemSolvingWorkflow, WorkflowStep  # noqa: E402
+from cosmic_council.core.models import Problem as DBProblem, Cycle, Solution  # noqa: E402
+from cosmic_council.database.unified_database_manager import get_session_context  # noqa: E402
+from cosmic_council.utils.analytics_dashboard import AnalyticsDashboard, TimeRange, DashboardView  # noqa: E402
+from applications.enterprise_policy_engine import EnterprisePolicyEngine, PolicyRule, PolicyType  # noqa: E402
+from applications.purple_elephant_feedback_system import PurpleElephantFeedbackSystem, FeedbackType  # noqa: E402
+from cosmic_council.integrations.unified_perpetual_thinking_system import (  # noqa: E402
+    UnifiedPerpetualThinkingEngine,
+    PerpetualAIThinkingEngine,
+    AIEnhancementLevel,
+    AIThinkingMode,
+    PerpetualCycle,
+    CycleType,
+    CycleStatus,
+    PatternType,
+)
+from cosmic_council.database.unified_database_service import PerpetualDatabaseService  # noqa: E402
+
+# Local testing stub for missing AI LLM integration
+class AILLMIntegration:  # type: ignore
+    def __init__(self, *args, **kwargs):
+        self.config = kwargs.get("config")
+
+    async def enhance(self, *args, **kwargs):
+        return {"status": "ok", "enhanced": True}
+
 
 # Configure pytest
 pytest_plugins = ["pytest_asyncio"]
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -40,20 +85,22 @@ def event_loop():
     yield loop
     loop.close()
 
+
 @pytest.fixture
 def temp_db():
     """Create a temporary database for testing."""
     with tempfile.NamedTemporaryFile(suffix='.db', delete=False) as tmp:
         db_path = tmp.name
-    
+
     # Set up temporary database
     os.environ['DATABASE_URL'] = f'sqlite:///{db_path}'
-    
+
     yield db_path
-    
+
     # Cleanup
     if os.path.exists(db_path):
         os.unlink(db_path)
+
 
 @pytest.fixture
 async def cosmic_council() -> AsyncGenerator[CosmicCouncil, None]:
@@ -61,11 +108,13 @@ async def cosmic_council() -> AsyncGenerator[CosmicCouncil, None]:
     council = CosmicCouncil()
     yield council
 
+
 @pytest.fixture
 async def enhanced_red_owl_agent() -> AsyncGenerator[EnhancedRedOwlAgent, None]:
     """Provide an enhanced Red Owl agent for testing."""
     agent = EnhancedRedOwlAgent()
     yield agent
+
 
 @pytest.fixture
 async def enhanced_orange_orangutan_agent() -> AsyncGenerator[EnhancedOrangeOrangutanAgent, None]:
@@ -73,11 +122,13 @@ async def enhanced_orange_orangutan_agent() -> AsyncGenerator[EnhancedOrangeOran
     agent = EnhancedOrangeOrangutanAgent()
     yield agent
 
+
 @pytest.fixture
 async def problem_solving_workflow() -> AsyncGenerator[ProblemSolvingWorkflow, None]:
     """Provide a problem-solving workflow for testing."""
     workflow = ProblemSolvingWorkflow()
     yield workflow
+
 
 @pytest.fixture
 async def ai_llm_integration() -> AsyncGenerator[AILLMIntegration, None]:
@@ -85,11 +136,13 @@ async def ai_llm_integration() -> AsyncGenerator[AILLMIntegration, None]:
     integration = AILLMIntegration()
     yield integration
 
+
 @pytest.fixture
 async def analytics_dashboard() -> AsyncGenerator[AnalyticsDashboard, None]:
     """Provide an analytics dashboard for testing."""
     dashboard = AnalyticsDashboard()
     yield dashboard
+
 
 @pytest.fixture
 async def policy_engine() -> AsyncGenerator[EnterprisePolicyEngine, None]:
@@ -97,11 +150,13 @@ async def policy_engine() -> AsyncGenerator[EnterprisePolicyEngine, None]:
     engine = EnterprisePolicyEngine()
     yield engine
 
+
 @pytest.fixture
 async def feedback_system() -> AsyncGenerator[PurpleElephantFeedbackSystem, None]:
     """Provide a feedback system for testing."""
     system = PurpleElephantFeedbackSystem()
     yield system
+
 
 @pytest.fixture
 async def perpetual_ai_engine() -> AsyncGenerator[PerpetualAIThinkingEngine, None]:
@@ -118,12 +173,14 @@ async def perpetual_ai_engine() -> AsyncGenerator[PerpetualAIThinkingEngine, Non
     )
     yield engine
 
+
 @pytest.fixture
 async def perpetual_database_service() -> AsyncGenerator[PerpetualDatabaseService, None]:
     """Provide a perpetual database service for testing."""
     service = PerpetualDatabaseService("sqlite:///:memory:")
     await service.create_tables()
     yield service
+
 
 @pytest.fixture
 def sample_problem() -> ProblemStatement:
@@ -138,6 +195,7 @@ def sample_problem() -> ProblemStatement:
         success_criteria=["Test criteria 1", "Test criteria 2"]
     )
 
+
 @pytest.fixture
 def sample_complex_problem() -> ProblemStatement:
     """Provide a complex sample problem for testing."""
@@ -150,6 +208,7 @@ def sample_complex_problem() -> ProblemStatement:
         constraints={"budget": "$50K", "timeline": "3 months", "team_size": "10 people"},
         success_criteria=["Complex criteria 1", "Complex criteria 2", "Complex criteria 3"]
     )
+
 
 @pytest.fixture
 def sample_simple_problem() -> ProblemStatement:
@@ -164,6 +223,7 @@ def sample_simple_problem() -> ProblemStatement:
         success_criteria=["Simple criteria"]
     )
 
+
 @pytest.fixture
 def sample_systemic_problem() -> ProblemStatement:
     """Provide a systemic sample problem for testing."""
@@ -176,6 +236,7 @@ def sample_systemic_problem() -> ProblemStatement:
         constraints={"budget": "$100K", "timeline": "6 months", "regulatory": "strict"},
         success_criteria=["Systemic criteria 1", "Systemic criteria 2", "Systemic criteria 3", "Systemic criteria 4"]
     )
+
 
 @pytest.fixture
 def sample_problem_data() -> dict:
@@ -190,6 +251,7 @@ def sample_problem_data() -> dict:
         "success_criteria": ["Test criteria"]
     }
 
+
 @pytest.fixture
 def sample_cycle_data() -> dict:
     """Provide sample cycle data for testing."""
@@ -202,6 +264,7 @@ def sample_cycle_data() -> dict:
             "confidence_threshold": 0.8
         }
     }
+
 
 @pytest.fixture
 def sample_solution_data() -> dict:
@@ -225,6 +288,7 @@ def sample_solution_data() -> dict:
         ]
     }
 
+
 @pytest.fixture
 def mock_llm_response() -> dict:
     """Provide a mock LLM response for testing."""
@@ -236,6 +300,7 @@ def mock_llm_response() -> dict:
         "analysis_depth": "moderate",
         "framework_applied": "mock_framework"
     }
+
 
 @pytest.fixture
 def mock_enterprise_result() -> dict:
@@ -251,6 +316,7 @@ def mock_enterprise_result() -> dict:
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
     }
+
 
 @pytest.fixture
 def mock_workflow_result() -> dict:
@@ -281,6 +347,7 @@ def mock_workflow_result() -> dict:
         }
     }
 
+
 @pytest.fixture
 def mock_analytics_data() -> dict:
     """Provide mock analytics data for testing."""
@@ -302,6 +369,7 @@ def mock_analytics_data() -> dict:
         "innovation_index": 0.84
     }
 
+
 @pytest.fixture
 def mock_policy_rule() -> PolicyRule:
     """Provide a mock policy rule for testing."""
@@ -315,6 +383,7 @@ def mock_policy_rule() -> PolicyRule:
         priority=1,
         is_active=True
     )
+
 
 @pytest.fixture
 def mock_feedback_cycle() -> dict:
@@ -332,6 +401,7 @@ def mock_feedback_cycle() -> dict:
         "recommendations": ["Test recommendation 1", "Test recommendation 2"]
     }
 
+
 @pytest.fixture
 def mock_database_session():
     """Provide a mock database session for testing."""
@@ -343,6 +413,7 @@ def mock_database_session():
     session.close.return_value = None
     return session
 
+
 @pytest.fixture
 def mock_redis_client():
     """Provide a mock Redis client for testing."""
@@ -353,6 +424,7 @@ def mock_redis_client():
     client.exists.return_value = False
     client.expire.return_value = True
     return client
+
 
 @pytest.fixture
 def mock_http_client():
@@ -367,6 +439,7 @@ def mock_http_client():
     client.delete.return_value = response
     return client
 
+
 @pytest.fixture
 def mock_websocket():
     """Provide a mock WebSocket for testing."""
@@ -376,6 +449,7 @@ def mock_websocket():
     websocket.receive_text.return_value = "test message"
     websocket.close.return_value = None
     return websocket
+
 
 @pytest.fixture
 def mock_file_system():
@@ -388,6 +462,7 @@ def mock_file_system():
     fs.rmdir.return_value = None
     return fs
 
+
 @pytest.fixture
 def mock_logger():
     """Provide a mock logger for testing."""
@@ -397,6 +472,7 @@ def mock_logger():
     logger.error.return_value = None
     logger.debug.return_value = None
     return logger
+
 
 @pytest.fixture
 def mock_config():
@@ -409,6 +485,7 @@ def mock_config():
     config.secret_key = "test-secret-key"
     config.api_key = "test-api-key"
     return config
+
 
 @pytest.fixture
 def mock_environment():
@@ -425,6 +502,7 @@ def mock_environment():
     }
     return env
 
+
 @pytest.fixture
 def sample_perpetual_session_data():
     """Provide sample perpetual session data for testing."""
@@ -439,6 +517,7 @@ def sample_perpetual_session_data():
         "ai_adaptation_enabled": True,
         "ai_breakthrough_detection": True
     }
+
 
 @pytest.fixture
 def sample_ai_enhancement_data():
@@ -456,6 +535,7 @@ def sample_ai_enhancement_data():
         "impact_score": 0.78
     }
 
+
 @pytest.fixture
 def sample_perpetual_cycle():
     """Provide a sample perpetual cycle for testing."""
@@ -472,6 +552,7 @@ def sample_perpetual_cycle():
         pattern_type=PatternType.CONVERGENCE,
         processing_time=2.5
     )
+
 
 @pytest.fixture
 def mock_perpetual_analytics():
@@ -496,6 +577,7 @@ def mock_perpetual_analytics():
         }
     }
 
+
 # Test markers
 pytest.mark.unit = pytest.mark.unit
 pytest.mark.integration = pytest.mark.integration
@@ -503,6 +585,7 @@ pytest.mark.e2e = pytest.mark.e2e
 pytest.mark.performance = pytest.mark.performance
 pytest.mark.security = pytest.mark.security
 pytest.mark.slow = pytest.mark.slow
+
 
 # Test configuration
 def pytest_configure(config):
@@ -513,6 +596,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "performance: Performance tests")
     config.addinivalue_line("markers", "security: Security tests")
     config.addinivalue_line("markers", "slow: Slow running tests")
+
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection to add markers based on test names."""

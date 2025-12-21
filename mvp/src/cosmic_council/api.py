@@ -389,7 +389,7 @@ async def get_stats(db: ProductionDatabase = Depends(get_database)):
         raise HTTPException(status_code=500, detail="Failed to retrieve statistics")
 
 
-@app.get("/enterprises", response_model=List[Dict[str, str]])
+@app.get("/supra_enterprise", response_model=List[Dict[str, str]])
 async def get_enterprises():
     """Get list of available enterprises."""
     return [

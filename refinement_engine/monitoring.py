@@ -7,7 +7,7 @@ import time
 import asyncio
 import logging
 from typing import Dict, Any, Optional, List, Callable
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 from enum import Enum
 import json
@@ -350,7 +350,7 @@ class MetricsCollector:
                 duration_ms=duration * 1000,
                 memory_usage_mb=psutil.Process().memory_info().rss / 1024 / 1024,
                 cpu_usage_percent=psutil.Process().cpu_percent(),
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 user_id=user_id
             )
             
@@ -502,7 +502,7 @@ class MetricsCollector:
             
             # Store system metrics
             system_metrics = SystemMetrics(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_percent=cpu_percent,
                 memory_percent=memory.percent,
                 disk_usage_percent=(disk.used / disk.total) * 100,
@@ -530,7 +530,7 @@ class MetricsCollector:
     def get_metrics_summary(self) -> Dict[str, Any]:
         """Get summary of all metrics."""
         summary = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "performance_metrics": {
                 "total_requests": len(self.performance_history),
                 "average_response_time": self._calculate_average_response_time(),

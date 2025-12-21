@@ -3,7 +3,7 @@ Cycle domain models.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from .base import BaseModel
 from ..types import CycleStatus, EnterpriseType
 
@@ -33,19 +33,19 @@ class Cycle(BaseModel):
     def start(self) -> None:
         """Start the cycle"""
         self.status = CycleStatus.RUNNING
-        self.started_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.started_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(timezone.utc)
     
     def complete(self) -> None:
         """Complete the cycle"""
         self.status = CycleStatus.COMPLETED
-        self.completed_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.completed_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(timezone.utc)
     
     def fail(self, error_message: str) -> None:
         """Mark cycle as failed"""
         self.status = CycleStatus.FAILED
-        self.completed_at = datetime.utcnow()
+        self.completed_at = datetime.now(timezone.utc)
         self.update_metadata('error_message', error_message)
     
     def to_dict(self) -> Dict[str, Any]:

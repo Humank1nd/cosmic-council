@@ -218,7 +218,7 @@ echo "======================="
 
 # Test 10: Check enterprises endpoint
 echo "10. Checking enterprises endpoint..."
-ENTERPRISES_RESPONSE=$(curl -s "$GATEWAY_URL/v1/enterprises")
+ENTERPRISES_RESPONSE=$(curl -s "$GATEWAY_URL/v1/supra_enterprise")
 echo "$ENTERPRISES_RESPONSE" | jq '.'
 echo ""
 

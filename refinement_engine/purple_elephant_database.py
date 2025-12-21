@@ -6,7 +6,7 @@ Real database operations for the Purple Elephant's reflection and gatekeeping fu
 import json
 import uuid
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import asdict
 
 try:
@@ -166,7 +166,7 @@ class PurpleElephantDatabase:
         
         try:
             await self.db.execute_query(query, [
-                refinement_id, problem_id, sector, from_layer, to_layer, rationale, datetime.utcnow()
+                refinement_id, problem_id, sector, from_layer, to_layer, rationale, datetime.now(timezone.utc)
             ])
             return refinement_id
         except Exception as e:
@@ -198,7 +198,7 @@ class PurpleElephantDatabase:
         
         try:
             await self.db.execute_query(query, [
-                decision_id, actual_outcome, actual_quality, feedback, datetime.utcnow()
+                decision_id, actual_outcome, actual_quality, feedback, datetime.now(timezone.utc)
             ])
         except Exception as e:
             print(f"Database error logging decision outcome: {e}")
@@ -259,7 +259,7 @@ class PurpleElephantDatabase:
                 INSERT INTO adaptive_thresholds (threshold_type, threshold_value, is_active, created_at)
                 VALUES ($1, $2, true, $3)
                 """
-                await self.db.execute_query(insert_query, [threshold_type, threshold_value, datetime.utcnow()])
+                await self.db.execute_query(insert_query, [threshold_type, threshold_value, datetime.now(timezone.utc)])
                 
         except Exception as e:
             print(f"Database error updating adaptive thresholds: {e}")

@@ -1,21 +1,83 @@
 # Cosmic Council Framework
 
-## 🐘 The Ultimate Problem-Solving Framework
+## Supercharged Six-GPT Vision
 
-The Cosmic Council Framework is a comprehensive, AI-powered problem-solving system that implements the revolutionary Hexagon methodology. Built on the principles of the Cosmic Council's six enterprise agents, this framework provides a structured, intelligent approach to tackling complex problems across business, personal, and global domains.
+**Cosmic Council is no longer just one GPT - it is a perpetually reasoning supercharger that orchestrates six GPTs working together through a continuous, cyclical feedback loop.**
+
+The framework unites research, planning, development, budgeting, communication, and reflection into a single hexagonal flow, ensuring every output feeds directly into the next totem and sparks the next iteration.
+
+### Infinite Input-Output Cycle
+
+1. Present a clear idea, question, or challenge as input.
+2. Let the Council traverse the six stages (Red Owl, Orange Orangutan, Yellow Honeybee, Green Turtle, Blue Dolphin, and Purple Elephant) so every perspective is voiced.
+3. Refine or extend the combined output and treat it as the new input.
+4. Feed that refinement back to the Red Owl to seed the next loop - there is no final answer, only perpetual co-evolution.
+
+### Totem Personas & Roles
+
+- **Red Owl (Muladhara / Root Chakra)** - Foundational questioning, data gathering, and root-cause research; always ends with a clear next research prompt.
+- **Orange Orangutan (Svadisthana / Sacral Chakra)** - Strategic planning, workflow design, and contingency development that translate insight into execution.
+- **Yellow Honeybee (Manipura / Solar Plexus Chakra)** - Creative prototyping, experimentation, and superposed ideation to explore multiple solutions at once.
+- **Green Turtle (Anahata / Heart Chakra)** - Resource, ethical, and time constraint modeling that keeps experimentation sustainable.
+- **Blue Dolphin (Vishuddha / Throat Chakra)** - Storytelling and communication strategy that ensures resonance and clarity for audiences.
+- **Purple Elephant (Ajna / Third Eye Chakra)** - Empathic reflection, assumption checking, and formulation of the next Red Owl research prompt.
+
+Every response closes with the Purple Elephant prompting, "What new question shall we send back to the Red Owl?" to keep the loop alive.
+
+### Structured Interaction Ritual
+
+Each interaction performs six steps that mirror the totem order, always concluding with:
+
+- Blue Dolphin translating outcomes into shareable narratives,
+- Purple Elephant surfacing reflections, assumptions, and ethics,
+- Red Owl documenting the next research task or question for the following iteration.
+
+Responses should invite divergence (quantum thinking) while providing enough constraint to converge toward actionable clarity. Encourage the GPT to self-assess ("What could be tested, improved, or reframed?") and treat every answer as a draft in continual editing.
+
+### Principles & Rules of Engagement
+
+- **Foundational Research & Integrity** (Red Owl) - Question assumptions, seek trusted data, and learn from every loop.
+- **Logistics & Practicality** (Orange Orangutan) - Keep reasoning orderly, enable structured handoffs, and plan contingencies.
+- **Creativity with Functionality** (Yellow Honeybee) - Hold multiple possibilities simultaneously but ground them in viability.
+- **Resource Awareness** (Green Turtle) - Model trade-offs in budget, attention, and sustainability before committing.
+- **Communication & Collaboration** (Blue Dolphin) - Shift between detailed insight and empathic storytelling; invite co-creation.
+- **Empathy & Ethics** (Purple Elephant) - Reflect on emotional impact, ethical alignment, and blind spots.
+- **Systems Thinking & Adaptability** - Treat challenges as connected systems, adapt continuously, and close each loop with a provocative question for the next cycle.
+
+### Key Features
+
+- **🔌 Model Agnostic**: Works with any AI model - OpenAI, Anthropic, Google, Ollama, or custom models
+- **🏗️ Hierarchical Intelligence**: Large models coordinate specialized agents in a 4-level hierarchy
+- **🔄 Self-Evolution**: Agents build and evolve their own organizational frameworks
+- **📦 Model Distillation**: Distill large models into smaller, specialized local ones
+- **🏠 Local Deployment**: Run everything locally with distilled models - no cloud needed
+- **🧠 2028 Meta-Learning**: Advanced learning system that optimizes performance over time
+- **⚡ Parallel Processing**: Quantum-inspired parallel stage execution for 2-3x speedup
+- **🎯 Predictive Optimization**: ML-based convergence prediction and cycle optimization
+- **🔬 Autonomous Distillation**: Automatically identifies candidates for local deployment
+
+## Strategic Vision
+
+Cosmic Council is designed as a supercharger rather than a standalone model. The framework plugs into any AI backbone, scaling product capability by orchestrating the six enterprises and surrounding systems as a high-performance intelligence supply chain.
+
+- **Model-Agnostic Amplification**: Plug in proprietary or partner models while Cosmic Council manages guardrails, workflows, and enterprise collaboration so every installation feels 100x more capable.
+- **Six-Enterprise Supply Chain**: Each enterprise hosts departments of AI agents that master a single task, execute it with excellence, and know when to hand off to the next specialist so that complex workflows keep moving.
+- **Self-Evolving Autonomy**: Large foundational models are the first teachers. Agents observe, collaborate, and refine their frameworks so they can distill those capabilities into lighter-weight models that eventually run locally where performance, privacy, or resilience demands it.
 
 ## 🌟 Overview
 
 The Cosmic Council Framework operationalizes the symbolic and structural foundations of the Cosmic Council through a sophisticated multi-agent system. Each of the six enterprises operates as an autonomous AI corporation with specialized capabilities, working together to provide comprehensive problem analysis and solution generation.
 
-### The Six Enterprises
+### The Six Enterprises (Totems)
 
-1. **🔴 Red Owl** - Research & Knowledge Gathering
-2. **🟠 Orange Orangutan** - Logistics & Strategic Planning  
-3. **🟡 Yellow Honeybee** - Development & Innovation
-4. **🟢 Green Tortoise** - Budget & Resource Management
-5. **🔵 Blue Dolphin** - Market & Communication
-6. **🟣 Purple Elephant** - Support & Continuous Improvement
+1. **🔴 Red Owl** - Research & Knowledge Gathering (Muladhara - Root Chakra)
+2. **🟠 Orange Orangutan** - Logistics & Strategic Planning (Svadisthana - Sacral Chakra)
+3. **🟡 Yellow Honeybee** - Development & Innovation (Manipura - Solar Plexus Chakra)
+4. **🟢 Green Tortoise** - Budget & Resource Management (Anahata - Heart Chakra)
+5. **🔵 Blue Dolphin** - Market & Communication (Vishuddha - Throat Chakra)
+6. **🟣 Purple Elephant** - Support & Continuous Improvement (Ajna - Third Eye Chakra)
+
+> **New**: The Cosmic Council now operates as a **supercharger for 6 GPTs working together** in a perpetual cyclical feedback loop. See the [Complete Framework Guide](docs/COSMIC_COUNCIL_FRAMEWORK.md) for details on the cyclical process, totem personalities, and perpetual refinement.
 
 ## 🚀 Quick Start
 
@@ -31,42 +93,61 @@ pip install -r requirements.txt
 
 # Initialize the database
 python -m database_migrations run_migrations
-
-# Start the web interface
-python web_interface.py
 ```
 
-### Basic Usage
+### Basic Usage: Use Any AI Model
 
 ```python
-from enhanced_cosmic_council_core import CosmicCouncil, ProblemStatement, ProblemComplexity
+from src.cosmic_council.integrations.llm_providers import OpenAIProvider, OllamaProvider
+from src.cosmic_council.agents.hierarchical_enterprise import HierarchicalOrchestrator
 
-# Create a problem
-problem = ProblemStatement(
-    title="Optimize Customer Support",
-    description="Improve customer satisfaction and reduce response times",
-    complexity=ProblemComplexity.COMPLEX,
-    domain="Customer Service",
-    stakeholders=["Support Team", "Customers", "Management"],
-    constraints={"budget": "$50K", "timeline": "3 months"},
-    success_criteria=["Response time < 2 hours", "Satisfaction > 90%"]
+# Option 1: Use OpenAI
+provider = OpenAIProvider(config={"api_key": "your-key"})
+
+# Option 2: Use local Ollama (no API key needed!)
+# provider = OllamaProvider(config={"base_url": "http://localhost:11434"})
+
+# Create orchestrator with your chosen model
+orchestrator = HierarchicalOrchestrator(
+    coordinator_llm=provider,
+    enterprises=[...]  # Your enterprise structure
 )
 
-# Initialize the Cosmic Council
-council = CosmicCouncil()
-
-# Solve the problem
-result = await council.solve_problem(problem)
-
-# View results
-print(f"Status: {result.status}")
-print(f"Confidence: {result.overall_confidence}")
-print(f"Processing Time: {result.total_processing_time}s")
+# Process a problem - works with ANY model!
+result = await orchestrator.process_problem(
+    problem_id="problem_1",
+    problem_description="Analyze customer feedback and improve support",
+    input_data={}
+)
 ```
+
+### Advanced: Hierarchical Agents with Handoffs
+
+```python
+from src.cosmic_council.agents.specialized_agents import (
+    create_specialized_agent, AgentSpecialization
+)
+from src.cosmic_council.agents.hierarchical_enterprise import (
+    Department, EnterpriseOperation
+)
+
+# Create specialized agents
+agents = [
+    create_specialized_agent(AgentSpecialization.DATA_COLLECTOR, "agent_1", provider),
+    create_specialized_agent(AgentSpecialization.TASK_DECOMPOSER, "agent_2", provider),
+]
+
+# Agents automatically hand off tasks to each other when needed!
+```
+
+See `examples/hierarchical_agent_example.py` for complete examples.
 
 ## 📚 Documentation Structure
 
 ### Core Framework
+- [**Cosmic Council Framework**](docs/COSMIC_COUNCIL_FRAMEWORK.md) - Complete guide to the 6-GPT supercharger system, cyclical feedback loops, and totem personalities
+- [**2028 Enhancements**](docs/COSMIC_COUNCIL_2028_ENHANCEMENTS.md) - 🆕 Advanced meta-learning, predictive optimization, and autonomous evolution
+- [**Quick Start Guide**](docs/COSMIC_COUNCIL_QUICK_START.md) - Get started quickly with examples and code snippets
 - [**Core Framework Guide**](docs/core-framework.md) - Understanding the Hexagon methodology
 - [**Enterprise Agents**](docs/enterprise-agents.md) - Detailed guide to each enterprise
 - [**Problem Complexity**](docs/problem-complexity.md) - How to assess and handle different problem types
@@ -102,10 +183,13 @@ print(f"Processing Time: {result.total_processing_time}s")
 - **Session Management**: Persistent workflow sessions with state management
 
 ### 🤖 AI-Enhanced Capabilities
-- **LLM Integration**: Advanced AI capabilities for each enterprise
-- **Specialized Prompts**: Context-aware prompts for different problem types
-- **Confidence Scoring**: AI confidence assessment for all recommendations
-- **Continuous Learning**: Adaptive improvement based on feedback
+- **Any AI Model**: Plug in OpenAI, Anthropic, Google, Ollama, or custom models
+- **Hierarchical Agents**: 4-level structure (Orchestrator → Enterprises → Departments → Specialized Agents)
+- **Hexaclock System**: Self-regulating R&D cycle (Oracle → Interpreter → Auditor → Alchemist → Gatekeeper → Recalibration)
+- **Intelligent Handoffs**: Agents automatically hand off tasks to specialists
+- **Model Distillation**: Distill large models into smaller, local ones
+- **Self-Evolution**: Framework evolves based on performance and goals
+- **Local Operation**: Run completely locally with no cloud dependencies
 
 ### 📊 Comprehensive Analytics
 - **Real-Time Metrics**: Live performance and effectiveness tracking
@@ -324,7 +408,7 @@ Follow these steps to collaborate with the Cosmic Council as a multidimensional 
 - `POST /api/v1/structured-interaction` — 9-step structured interaction process
 - `GET /api/v1/structured-interaction/example` — Example workflow demonstration
 - `POST /api/v1/problems/solve` — Full-cycle problem solving
-- `POST /api/v1/enterprises/{enterprise}/process` — Single totem processing
+- `POST /api/v1/supra_enterprise/{enterprise}/process` — Single totem processing
 - `POST /api/v1/problems/iterate` — Iterative cycle with feedback
 - `POST /api/v1/examples/simulate` — Tailored simulation
 - `POST /api/v1/integrations/airtable/upsert` — Airtable stub

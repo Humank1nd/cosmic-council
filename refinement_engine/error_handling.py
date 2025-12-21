@@ -7,7 +7,7 @@ import asyncio
 import logging
 import traceback
 from typing import Dict, Any, Optional, List, Callable, Type, Union
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass
 from enum import Enum
 import functools
@@ -165,7 +165,7 @@ class ErrorHandler:
         # Create error context
         error_context = ErrorContext(
             error_id=error_id,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             severity=severity,
             category=category,
             component=component,
@@ -222,7 +222,7 @@ class ErrorHandler:
         """Trip circuit breaker for a component/operation."""
         circuit_key = f"{component}:{operation}"
         self.circuit_breakers[circuit_key] = {
-            "tripped_at": datetime.utcnow(),
+            "tripped_at": datetime.now(timezone.utc),
             "error_count": self.error_counts.get(circuit_key, 0)
         }
         
@@ -239,7 +239,7 @@ class ErrorHandler:
         timeout = timedelta(seconds=self.config["circuit_breaker_timeout"])
         
         # Check if timeout has passed
-        if datetime.utcnow() - circuit["tripped_at"] > timeout:
+        if datetime.now(timezone.utc) - circuit["tripped_at"] > timeout:
             # Reset circuit breaker
             del self.circuit_breakers[circuit_key]
             return False
@@ -353,7 +353,7 @@ class ErrorHandler:
             errors_by_component[component] = errors_by_component.get(component, 0) + 1
         
         # Recent errors (last 24 hours)
-        recent_cutoff = datetime.utcnow() - timedelta(hours=24)
+        recent_cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
         recent_errors = [e for e in self.error_history if e.timestamp > recent_cutoff]
         
         return {
@@ -363,7 +363,7 @@ class ErrorHandler:
             "errors_by_category": errors_by_category,
             "errors_by_component": errors_by_component,
             "circuit_breakers": list(self.circuit_breakers.keys()),
-            "error_rate": total_errors / max(1, (datetime.utcnow() - self.error_history[0].timestamp).total_seconds() / 3600)
+            "error_rate": total_errors / max(1, (datetime.now(timezone.utc) - self.error_history[0].timestamp).total_seconds() / 3600)
         }
 
 

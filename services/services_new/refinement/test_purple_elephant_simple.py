@@ -5,7 +5,7 @@ Tests the core logic without complex dependencies.
 
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock
 
 
@@ -66,7 +66,7 @@ class AdaptiveThresholds:
             "actual_alignment": alignment,
             "outcome": decision_outcome,
             "quality": actual_quality,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         })
         
         # Adjust thresholds based on outcome

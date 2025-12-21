@@ -22,7 +22,7 @@ import json
 import pickle
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -101,7 +101,7 @@ class DataCollector:
             'type': data_type,
             'content': content,
             'metadata': metadata or {},
-            'timestamp': datetime.utcnow(),
+            'timestamp': datetime.now(timezone.utc),
             'quality_score': self._assess_data_quality(content)
         }
         
@@ -681,7 +681,7 @@ class ContinuousLearner:
             'response': response,
             'user_rating': user_rating,  # 1-5 scale
             'user_feedback': user_feedback,
-            'timestamp': datetime.utcnow()
+            'timestamp': datetime.now(timezone.utc)
         }
         
         self.feedback_data.append(feedback_entry)
@@ -694,7 +694,7 @@ class ContinuousLearner:
         
         # Check time interval
         if self.last_retrain:
-            time_since_retrain = datetime.utcnow() - self.last_retrain
+            time_since_retrain = datetime.now(timezone.utc) - self.last_retrain
             if time_since_retrain.total_seconds() < self.config.retrain_interval * 3600:
                 return False
         
@@ -948,7 +948,7 @@ class AITrainingSystem:
         if self.continuous_learner.should_retrain():
             logger.info("Retraining triggered by feedback analysis")
             # In a real implementation, this would trigger retraining
-            self.continuous_learner.last_retrain = datetime.utcnow()
+            self.continuous_learner.last_retrain = datetime.now(timezone.utc)
 
 # --- Demo Function ---
 

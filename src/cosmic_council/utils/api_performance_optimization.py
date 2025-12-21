@@ -25,7 +25,7 @@ import logging
 import json
 import gzip
 import pickle
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -88,7 +88,7 @@ class APIMetrics:
     request_size: int
     response_size: int
     cache_hit: bool = False
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     user_id: Optional[str] = None
     error: Optional[str] = None
 
@@ -557,7 +557,7 @@ class OptimizedFastAPI:
         @self.app.get("/health")
         async def health_check():
             """Health check endpoint"""
-            return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+            return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
         
         @self.app.get("/metrics")
         async def get_metrics():
@@ -673,7 +673,7 @@ async def demo_api_performance_optimization():
         
         # Simulate caching responses
         test_responses = [
-            {"id": i, "data": f"response_{i}", "timestamp": datetime.utcnow().isoformat()}
+            {"id": i, "data": f"response_{i}", "timestamp": datetime.now(timezone.utc).isoformat()}
             for i in range(10)
         ]
         

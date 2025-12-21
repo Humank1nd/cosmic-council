@@ -6,7 +6,7 @@ Implements the clockwise processing cycle for the Cosmic Council
 import asyncio
 import uuid
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from .schemas import EvalInput, EvalDecision
 from .policy_engine import engine as policy_engine
 from .storage import log_decision
@@ -37,7 +37,7 @@ class AutonomousFlowEngine:
         cycle_id = str(uuid.uuid4())
         results = {
             'cycle_id': cycle_id,
-            'start_time': datetime.utcnow().isoformat(),
+            'start_time': datetime.now(timezone.utc).isoformat(),
             'enterprises': {},
             'final_decision': None,
             'feedback_loop': None
@@ -64,7 +64,7 @@ class AutonomousFlowEngine:
             results['enterprises'], feedback_result
         )
         results['final_decision'] = final_decision
-        results['end_time'] = datetime.utcnow().isoformat()
+        results['end_time'] = datetime.now(timezone.utc).isoformat()
         
         return results
     
@@ -119,7 +119,7 @@ class AutonomousFlowEngine:
             'policy_decision': allow,
             'obligations': meta.get('obligations', []),
             'processing_result': enterprise_result,
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': datetime.now(timezone.utc).isoformat()
         }
     
     async def _enterprise_specific_processing(self, enterprise: str, problem_input: Dict[str, Any], 

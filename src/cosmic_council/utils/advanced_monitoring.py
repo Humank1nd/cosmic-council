@@ -25,7 +25,7 @@ import logging
 import json
 import psutil
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Callable, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -208,7 +208,7 @@ class AdvancedMetrics:
             value=value,
             metric_type=MetricType.COUNTER,
             labels=labels or {},
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         ))
     
     def set_gauge(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
@@ -222,7 +222,7 @@ class AdvancedMetrics:
             value=value,
             metric_type=MetricType.GAUGE,
             labels=labels or {},
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         ))
     
     def observe_histogram(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
@@ -236,7 +236,7 @@ class AdvancedMetrics:
             value=value,
             metric_type=MetricType.HISTOGRAM,
             labels=labels or {},
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         ))
     
     def observe_summary(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
@@ -250,7 +250,7 @@ class AdvancedMetrics:
             value=value,
             metric_type=MetricType.SUMMARY,
             labels=labels or {},
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         ))
     
     def _create_metric_key(self, name: str, labels: Optional[Dict[str, str]]) -> str:
@@ -262,7 +262,7 @@ class AdvancedMetrics:
     
     def get_metric_summary(self, name: str, time_range: timedelta = timedelta(hours=1)) -> Dict[str, Any]:
         """Get metric summary for time range"""
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - time_range
         
         metrics = self.metrics_storage.get_metrics(name, start_time, end_time)
@@ -285,7 +285,7 @@ class AdvancedMetrics:
     
     def get_metric_trends(self, name: str, time_range: timedelta = timedelta(hours=24)) -> Dict[str, Any]:
         """Get metric trends over time"""
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - time_range
         
         metrics = self.metrics_storage.get_metrics(name, start_time, end_time)
@@ -449,7 +449,7 @@ class AdvancedAlerting:
             metric_name=rule['metric'],
             threshold=rule['threshold'],
             current_value=value,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             status='active'
         )
         
@@ -470,7 +470,7 @@ class AdvancedAlerting:
         if rule_name in self.active_alerts:
             alert = self.active_alerts[rule_name]
             alert.status = 'resolved'
-            alert.resolved_at = datetime.utcnow()
+            alert.resolved_at = datetime.now(timezone.utc)
             
             del self.active_alerts[rule_name]
             
@@ -633,7 +633,7 @@ class IncidentManager:
             title=alert.message,
             description=f"Incident created from alert: {alert.rule_name}",
             status='open',
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
             playbook=self.response_playbooks.get(alert.rule_name, {}),
             assignee=None
         )
@@ -650,7 +650,7 @@ class IncidentManager:
         """Assign incident to appropriate team member"""
         # In a real implementation, this would integrate with on-call systems
         incident.assignee = "on_call_engineer"
-        incident.assigned_at = datetime.utcnow()
+        incident.assigned_at = datetime.now(timezone.utc)
         
         logger.info(f"Incident {incident.id} assigned to {incident.assignee}")
     
@@ -659,16 +659,16 @@ class IncidentManager:
         if incident_id in self.active_incidents:
             incident = self.active_incidents[incident_id]
             incident.status = status
-            incident.updated_at = datetime.utcnow()
+            incident.updated_at = datetime.now(timezone.utc)
             
             if notes:
                 incident.notes.append({
-                    'timestamp': datetime.utcnow(),
+                    'timestamp': datetime.now(timezone.utc),
                     'note': notes
                 })
             
             if status == 'resolved':
-                incident.resolved_at = datetime.utcnow()
+                incident.resolved_at = datetime.now(timezone.utc)
                 del self.active_incidents[incident_id]
             
             logger.info(f"Incident {incident_id} status updated to {status}")
@@ -730,7 +730,7 @@ class SLAMonitor:
     def record_sla_metric(self, metric_name: str, value: float, timestamp: datetime = None):
         """Record SLA metric"""
         if timestamp is None:
-            timestamp = datetime.utcnow()
+            timestamp = datetime.now(timezone.utc)
         
         self.sla_metrics[metric_name] = {
             'value': value,
@@ -769,7 +769,7 @@ class SLAMonitor:
     
     def get_sla_report(self, time_range: timedelta = timedelta(days=30)) -> Dict[str, Any]:
         """Get SLA compliance report"""
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         start_time = end_time - time_range
         
         # Filter records by time range
@@ -812,7 +812,7 @@ class AdvancedMetric:
     value: float
     metric_type: 'MetricType'
     labels: Dict[str, str] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class Alert:

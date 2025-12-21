@@ -6,7 +6,7 @@ Comprehensive system for integrating ancient wisdom, spiritual teachings, and co
 import asyncio
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -72,7 +72,7 @@ class SpiritualTeaching:
     energy_frequency: float
     keywords: List[str] = field(default_factory=list)
     applications: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class WisdomSynthesis:
@@ -85,7 +85,7 @@ class WisdomSynthesis:
     energy_frequency: float
     chakra_balance: Dict[ChakraType, float]
     elemental_harmony: Dict[ElementalType, float]
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class SpiritualGuidance:
@@ -98,7 +98,7 @@ class SpiritualGuidance:
     spiritual_practices: List[str]
     energy_alignment: Dict[str, float]
     cosmic_insights: List[str]
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SpiritualWisdomDatabase:
     """
@@ -500,7 +500,7 @@ class SpiritualWisdomDatabase:
     async def create_wisdom_synthesis(self, teachings: List[SpiritualTeaching]) -> WisdomSynthesis:
         """Create a synthesis of multiple spiritual teachings"""
         
-        synthesis_id = f"wisdom_synthesis_{datetime.utcnow().timestamp()}"
+        synthesis_id = f"wisdom_synthesis_{datetime.now(timezone.utc).timestamp()}"
         
         # Find common themes and principles
         common_themes = []
@@ -570,7 +570,7 @@ class SpiritualGuidanceEngine:
                                        enterprise_type: str = None) -> SpiritualGuidance:
         """Provide comprehensive spiritual guidance for problem-solving"""
         
-        guidance_id = f"spiritual_guidance_{datetime.utcnow().timestamp()}"
+        guidance_id = f"spiritual_guidance_{datetime.now(timezone.utc).timestamp()}"
         
         # Find relevant teachings
         relevant_teachings = await self.wisdom_database.find_relevant_teachings(problem_context)

@@ -25,12 +25,12 @@ IMPORT_MAPPINGS = {
     
     # Agent imports
     'src.cosmic_council.agents.unified_ai_agent_system': 'src.agents.orchestration.coordinator',
-    'src.cosmic_council.agents.red_owl_agent': 'src.agents.enterprises.red_owl',
-    'src.cosmic_council.agents.orange_orangutan_agent': 'src.agents.enterprises.orange_orangutan',
-    'src.cosmic_council.agents.yellow_honeybee_agent': 'src.agents.enterprises.yellow_honeybee',
-    'src.cosmic_council.agents.green_tortoise_agent': 'src.agents.enterprises.green_tortoise',
-    'src.cosmic_council.agents.blue_dolphin_agent': 'src.agents.enterprises.blue_dolphin',
-    'src.cosmic_council.agents.purple_elephant_agent': 'src.agents.enterprises.purple_elephant',
+    'src.cosmic_council.agents.red_owl_agent': 'src.agents.supra_enterprise.red_owl',
+    'src.cosmic_council.agents.orange_orangutan_agent': 'src.agents.supra_enterprise.orange_orangutan',
+    'src.cosmic_council.agents.yellow_honeybee_agent': 'src.agents.supra_enterprise.yellow_honeybee',
+    'src.cosmic_council.agents.green_tortoise_agent': 'src.agents.supra_enterprise.green_tortoise',
+    'src.cosmic_council.agents.blue_dolphin_agent': 'src.agents.supra_enterprise.blue_dolphin',
+    'src.cosmic_council.agents.purple_elephant_agent': 'src.agents.supra_enterprise.purple_elephant',
     
     # Workflow imports
     'src.cosmic_council.workflows.unified_workflow_engine': 'src.core.services',

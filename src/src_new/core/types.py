@@ -5,7 +5,7 @@ Core type definitions and enums for the Cosmic Council system.
 from enum import Enum
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -65,7 +65,7 @@ class ProblemStatement:
     stakeholders: List[str] = field(default_factory=list)
     constraints: Dict[str, Any] = field(default_factory=dict)
     success_criteria: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -80,7 +80,7 @@ class Solution:
     components: List[Dict[str, Any]] = field(default_factory=list)
     implementation_plan: Dict[str, Any] = field(default_factory=dict)
     success_metrics: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -95,5 +95,5 @@ class Cycle:
     results: Dict[str, Any] = field(default_factory=dict)
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)

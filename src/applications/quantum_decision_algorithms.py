@@ -7,7 +7,7 @@ import asyncio
 import math
 import random
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -46,7 +46,7 @@ class QuantumOption:
     energy_level: float            # Energy associated with this option
     spiritual_resonance: float     # Spiritual alignment
     quantum_coherence: float       # Coherence with other options
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class QuantumDecision:
@@ -60,7 +60,7 @@ class QuantumDecision:
     entanglement_connections: List[str] = field(default_factory=list)
     tunneling_potential: float = 0.0
     measurement_result: Optional[QuantumOption] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class QuantumDecisionResult:
@@ -73,7 +73,7 @@ class QuantumDecisionResult:
     breakthrough_achieved: bool
     processing_time: float
     insights: List[str]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuantumDecisionEngine:
     """
@@ -106,7 +106,7 @@ class QuantumDecisionEngine:
                                     complexity: DecisionComplexity = DecisionComplexity.MODERATE) -> QuantumDecision:
         """Create a quantum decision from classical options"""
         
-        decision_id = f"quantum_decision_{datetime.utcnow().timestamp()}"
+        decision_id = f"quantum_decision_{datetime.now(timezone.utc).timestamp()}"
         
         # Convert classical options to quantum options
         quantum_options = []
@@ -348,7 +348,7 @@ class QuantumDecisionEngine:
                                   barrier_strength: float = 0.5) -> QuantumDecisionResult:
         """Make a complete quantum decision"""
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Step 1: Create quantum decision
         decision = await self.create_quantum_decision(options, decision_type, complexity)
@@ -366,7 +366,7 @@ class QuantumDecisionEngine:
         selected_option = await self.perform_quantum_measurement(decision)
         
         # Calculate result metrics
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         confidence_level = coherence_result["coherence_level"] * 0.8 + (0.2 if tunneling_result else 0.0)
         quantum_enhancement = decision.coherence_level * 0.6 + decision.tunneling_potential * 0.4
         spiritual_alignment = sum(opt.spiritual_resonance for opt in decision.options) / len(decision.options)

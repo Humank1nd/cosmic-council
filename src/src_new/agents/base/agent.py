@@ -4,7 +4,7 @@ Base agent class for all AI agents in the Cosmic Council system.
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import uuid
 
@@ -22,8 +22,8 @@ class BaseAgent(ABC):
         self.name = name
         self.description = description
         self.status = AgentStatus.IDLE
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.created_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(timezone.utc)
         self.logger = logger
         self.metadata = {}
     
@@ -46,20 +46,20 @@ class BaseAgent(ABC):
             
             # Update status
             self.status = AgentStatus.PROCESSING
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(timezone.utc)
             
             # Process the input
             result = await self.process(input_data)
             
             # Update status
             self.status = AgentStatus.IDLE
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(timezone.utc)
             
             return result
             
         except Exception as e:
             self.status = AgentStatus.ERROR
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(timezone.utc)
             self.logger.error(f"Agent {self.agent_id} execution failed: {e}")
             raise
     
@@ -78,7 +78,7 @@ class BaseAgent(ABC):
     def update_metadata(self, key: str, value: Any) -> None:
         """Update agent metadata"""
         self.metadata[key] = value
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(id={self.agent_id}, name={self.name})"
@@ -128,7 +128,7 @@ class LLMAgent(BaseAgent):
             return {
                 'agent_id': self.agent_id,
                 'response': response,
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(timezone.utc).isoformat(),
                 'input_data': input_data
             }
             

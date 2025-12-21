@@ -7,7 +7,7 @@ import asyncio
 import os
 import sys
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 import uuid
 import tempfile
@@ -186,7 +186,7 @@ class SQLiteDatabaseTester:
                         layer_id=LayerDefinitions.DECI.layer_id,
                         revolution=1,
                         status="started",
-                        started_at=datetime.utcnow()
+                        started_at=datetime.now(timezone.utc)
                     )
                     session.add(layer_run)
                     await session.flush()
@@ -227,7 +227,7 @@ class SQLiteDatabaseTester:
         print("\n⚡ Testing Database Performance...")
         
         try:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             
             # Create multiple problems
             problem_ids = []
@@ -257,7 +257,7 @@ class SQLiteDatabaseTester:
                     status="completed"
                 )
             
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             duration = (end_time - start_time).total_seconds()
             
             print(f"✅ Created 5 problems, 5 layer runs, 5 sector runs in {duration:.2f} seconds")

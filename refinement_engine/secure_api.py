@@ -8,7 +8,7 @@ import json
 import logging
 import hashlib
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends, Request, status, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -168,7 +168,7 @@ logger = structlog.get_logger(__name__)
 @app.middleware("http")
 async def security_middleware(request: Request, call_next):
     """Security middleware for request processing."""
-    start_time = datetime.utcnow()
+    start_time = datetime.now(timezone.utc)
     request_id = str(uuid.uuid4())
     
     # Add request ID to request state
@@ -189,7 +189,7 @@ async def security_middleware(request: Request, call_next):
         response = await call_next(request)
         
         # Log response
-        process_time = (datetime.utcnow() - start_time).total_seconds()
+        process_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         logger.info(
             "Request completed",
             request_id=request_id,
@@ -208,7 +208,7 @@ async def security_middleware(request: Request, call_next):
         
     except Exception as e:
         # Log error
-        process_time = (datetime.utcnow() - start_time).total_seconds()
+        process_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         logger.error(
             "Request failed",
             request_id=request_id,
@@ -238,7 +238,7 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0"
     }
 

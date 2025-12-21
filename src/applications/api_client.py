@@ -275,7 +275,7 @@ class CosmicCouncilAPIClient:
     
     async def get_enterprises(self) -> Dict[str, Any]:
         """Get all enterprises"""
-        return await self._make_request("GET", "/api/v1/enterprises")
+        return await self._make_request("GET", "/api/v1/supra_enterprise")
     
     # Perpetual Thinking System
     

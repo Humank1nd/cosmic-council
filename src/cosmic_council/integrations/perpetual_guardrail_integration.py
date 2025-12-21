@@ -64,7 +64,7 @@ except ImportError:
 # Import perpetual thinking system components
 from .unified_perpetual_thinking_system import UnifiedPerpetualThinkingEngine, CycleType, PatternType
 from .meta_cyclical_architecture import MetaCyclicalArchitecture, MetaCycleType
-from ...applications.enhanced_master_orchestration_system import EnhancedMasterOrchestrationSystem, OrchestrationMode
+from applications.enhanced_master_orchestration_system import EnhancedMasterOrchestrationSystem, OrchestrationMode
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ Provides REST API endpoints for problem submission, status tracking, and explana
 from typing import Dict, Any, Optional, List
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -159,7 +159,7 @@ async def root():
 @app.get("/health", response_model=Dict[str, str])
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.post("/problems", response_model=ProblemSubmissionResponse)

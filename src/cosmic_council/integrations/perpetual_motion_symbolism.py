@@ -9,7 +9,7 @@ that embody the eternal dance of the Cosmic Council's systems thinking framework
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -50,7 +50,7 @@ class WhiteRabbitCycle:
     direction: str        # "clockwise" or "counterclockwise"
     energy_level: float   # 0.0 to 1.0
     wisdom_accumulated: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class RainbowSnakeFlow:
@@ -60,7 +60,7 @@ class RainbowSnakeFlow:
     flow_strength: float  # 0.0 to 1.0
     color_spectrum: List[str]  # Colors of the rainbow
     energy_transfer: Dict[str, float]  # Energy flowing between segments
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class BlackSnakeOutputFlow:
@@ -70,7 +70,7 @@ class BlackSnakeOutputFlow:
     outputs: List[Dict[str, Any]] = field(default_factory=list)
     last_output: Optional[Dict[str, Any]] = None
     throughput_per_min: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class EternalDance:
@@ -81,7 +81,7 @@ class EternalDance:
     harmony_level: float  # 0.0 to 1.0
     cosmic_rhythm: float  # Universal rhythm frequency
     transformation_potential: float  # 0.0 to 1.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PerpetualMotionSymbolism:
     """
@@ -264,12 +264,12 @@ class PerpetualMotionSymbolism:
                     connection_key = f"{from_seg}->{to_seg}"
                     
                     # Create flowing energy pattern
-                    time_factor = datetime.utcnow().timestamp() * 0.001
+                    time_factor = datetime.now(timezone.utc).timestamp() * 0.001
                     energy = flow.flow_strength * (0.8 + 0.2 * math.sin(time_factor + hash(connection_key) % 100))
                     flow.energy_transfer[connection_key] = energy
                 
                 # Update flow strength with cosmic rhythm
-                cosmic_factor = math.sin(datetime.utcnow().timestamp() * self.cosmic_rhythm_frequency * 0.0001)
+                cosmic_factor = math.sin(datetime.now(timezone.utc).timestamp() * self.cosmic_rhythm_frequency * 0.0001)
                 flow.flow_strength = self.snake_flow_base * (0.9 + 0.1 * cosmic_factor)
                 
                 # Wait before next update
@@ -285,11 +285,11 @@ class PerpetualMotionSymbolism:
         try:
             while flow_id in self.active_outputs:
                 # Decay/increase intensity gently with cosmic rhythm
-                cosmic_factor = 0.05 * math.sin(datetime.utcnow().timestamp() * self.cosmic_rhythm_frequency * 0.00005)
+                cosmic_factor = 0.05 * math.sin(datetime.now(timezone.utc).timestamp() * self.cosmic_rhythm_frequency * 0.00005)
                 flow.intensity = max(0.05, min(1.0, flow.intensity + cosmic_factor))
 
                 # Update throughput per minute based on recent outputs (last 60s)
-                now = datetime.utcnow().timestamp()
+                now = datetime.now(timezone.utc).timestamp()
                 window = [t for t in window if now - t <= 60.0]
                 flow.throughput_per_min = float(len(window))
 
@@ -311,7 +311,7 @@ class PerpetualMotionSymbolism:
                 dance.harmony_level = 1.0 - abs(rabbit_energy - snake_energy)
                 
                 # Update cosmic rhythm
-                time_factor = datetime.utcnow().timestamp() * 0.001
+                time_factor = datetime.now(timezone.utc).timestamp() * 0.001
                 dance.cosmic_rhythm = self.cosmic_rhythm_frequency * (1.0 + 0.1 * math.sin(time_factor))
                 
                 # Calculate transformation potential
@@ -405,7 +405,7 @@ class PerpetualMotionSymbolism:
         # Simple transformation to output (placeholder for downstream engines)
         output_payload = {
             "id": str(uuid.uuid4()),
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "input": input_text,
             "metadata": metadata or {},
             "summary": (input_text[:140] + "…") if len(input_text) > 140 else input_text,

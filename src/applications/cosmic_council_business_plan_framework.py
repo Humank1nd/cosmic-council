@@ -10,7 +10,7 @@ business plan format.
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -68,7 +68,7 @@ class BusinessPlan:
     executive_summary: str = ""
     key_metrics: Dict[str, Any] = field(default_factory=dict)
     timeline: str = ""
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class BusinessPlanTemplate:
@@ -371,7 +371,7 @@ class CosmicCouncilBusinessPlanFramework:
                                    market_segment: MarketSegment = MarketSegment.B2B,
                                    cosmic_council_insights: Dict[str, Any] = None) -> BusinessPlan:
         """Generate a 1-page business plan using Cosmic Council insights"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         logger.info(f"📋 Generating Business Plan for: {problem_statement}")
         
@@ -407,7 +407,7 @@ class CosmicCouncilBusinessPlanFramework:
         # Set timeline
         business_plan.timeline = await self._generate_timeline(business_stage)
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         logger.info(f"📋 Business Plan generated in {processing_time:.2f}s")
         
         return business_plan

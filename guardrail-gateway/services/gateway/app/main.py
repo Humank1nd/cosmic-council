@@ -8,7 +8,7 @@ from .caps_cache import budget_caps_cache
 from sqlalchemy import text
 import uuid
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 app = FastAPI(title="Guardrail Gateway", version="0.1.0")
@@ -36,7 +36,7 @@ async def evaluate(payload: EvalInput):
         explanation=meta, 
         obligations=meta.get("obligations", []),
         decision_id=decision_id,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
     
     try:
@@ -114,7 +114,7 @@ async def execute_autonomous_cycle(problem_input: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Autonomous cycle failed: {str(e)}")
 
-@app.get("/v1/enterprises")
+@app.get("/v1/supra_enterprise")
 async def list_enterprises():
     """
     List all six enterprises and their roles
@@ -224,7 +224,7 @@ async def complete_cycle_run(request: CycleCompleteRequest):
             return {
                 "run_id": request.run_id,
                 "status": "completed",
-                "completed_at": datetime.utcnow(),
+                "completed_at": datetime.now(timezone.utc),
                 "metrics": dict(metrics._mapping) if metrics else {}
             }
             

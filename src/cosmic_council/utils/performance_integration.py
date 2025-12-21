@@ -23,7 +23,7 @@ import asyncio
 import time
 import logging
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -285,7 +285,7 @@ class PerformanceIntegrationManager:
                 # Record optimization
                 optimization_duration = time.time() - optimization_start
                 self.optimization_history.append({
-                    "timestamp": datetime.utcnow(),
+                    "timestamp": datetime.now(timezone.utc),
                     "duration": optimization_duration,
                     "optimizations": optimizations_applied,
                     "cpu_usage": cpu_usage,
@@ -316,7 +316,7 @@ class PerformanceIntegrationManager:
             
             # Store metrics
             self.performance_metrics = {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "system": {
                     "cpu_usage": cpu_usage,
                     "memory_usage": memory.percent,

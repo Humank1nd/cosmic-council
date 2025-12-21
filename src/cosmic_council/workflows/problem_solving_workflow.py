@@ -5,7 +5,7 @@ Implements the Cosmic Council's hexagon methodology with guided workflows
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -260,12 +260,12 @@ class ProblemSolvingWorkflow:
         if problem:
             self.current_session.problem = problem
             self.current_session.status = WorkflowStatus.IN_PROGRESS
-            self.current_session.start_time = datetime.utcnow()
+            self.current_session.start_time = datetime.now(timezone.utc)
             self.current_session.current_step = WorkflowStep.PROBLEM_DEFINITION
         else:
             # Start with problem definition
             self.current_session.status = WorkflowStatus.IN_PROGRESS
-            self.current_session.start_time = datetime.utcnow()
+            self.current_session.start_time = datetime.now(timezone.utc)
             self.current_session.current_step = WorkflowStep.PROBLEM_DEFINITION
         
         # Initialize all steps
@@ -294,7 +294,7 @@ class ProblemSolvingWorkflow:
         
         # Mark step as in progress
         step_data.status = WorkflowStatus.IN_PROGRESS
-        step_data.start_time = datetime.utcnow()
+        step_data.start_time = datetime.now(timezone.utc)
         
         if user_inputs:
             step_data.user_inputs.update(user_inputs)
@@ -327,7 +327,7 @@ class ProblemSolvingWorkflow:
             # Update step data
             step_data.results = result
             step_data.status = WorkflowStatus.COMPLETED
-            step_data.end_time = datetime.utcnow()
+            step_data.end_time = datetime.now(timezone.utc)
             step_data.duration = step_data.end_time - step_data.start_time
             step_data.confidence_score = result.get("confidence_score", 0.0)
             
@@ -338,7 +338,7 @@ class ProblemSolvingWorkflow:
             if next_step is None:
                 # Workflow completed
                 self.current_session.status = WorkflowStatus.COMPLETED
-                self.current_session.end_time = datetime.utcnow()
+                self.current_session.end_time = datetime.now(timezone.utc)
                 self.current_session.total_duration = self.current_session.end_time - self.current_session.start_time
             
             return {
@@ -352,7 +352,7 @@ class ProblemSolvingWorkflow:
         except Exception as e:
             logger.error(f"Error executing step {current_step}: {e}")
             step_data.status = WorkflowStatus.FAILED
-            step_data.end_time = datetime.utcnow()
+            step_data.end_time = datetime.now(timezone.utc)
             if step_data.start_time:
                 step_data.duration = step_data.end_time - step_data.start_time
             

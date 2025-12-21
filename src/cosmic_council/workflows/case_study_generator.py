@@ -4,7 +4,7 @@ Generates custom case studies based on user inputs and templates
 """
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
@@ -81,7 +81,7 @@ class CaseStudyGenerator:
             resources_needed=self._generate_resources_needed(request, base_template),
             success_metrics=self._generate_success_metrics(request, base_template),
             tags=self._generate_tags(request),
-            generated_date=datetime.utcnow(),
+            generated_date=datetime.now(timezone.utc),
             base_template_id=base_template.id if base_template else None
         )
         

@@ -5,7 +5,7 @@ Provides JWT-based authentication and role-based access control.
 
 import hashlib
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from enum import Enum
@@ -53,7 +53,7 @@ class User:
     
     def __post_init__(self):
         if self.created_at is None:
-            self.created_at = datetime.utcnow()
+            self.created_at = datetime.now(timezone.utc)
     
     def has_permission(self, permission: Permission) -> bool:
         """Check if user has a specific permission."""
@@ -139,14 +139,14 @@ class AuthManager:
     
     def create_access_token(self, user: User) -> str:
         """Create a JWT access token for a user."""
-        expire = datetime.utcnow() + timedelta(minutes=self.access_token_expire_minutes)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=self.access_token_expire_minutes)
         token_data = {
             "user_id": user.id,
             "username": user.username,
             "role": user.role.value,
             "permissions": [p.value for p in user.permissions],
             "exp": expire,
-            "iat": datetime.utcnow()
+            "iat": datetime.now(timezone.utc)
         }
         
         token = jwt.encode(token_data, self.jwt_secret, algorithm=self.algorithm)

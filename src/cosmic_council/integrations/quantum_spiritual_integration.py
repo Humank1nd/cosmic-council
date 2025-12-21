@@ -6,7 +6,7 @@ Integrates quantum mechanics concepts with spiritual wisdom for enhanced problem
 import asyncio
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -61,7 +61,7 @@ class QuantumField:
     coherence_level: float  # 0.0 to 1.0
     entanglement_connections: List[str] = field(default_factory=list)
     tunneling_potential: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class SpiritualWisdom:
@@ -72,7 +72,7 @@ class SpiritualWisdom:
     gemstone_resonance: GemstoneType
     sacred_number: SacredNumber
     energy_frequency: float
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class QuantumSpiritualResult:
@@ -83,7 +83,7 @@ class QuantumSpiritualResult:
     breakthrough_potential: float
     sacred_alignment: float
     processing_time: float
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuantumSpiritualEngine:
     """
@@ -175,7 +175,7 @@ class QuantumSpiritualEngine:
     async def create_quantum_field(self, problem_context: Dict[str, Any]) -> QuantumField:
         """Create a quantum field of possibilities for the problem"""
         
-        field_id = f"quantum_field_{datetime.utcnow().timestamp()}"
+        field_id = f"quantum_field_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate multiple solution possibilities (superposition)
         possibilities = []
@@ -307,7 +307,7 @@ class QuantumSpiritualEngine:
     async def achieve_quantum_coherence(self, quantum_fields: List[QuantumField], spiritual_wisdom: List[SpiritualWisdom]) -> QuantumSpiritualResult:
         """Achieve quantum coherence by aligning quantum states with spiritual wisdom"""
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Calculate overall coherence
         field_coherence = sum(field.coherence_level for field in quantum_fields) / len(quantum_fields) if quantum_fields else 0.0
@@ -334,7 +334,7 @@ class QuantumSpiritualEngine:
         else:
             quantum_state = QuantumState.SUPERPOSITION
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         result = QuantumSpiritualResult(
             quantum_state=quantum_state,

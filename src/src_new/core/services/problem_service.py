@@ -3,7 +3,7 @@ Problem service for managing problems in the Cosmic Council system.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from ..models.problem import Problem, ProblemStatement
@@ -60,7 +60,7 @@ class ProblemService:
                     if hasattr(problem, key):
                         setattr(problem, key, value)
                 
-                problem.updated_at = datetime.utcnow()
+                problem.updated_at = datetime.now(timezone.utc)
                 
                 if not problem.validate():
                     raise ValueError("Invalid updated problem data")

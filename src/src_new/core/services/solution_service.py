@@ -3,7 +3,7 @@ Solution service for managing solutions in the Cosmic Council system.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from ..models.solution import Solution, SolutionComponent
@@ -71,7 +71,7 @@ class SolutionService:
                     if hasattr(solution, key):
                         setattr(solution, key, value)
                 
-                solution.updated_at = datetime.utcnow()
+                solution.updated_at = datetime.now(timezone.utc)
                 
                 if not solution.validate():
                     raise ValueError("Invalid updated solution data")
@@ -132,7 +132,7 @@ class SolutionService:
             evaluation = {
                 'solution_id': solution.id,
                 'problem_id': problem.id,
-                'evaluation_date': datetime.utcnow(),
+                'evaluation_date': datetime.now(timezone.utc),
                 'criteria_satisfaction': {},
                 'overall_score': 0.0,
                 'recommendations': []

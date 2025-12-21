@@ -10,7 +10,7 @@ knowledge and wisdom.
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -58,7 +58,7 @@ class ThinkTankResult:
     confidence_score: float
     key_insights: List[str]
     next_phase_inputs: Dict[str, Any]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 @dataclass
 class IntegrationCycle:
@@ -71,7 +71,7 @@ class IntegrationCycle:
     overall_confidence: float = 0.0
     total_processing_time: float = 0.0
     status: IntegrationStatus = IntegrationStatus.PENDING
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
 
 @dataclass
@@ -84,7 +84,7 @@ class WisdomSynthesis:
     actionable_recommendations: List[str] = field(default_factory=list)
     next_cycle_questions: List[str] = field(default_factory=list)
     wisdom_principles: List[str] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CosmicCouncilThinkTankIntegration:
     """🔄 Cosmic Council Think Tank Integration System
@@ -110,7 +110,7 @@ class CosmicCouncilThinkTankIntegration:
                                        initial_context: Dict[str, Any] = None,
                                        cycle_number: int = 1) -> IntegrationCycle:
         """Conduct a complete integrated inquiry through all Think Tanks"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         logger.info(f"🔄 Beginning Integrated Cosmic Council Inquiry - Cycle {cycle_number}")
         logger.info(f"Problem: {problem_statement}")
@@ -159,9 +159,9 @@ class CosmicCouncilThinkTankIntegration:
         
         # Calculate overall metrics
         cycle.overall_confidence = self._calculate_overall_confidence(cycle.think_tank_results)
-        cycle.total_processing_time = (datetime.utcnow() - start_time).total_seconds()
+        cycle.total_processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         cycle.status = IntegrationStatus.COMPLETED
-        cycle.completed_at = datetime.utcnow()
+        cycle.completed_at = datetime.now(timezone.utc)
         
         # Add to history
         self.integration_history.append(cycle)
@@ -174,7 +174,7 @@ class CosmicCouncilThinkTankIntegration:
     async def _conduct_genesis_phase(self, problem_statement: str, 
                                    initial_context: Dict[str, Any]) -> ThinkTankResult:
         """Conduct the Genesis Plane phase (Red Owl)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.GENESIS]
         
@@ -190,7 +190,7 @@ class CosmicCouncilThinkTankIntegration:
             ]
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for next phase
         key_insights = [
@@ -220,7 +220,7 @@ class CosmicCouncilThinkTankIntegration:
     
     async def _conduct_logistics_phase(self, genesis_result: ThinkTankResult) -> ThinkTankResult:
         """Conduct the Logistics Nexus phase (Orange Orangutan)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.LOGISTICS]
         
@@ -242,7 +242,7 @@ class CosmicCouncilThinkTankIntegration:
             resources_available={"team_size": "8-12 people", "expertise": "multi-disciplinary"}
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for next phase
         key_insights = [
@@ -272,7 +272,7 @@ class CosmicCouncilThinkTankIntegration:
     
     async def _conduct_innovation_phase(self, logistics_result: ThinkTankResult) -> ThinkTankResult:
         """Conduct the Innovation Sphere phase (Yellow Honeybee)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.INNOVATION]
         
@@ -296,7 +296,7 @@ class CosmicCouncilThinkTankIntegration:
             opportunities={"technology": "AI and collaboration tools", "community": "global network"}
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for next phase
         key_insights = [
@@ -326,7 +326,7 @@ class CosmicCouncilThinkTankIntegration:
     
     async def _conduct_resource_phase(self, innovation_result: ThinkTankResult) -> ThinkTankResult:
         """Conduct the Verdant Expanse phase (Green Tortoise)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.RESOURCES]
         
@@ -354,7 +354,7 @@ class CosmicCouncilThinkTankIntegration:
             timeline_requirements={"launch": "12 months", "scaling": "18 months"}
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for next phase
         key_insights = [
@@ -384,7 +384,7 @@ class CosmicCouncilThinkTankIntegration:
     
     async def _conduct_communication_phase(self, resource_result: ThinkTankResult) -> ThinkTankResult:
         """Conduct the Market of Echoes phase (Blue Dolphin)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.COMMUNICATION]
         
@@ -405,7 +405,7 @@ class CosmicCouncilThinkTankIntegration:
             stakeholder_groups=["end users", "decision makers", "influencers", "partners"]
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for next phase
         key_insights = [
@@ -436,7 +436,7 @@ class CosmicCouncilThinkTankIntegration:
     
     async def _conduct_reflection_phase(self, communication_result: ThinkTankResult) -> ThinkTankResult:
         """Conduct the Third Eye phase (Purple Elephant)"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         think_tank = self.think_tanks[IntegrationPhase.REFLECTION]
         
@@ -466,7 +466,7 @@ class CosmicCouncilThinkTankIntegration:
             reflection_depth=ReflectionDepth.DEEP
         )
         
-        processing_time = (datetime.utcnow() - start_time).total_seconds()
+        processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Extract key insights and prepare inputs for synthesis
         key_insights = [

@@ -5,7 +5,7 @@ Provides fast access to budget caps for policy evaluation
 
 import json
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from .storage import engine
 from sqlalchemy import text
 
@@ -61,7 +61,7 @@ class BudgetCapsCache:
         if not self._last_refresh:
             return True
         
-        return (datetime.utcnow() - self._last_refresh).total_seconds() > self._cache_ttl
+        return (datetime.now(timezone.utc) - self._last_refresh).total_seconds() > self._cache_ttl
     
     async def _refresh_cache(self):
         """Refresh cache from database"""
@@ -96,7 +96,7 @@ class BudgetCapsCache:
                         'metadata': row[7] or {}
                     }
                 
-                self._last_refresh = datetime.utcnow()
+                self._last_refresh = datetime.now(timezone.utc)
                 
         except Exception as e:
             print(f"Failed to refresh budget caps cache: {e}")

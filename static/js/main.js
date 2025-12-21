@@ -146,7 +146,7 @@ const API = {
     },
 
     enterprises: {
-        getAll: () => API.get('/enterprises')
+        getAll: () => API.get('/supra_enterprise')
     },
 
     perpetual: {

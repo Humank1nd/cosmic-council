@@ -72,7 +72,7 @@ shared.utils.database → src.database.connection
 ```python
 # Old → New
 src.cosmic_council.agents.unified_ai_agent_system → src.agents.orchestration.coordinator
-src.cosmic_council.agents.red_owl_agent → src.agents.enterprises.red_owl
+src.cosmic_council.agents.red_owl_agent → src.agents.supra_enterprise.red_owl
 # ... (all enterprise agents updated)
 ```
 

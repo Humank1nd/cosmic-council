@@ -8,7 +8,7 @@ import json
 import logging
 from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from ..core.core import ProblemStatement, ProblemComplexity, EnterpriseType
@@ -84,7 +84,7 @@ class AIEnhancedProblemSolvingWorkflow(ProblemSolvingWorkflow):
         session = AIWorkflowSession(
             session_id=str(uuid.uuid4()),
             problem=problem,
-            start_time=datetime.utcnow(),
+            start_time=datetime.now(timezone.utc),
             ai_config=self.ai_config,
             ai_integration=self.ai_integration,
             conversation_id=conversation_id
@@ -462,7 +462,7 @@ class AIEnhancedProblemSolvingWorkflow(ProblemSolvingWorkflow):
             "conversation_id": session.conversation_id,
             "ai_insights_count": len(session.ai_insights),
             "ai_recommendations_count": len(session.ai_recommendations),
-            "session_duration": (datetime.utcnow() - session.started_at).total_seconds()
+            "session_duration": (datetime.now(timezone.utc) - session.started_at).total_seconds()
         }
 
 # Demo function

@@ -29,7 +29,7 @@ PROBLEMATIC_PATTERNS = [
     (r'from cosmic_council_core\s+import', 'from src.core.types import'),
     (r'from cosmic_council_simplified\s+import', 'from src.core.services import'),
     (r'from parallel_cosmic_council_processor\s+import', 'from src.core.services import'),
-    (r'from cosmic_council_simplified\.enterprise\s+import', 'from src.agents.enterprises import'),
+    (r'from cosmic_council_simplified\.enterprise\s+import', 'from src.agents.supra_enterprise import'),
 ]
 
 def find_python_files(directory: Path) -> List[Path]:

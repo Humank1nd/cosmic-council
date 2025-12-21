@@ -3,7 +3,7 @@ Cycle service for managing problem-solving cycles in the Cosmic Council system.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import asyncio
 
@@ -130,7 +130,7 @@ class CycleService:
                     raise ValueError(f"Cannot pause cycle in status: {cycle.status}")
                 
                 cycle.status = CycleStatus.PAUSED
-                cycle.updated_at = datetime.utcnow()
+                cycle.updated_at = datetime.now(timezone.utc)
                 await self.repository.update(cycle)
                 
                 self.logger.info(f"Paused cycle: {cycle_id}")
@@ -154,7 +154,7 @@ class CycleService:
                     raise ValueError(f"Cannot resume cycle in status: {cycle.status}")
                 
                 cycle.status = CycleStatus.RUNNING
-                cycle.updated_at = datetime.utcnow()
+                cycle.updated_at = datetime.now(timezone.utc)
                 await self.repository.update(cycle)
                 
                 self.logger.info(f"Resumed cycle: {cycle_id}")
@@ -178,7 +178,7 @@ class CycleService:
                     raise ValueError(f"Cannot cancel cycle in status: {cycle.status}")
                 
                 cycle.status = CycleStatus.FAILED
-                cycle.completed_at = datetime.utcnow()
+                cycle.completed_at = datetime.now(timezone.utc)
                 cycle.update_metadata('cancelled', True)
                 await self.repository.update(cycle)
                 
@@ -202,7 +202,7 @@ class CycleService:
                 'success': True,
                 'output_data': {
                     'message': f"Enterprise {enterprise_type.value} executed successfully",
-                    'timestamp': datetime.utcnow().isoformat()
+                    'timestamp': datetime.now(timezone.utc).isoformat()
                 },
                 'metrics': {
                     'processing_time': 1.0,

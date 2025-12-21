@@ -3,7 +3,7 @@ Base database model for the Cosmic Council system.
 """
 
 from sqlalchemy import Column, String, DateTime, Text, JSON
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 import uuid

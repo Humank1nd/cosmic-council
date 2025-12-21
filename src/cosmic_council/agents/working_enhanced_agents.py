@@ -5,7 +5,7 @@ Simplified but functional enhanced implementations
 
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
@@ -53,7 +53,7 @@ class WorkingEnhancedRedOwlAgent:
     
     async def process_problem_enhanced(self, problem, context: Dict[str, Any] = None) -> EnhancedResult:
         """Enhanced problem processing for Red Owl"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Conduct comprehensive research analysis
@@ -75,7 +75,7 @@ class WorkingEnhancedRedOwlAgent:
             recommendations = self._generate_recommendations(problem, research_framework)
             next_actions = self._identify_next_actions(problem, research_framework)
             
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             return EnhancedResult(
                 enterprise="Red Owl",
@@ -101,12 +101,12 @@ class WorkingEnhancedRedOwlAgent:
                     "relevance": 0.9,
                     "timeliness": 0.8
                 },
-                timestamp=datetime.utcnow().isoformat()
+                timestamp=datetime.now(timezone.utc).isoformat()
             )
             
         except Exception as e:
             logger.error(f"Error in enhanced Red Owl processing: {e}")
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             return EnhancedResult(
                 enterprise="Red Owl",
@@ -119,7 +119,7 @@ class WorkingEnhancedRedOwlAgent:
                 specialized_analysis={"error": str(e)},
                 framework_applied="None",
                 quality_metrics={},
-                timestamp=datetime.utcnow().isoformat()
+                timestamp=datetime.now(timezone.utc).isoformat()
             )
     
     def _determine_research_scope(self, problem) -> str:
@@ -242,7 +242,7 @@ class WorkingEnhancedOrangeOrangutanAgent:
     
     async def process_problem_enhanced(self, problem, context: Dict[str, Any] = None) -> EnhancedResult:
         """Enhanced problem processing for Orange Orangutan"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Conduct comprehensive planning analysis
@@ -265,7 +265,7 @@ class WorkingEnhancedOrangeOrangutanAgent:
             recommendations = self._generate_recommendations(problem, strategic_plan)
             next_actions = self._identify_next_actions(problem, strategic_plan)
             
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             return EnhancedResult(
                 enterprise="Orange Orangutan",
@@ -292,12 +292,12 @@ class WorkingEnhancedOrangeOrangutanAgent:
                     "feasibility": 0.85,
                     "timeliness": 0.9
                 },
-                timestamp=datetime.utcnow().isoformat()
+                timestamp=datetime.now(timezone.utc).isoformat()
             )
             
         except Exception as e:
             logger.error(f"Error in enhanced Orange Orangutan processing: {e}")
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             return EnhancedResult(
                 enterprise="Orange Orangutan",
@@ -310,7 +310,7 @@ class WorkingEnhancedOrangeOrangutanAgent:
                 specialized_analysis={"error": str(e)},
                 framework_applied="None",
                 quality_metrics={},
-                timestamp=datetime.utcnow().isoformat()
+                timestamp=datetime.now(timezone.utc).isoformat()
             )
     
     def _assess_planning_complexity(self, problem) -> str:

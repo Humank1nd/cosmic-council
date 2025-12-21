@@ -7,7 +7,7 @@ transactions, and data persistence.
 import asyncio
 import logging
 from typing import Dict, Any, Optional, List, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import json
 from contextlib import asynccontextmanager
@@ -50,8 +50,8 @@ class ProblemModel(Base):
     confidence_threshold = Column(Float, default=0.85)
     completeness_threshold = Column(Float, default=0.80)
     max_revolutions_per_layer = Column(Integer, default=3)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     layer_runs = relationship("LayerRunModel", back_populates="problem", cascade="all, delete-orphan")
@@ -72,7 +72,7 @@ class LayerRunModel(Base):
     finished_at = Column(DateTime, nullable=True)
     total_cost_usd = Column(Float, default=0.0)
     total_latency_ms = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problem = relationship("ProblemModel", back_populates="layer_runs")
@@ -93,7 +93,7 @@ class SectorRunModel(Base):
     output_json = Column(JSON, nullable=True)
     metrics = Column(JSON, nullable=True)
     error_message = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     layer_run = relationship("LayerRunModel", back_populates="sector_runs")
@@ -110,7 +110,7 @@ class RefinementModel(Base):
     rationale = Column(Text, nullable=False)
     refined_question = Column(Text, nullable=False)
     escalator_decision = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problem = relationship("ProblemModel", back_populates="refinements")
@@ -129,7 +129,7 @@ class AnswerModel(Base):
     novelty_score = Column(Float, default=0.0)
     alignment_score = Column(Float, default=1.0)
     net_benefit_score = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problem = relationship("ProblemModel", back_populates="answers")
@@ -147,7 +147,7 @@ class LayerModel(Base):
     purpose = Column(Text, nullable=True)
     example_reframing = Column(Text, nullable=True)
     toolchain_type = Column(String(50), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class DatabaseManager:
@@ -709,8 +709,8 @@ if __name__ == "__main__":
             await db_manager.update_layer_run(
                 layer_run_id,
                 status="completed",
-                started_at=datetime.utcnow(),
-                finished_at=datetime.utcnow(),
+                started_at=datetime.now(timezone.utc),
+                finished_at=datetime.now(timezone.utc),
                 total_cost_usd=50.0,
                 total_latency_ms=30000
             )

@@ -569,6 +569,10 @@ class UnifiedDatabaseService:
                 'connection_status': 'failed'
             }
 
+# Backward-compatible alias used by older imports
+class DatabaseService(UnifiedDatabaseService):
+    """Compatibility wrapper for legacy DatabaseService imports."""
+
 # ============================================================================
 # BACKWARD COMPATIBILITY WRAPPERS
 # ============================================================================
@@ -594,10 +598,77 @@ class PerpetualDatabaseService:
     async def create_perpetual_session(self, session_data: Dict[str, Any]) -> str:
         """Create a new perpetual thinking session"""
         return await self.unified_service.create_perpetual_session(session_data)
-    
+
+    async def save_perpetual_session(self, session_data: Dict[str, Any]) -> str:
+        """Save a perpetual session payload with compatibility mapping"""
+        allowed_fields = {
+            "id",
+            "session_name",
+            "initial_input",
+            "current_input",
+            "current_cycle_number",
+            "status",
+            "mode",
+            "goals",
+            "success_criteria",
+            "created_at",
+            "updated_at",
+            "ended_at",
+            "session_data",
+            "summary_metrics",
+        }
+        payload = {k: session_data[k] for k in allowed_fields if k in session_data}
+        if "session_id" in session_data and "id" not in payload:
+            try:
+                payload["id"] = uuid.UUID(session_data["session_id"])
+            except Exception:
+                payload["id"] = uuid.uuid4()
+        extras = {
+            k: v for k, v in session_data.items()
+            if k not in allowed_fields and k != "session_id"
+        }
+        if extras:
+            base_data = payload.get("session_data") or {}
+            payload["session_data"] = {**base_data, **extras}
+        return await self.unified_service.create_perpetual_session(payload)
+
     async def get_perpetual_session(self, session_id: str) -> Optional[Dict[str, Any]]:
         """Get a perpetual thinking session by ID"""
         return await self.unified_service.get_perpetual_session(session_id)
+
+    async def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+        """Compatibility alias for get_perpetual_session"""
+        session = await self.get_perpetual_session(session_id)
+        if session and "session_id" not in session and "id" in session:
+            session = dict(session)
+            session["session_id"] = session["id"]
+        return session
+
+    async def get_all_sessions(self, status: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+        """List perpetual sessions for API endpoints"""
+        try:
+            async with self.async_session() as session:
+                query = select(PerpetualThinkingSession)
+                if status:
+                    query = query.where(PerpetualThinkingSession.status == status)
+                query = query.order_by(PerpetualThinkingSession.created_at.desc()).limit(limit)
+                result = await session.execute(query)
+                sessions = result.scalars().all()
+                return [
+                    {
+                        "session_id": str(record.id),
+                        "session_name": record.session_name,
+                        "status": record.status,
+                        "current_cycle_number": record.current_cycle_number,
+                        "created_at": record.created_at,
+                        "updated_at": record.updated_at,
+                        "summary_metrics": record.summary_metrics
+                    }
+                    for record in sessions
+                ]
+        except SQLAlchemyError as e:
+            logger.error(f"ƒ?O Error listing perpetual sessions: {e}")
+            return []
     
     async def update_perpetual_session(self, session_id: str, update_data: Dict[str, Any]) -> bool:
         """Update a perpetual thinking session"""
@@ -610,6 +681,44 @@ class PerpetualDatabaseService:
     async def get_perpetual_cycle(self, cycle_id: str) -> Optional[Dict[str, Any]]:
         """Get a perpetual cycle by ID"""
         return await self.unified_service.get_perpetual_cycle(cycle_id)
+
+    async def get_session_cycles(self, session_id: str, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get cycles for a perpetual session"""
+        try:
+            async with self.async_session() as session:
+                lookup_id = session_id
+                try:
+                    lookup_id = uuid.UUID(session_id)
+                except Exception:
+                    pass
+                result = await session.execute(
+                    select(PerpetualCycle)
+                    .where(PerpetualCycle.session_id == lookup_id)
+                    .order_by(PerpetualCycle.started_at.desc())
+                    .limit(limit)
+                )
+                cycles = result.scalars().all()
+                return [
+                    {
+                        "cycle_id": str(cycle.id),
+                        "session_id": str(cycle.session_id),
+                        "cycle_number": cycle.cycle_number,
+                        "cycle_type": cycle.cycle_type,
+                        "status": cycle.status,
+                        "input_text": cycle.input_text,
+                        "output_text": cycle.output_text,
+                        "confidence_score": cycle.confidence_score,
+                        "effectiveness_score": cycle.effectiveness_score,
+                        "relevance_score": cycle.relevance_score,
+                        "started_at": cycle.started_at,
+                        "completed_at": cycle.completed_at,
+                        "duration": cycle.duration
+                    }
+                    for cycle in cycles
+                ]
+        except SQLAlchemyError as e:
+            logger.error(f"ƒ?O Error getting session cycles: {e}")
+            return []
     
     async def update_perpetual_cycle(self, cycle_id: str, update_data: Dict[str, Any]) -> bool:
         """Update a perpetual cycle"""
@@ -630,6 +739,30 @@ class PerpetualDatabaseService:
     async def get_human_feedback_points(self, session_id: str) -> List[Dict[str, Any]]:
         """Get all human feedback points for a session"""
         return await self.unified_service.get_human_feedback_points(session_id)
+
+    async def get_system_metrics(self, metric_name: Optional[str] = None, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get system metrics for the perpetual subsystem"""
+        try:
+            async with self.async_session() as session:
+                query = select(PerpetualSystemMetrics).order_by(PerpetualSystemMetrics.recorded_at.desc()).limit(limit)
+                result = await session.execute(query)
+                metrics = result.scalars().all()
+                return [
+                    {
+                        "id": str(metric.id),
+                        "total_sessions": metric.total_sessions,
+                        "total_cycles": metric.total_cycles,
+                        "total_breakthroughs": metric.total_breakthroughs,
+                        "avg_cycle_duration": metric.avg_cycle_duration,
+                        "avg_confidence_score": metric.avg_confidence_score,
+                        "system_uptime": metric.system_uptime,
+                        "recorded_at": metric.recorded_at
+                    }
+                    for metric in metrics
+                ]
+        except SQLAlchemyError as e:
+            logger.error(f"ƒ?O Error getting system metrics: {e}")
+            return []
     
     async def close(self):
         """Close the database connection"""
@@ -644,6 +777,7 @@ class PerpetualDatabaseService:
 # ============================================================================
 
 __all__ = [
+    'DatabaseService',
     'UnifiedDatabaseService',
     'PerpetualDatabaseService',  # Backward compatibility
     'Base',  # For table creation

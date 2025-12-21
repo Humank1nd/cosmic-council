@@ -56,7 +56,7 @@ The services architecture has been successfully implemented following the engine
 
 #### **API Endpoints**:
 - `GET /v1/analytics/cycles` - Get cycle analytics
-- `GET /v1/analytics/enterprises` - Get enterprise performance
+- `GET /v1/analytics/supra_enterprise` - Get enterprise performance
 - `GET /v1/analytics/system-health` - Get system health metrics
 - `GET /v1/analytics/dashboard` - Get analytics dashboards
 - `GET /health` - Health check

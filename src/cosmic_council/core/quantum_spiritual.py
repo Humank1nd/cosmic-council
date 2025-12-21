@@ -6,7 +6,7 @@ Complete integration of all quantum and spiritual enhancements into the Cosmic C
 import asyncio
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -73,7 +73,7 @@ class QuantumSpiritualCosmicCouncilResult:
     breakthrough_achieved: bool = False
     cosmic_insights: List[str] = field(default_factory=list)
     processing_time: float = 0.0
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuantumSpiritualCosmicCouncil:
     """
@@ -119,7 +119,7 @@ class QuantumSpiritualCosmicCouncil:
                                             include_visualizations: bool = True) -> QuantumSpiritualCosmicCouncilResult:
         """Solve a problem using the complete quantum-spiritual Cosmic Council system"""
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         integration_level = integration_level or self.integration_level
         
         logger.info(f"🔮🕉️🔷 Starting quantum-spiritual problem solving: {problem.title}")
@@ -175,7 +175,7 @@ class QuantumSpiritualCosmicCouncil:
                 overall_quantum_coherence, overall_spiritual_alignment, breakthrough_achieved
             )
             
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
+            processing_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             # Create comprehensive result
             result = QuantumSpiritualCosmicCouncilResult(
@@ -203,7 +203,7 @@ class QuantumSpiritualCosmicCouncil:
             if breakthrough_achieved:
                 self.breakthrough_history.append({
                     "problem_title": problem.title,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "quantum_coherence": overall_quantum_coherence,
                     "spiritual_alignment": overall_spiritual_alignment,
                     "cosmic_insights": cosmic_insights
@@ -224,7 +224,7 @@ class QuantumSpiritualCosmicCouncil:
                 problem=problem,
                 quantum_enterprise_results={},
                 integration_level=integration_level,
-                processing_time=(datetime.utcnow() - start_time).total_seconds()
+                processing_time=(datetime.now(timezone.utc) - start_time).total_seconds()
             )
     
     async def _analyze_problem_quantum_spiritual(self, problem: ProblemStatement) -> Dict[str, Any]:
@@ -447,7 +447,7 @@ class QuantumSpiritualCosmicCouncil:
         """Perform cosmic synthesis of all elements"""
         
         cosmic_synthesis = {
-            "synthesis_id": f"cosmic_synthesis_{datetime.utcnow().timestamp()}",
+            "synthesis_id": f"cosmic_synthesis_{datetime.now(timezone.utc).timestamp()}",
             "problem_title": problem.title,
             "quantum_enterprise_synthesis": {},
             "spiritual_wisdom_integration": {},

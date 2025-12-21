@@ -5,7 +5,7 @@ Health check API routes.
 from fastapi import APIRouter, Depends
 from typing import Dict, Any
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -16,7 +16,7 @@ async def health_check():
     """Basic health check endpoint"""
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "cosmic-council-api",
         "version": "2.0.0"
     }
@@ -27,7 +27,7 @@ async def readiness_check():
     """Readiness check endpoint"""
     return {
         "status": "ready",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "cosmic-council-api",
         "version": "2.0.0"
     }
@@ -38,7 +38,7 @@ async def liveness_check():
     """Liveness check endpoint"""
     return {
         "status": "alive",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "cosmic-council-api",
         "version": "2.0.0"
     }

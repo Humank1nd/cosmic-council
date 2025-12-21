@@ -5,7 +5,7 @@ Database Migrations and Schema Management for Cosmic Council System
 import os
 import logging
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from database_connection import get_database_connection, get_session_context
@@ -84,13 +84,13 @@ class MigrationManager:
     def apply_migration(self, version: str, description: str, sql: str):
         """Apply a migration"""
         try:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             
             with get_session_context() as session:
                 # Execute the migration SQL
                 session.execute(text(sql))
                 
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             execution_time_ms = int((end_time - start_time).total_seconds() * 1000)
             
             # Record the migration

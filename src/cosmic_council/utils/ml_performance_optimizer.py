@@ -23,7 +23,7 @@ import time
 import logging
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from enum import Enum
@@ -390,7 +390,7 @@ class AdaptiveCacheOptimizer:
                 'key': key,
                 'hit': hit,
                 'access_time': access_time,
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'context': context
             }
             self.access_patterns.append(access_record)
@@ -535,7 +535,7 @@ class MLPerformanceOptimizer:
             
             # Create performance features
             features = PerformanceFeatures(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_usage=current_metrics.get('cpu_usage', 50),
                 memory_usage=current_metrics.get('memory_usage', 60),
                 disk_usage=current_metrics.get('disk_usage', 40),
@@ -657,7 +657,7 @@ class MLPerformanceOptimizer:
         # Store recommendations
         with self._lock:
             self.optimization_recommendations.append({
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'type': 'anomaly_response',
                 'anomaly_score': anomaly_score,
                 'recommendations': recommendations,
@@ -752,7 +752,7 @@ async def demo_ml_performance_optimization():
         for i in range(50):
             # Create simulated performance features
             features = PerformanceFeatures(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_usage=50 + (i * 0.5) + np.random.normal(0, 5),
                 memory_usage=60 + (i * 0.3) + np.random.normal(0, 3),
                 disk_usage=40 + np.random.normal(0, 2),
@@ -797,7 +797,7 @@ async def demo_ml_performance_optimization():
         print("\n🔮 Testing ML Predictions:")
         if ml_optimizer.predictor.is_trained:
             test_features = PerformanceFeatures(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_usage=75.0,
                 memory_usage=80.0,
                 disk_usage=45.0,
@@ -824,7 +824,7 @@ async def demo_ml_performance_optimization():
         if ml_optimizer.anomaly_detector.is_trained:
             # Normal features
             normal_features = PerformanceFeatures(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_usage=50.0,
                 memory_usage=60.0,
                 disk_usage=40.0,
@@ -846,7 +846,7 @@ async def demo_ml_performance_optimization():
             
             # Anomalous features
             anomalous_features = PerformanceFeatures(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 cpu_usage=95.0,  # Very high CPU
                 memory_usage=95.0,  # Very high memory
                 disk_usage=90.0,  # High disk usage

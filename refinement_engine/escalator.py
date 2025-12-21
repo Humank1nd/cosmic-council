@@ -8,7 +8,7 @@ from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     from .layers import LayerDefinitions, LayerRefinementEngine
@@ -56,7 +56,7 @@ class EscalatorDecision:
         if self.metrics is None:
             self.metrics = {}
         if self.timestamp is None:
-            self.timestamp = datetime.utcnow()
+            self.timestamp = datetime.now(timezone.utc)
 
 
 class EscalatorEngine:

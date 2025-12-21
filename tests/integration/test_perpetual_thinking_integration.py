@@ -4,6 +4,7 @@ Tests the integration between perpetual thinking engine, AI integration, and dat
 """
 
 import pytest
+import pytest_asyncio
 import asyncio
 import uuid
 from datetime import datetime, timezone
@@ -25,7 +26,7 @@ from perpetual_database_service import PerpetualDatabaseService
 class TestPerpetualThinkingIntegration:
     """Test the integration of perpetual thinking components"""
 
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def ai_engine_with_db(self):
         """Create a Perpetual AI Thinking Engine with database for testing"""
         # Use in-memory database for testing

@@ -6,7 +6,7 @@ Each sector at each layer has its own MCP definition for context isolation and r
 import json
 import uuid
 from typing import Dict, Any, List, Optional, Union
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass, asdict
 from enum import Enum
 
@@ -439,8 +439,8 @@ class MCPManager:
                 "created_by": "mcp_manager",
                 "schema_compliant": True
             },
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc)
         )
         
         self.active_contexts[context_id] = context
@@ -461,7 +461,7 @@ class MCPManager:
         transformed_outputs = self._apply_transformations(outputs, mcp_def.transformation_rules)
         
         context.outputs = transformed_outputs
-        context.updated_at = datetime.utcnow()
+        context.updated_at = datetime.now(timezone.utc)
         
         return context
     
@@ -499,7 +499,7 @@ class MCPManager:
             context_data=transformed_inputs,
             transformation_applied=f"from_{from_context.sector.value}_{from_context.layer.value}_to_{to_sector.value}_{to_layer.value}",
             transition_type=transition_type,
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
         
         self.transition_history.append(transition)

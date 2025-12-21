@@ -8,7 +8,7 @@ import math
 import time
 import asyncio
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -395,7 +395,7 @@ class InteractiveHexagonVisualization:
         elif sector.state == SectorState.COMPLETED:
             sector.state = SectorState.ACTIVE  # Allow reactivation
         
-        sector.last_update = datetime.utcnow()
+        sector.last_update = datetime.now(timezone.utc)
         self.update_visualization()
         print(f"Toggled {sector.name} to {sector.state.value}")
     
@@ -406,7 +406,7 @@ class InteractiveHexagonVisualization:
         sector.state = state
         sector.progress = progress
         sector.confidence = confidence
-        sector.last_update = datetime.utcnow()
+        sector.last_update = datetime.now(timezone.utc)
         if data:
             sector.data = data
         

@@ -18,7 +18,7 @@ def generate_uuid() -> str:
 def format_timestamp(dt: Optional[datetime] = None) -> str:
     """Format a datetime as ISO string."""
     if dt is None:
-        dt = datetime.utcnow()
+        dt = datetime.now(timezone.utc)
     return dt.isoformat()
 
 def validate_email(email: str) -> bool:

@@ -775,7 +775,7 @@ async def process_agent_sequence(
     try:
         start_time = perf_counter()
         sequence_id = str(uuid.uuid4())
-        started_at = datetime.utcnow()
+        started_at = datetime.now(timezone.utc)
         
         # Convert problem request to ProblemStatement
         problem = ProblemStatement(
@@ -921,7 +921,7 @@ async def process_agent_sequence(
                 if last_index < len(all_agents) - 1:
                     next_agent = all_agents[last_index + 1]
         
-        total_time = (datetime.utcnow() - started_at).total_seconds()
+        total_time = (datetime.now(timezone.utc) - started_at).total_seconds()
 
         payload = AgentSequenceResponse(
             sequence_id=sequence_id,

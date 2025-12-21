@@ -12,7 +12,7 @@ from typing import List, Optional, Dict, Any
 from pathlib import Path
 import time
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class TestRunner:
@@ -236,7 +236,7 @@ class TestRunner:
         
         # Create report data
         report = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "config": self.config,
             "results": results,
             "summary": self._generate_summary(results)

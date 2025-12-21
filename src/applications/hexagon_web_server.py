@@ -6,7 +6,7 @@ Serves the interactive hexagon visualization with real-time updates
 import asyncio
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, asdict
 import threading
@@ -44,7 +44,7 @@ class VisualizationState:
         if self.sector_states is None:
             self.sector_states = {}
         if self.last_update is None:
-            self.last_update = datetime.utcnow()
+            self.last_update = datetime.now(timezone.utc)
 
 class HexagonWebServer:
     """Web server for the hexagon visualization"""
@@ -91,7 +91,7 @@ class HexagonWebServer:
             """Serve the main visualization page"""
             return FileResponse("web_hexagon_visualization.html")
         
-        @self.app.get("/api/enterprises")
+        @self.app.get("/api/supra_enterprise")
         async def get_enterprises():
             """Get enterprise configuration"""
             return {"enterprises": self.enterprise_config}
@@ -126,7 +126,7 @@ class HexagonWebServer:
                     "success_criteria": problem.success_criteria
                 }
                 
-                self.visualization_state.last_update = datetime.utcnow()
+                self.visualization_state.last_update = datetime.now(timezone.utc)
                 
                 # Broadcast update to connected clients
                 await self._broadcast_update("problem_set", self.visualization_state.problem)
@@ -153,10 +153,10 @@ class HexagonWebServer:
                 "state": new_state,
                 "progress": 0,
                 "confidence": 0,
-                "last_update": datetime.utcnow().isoformat()
+                "last_update": datetime.now(timezone.utc).isoformat()
             }
             
-            self.visualization_state.last_update = datetime.utcnow()
+            self.visualization_state.last_update = datetime.now(timezone.utc)
             
             # Broadcast update
             await self._broadcast_update("sector_toggled", {
@@ -189,7 +189,7 @@ class HexagonWebServer:
                 raise HTTPException(status_code=400, detail="Cannot reset during cycle")
             
             self._initialize_sector_states()
-            self.visualization_state.last_update = datetime.utcnow()
+            self.visualization_state.last_update = datetime.now(timezone.utc)
             
             # Broadcast update
             await self._broadcast_update("cycle_reset", {})
@@ -225,7 +225,7 @@ class HexagonWebServer:
                 "state": "inactive",
                 "progress": 0,
                 "confidence": 0,
-                "last_update": datetime.utcnow().isoformat()
+                "last_update": datetime.now(timezone.utc).isoformat()
             }
     
     async def _broadcast_update(self, update_type: str, data: Any):
@@ -233,7 +233,7 @@ class HexagonWebServer:
         message = {
             "type": update_type,
             "data": data,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         message_text = json.dumps(message)
@@ -290,7 +290,7 @@ class HexagonWebServer:
                     "state": "processing",
                     "progress": 0,
                     "confidence": 0,
-                    "last_update": datetime.utcnow().isoformat()
+                    "last_update": datetime.now(timezone.utc).isoformat()
                 }
                 
                 await self._broadcast_update("sector_processing", {
@@ -314,7 +314,7 @@ class HexagonWebServer:
                     "state": "completed",
                     "progress": 1.0,
                     "confidence": confidence,
-                    "last_update": datetime.utcnow().isoformat()
+                    "last_update": datetime.now(timezone.utc).isoformat()
                 }
                 
                 await self._broadcast_update("sector_completed", {

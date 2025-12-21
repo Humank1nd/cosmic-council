@@ -24,7 +24,7 @@ import sqlite3
 
 # Import the unified database models and service
 from ..core.models import Base
-from .unified_database_service import DatabaseService
+from .unified_database_service import UnifiedDatabaseService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -331,17 +331,24 @@ class UnifiedDatabaseManager:
         """Check if database connection is healthy"""
         try:
             if self.unified_service:
-                # Use the unified service health check
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+                # Avoid creating a new event loop when one is already running
                 try:
+                    running_loop = asyncio.get_running_loop()
+                except RuntimeError:
+                    running_loop = None
+                if running_loop and running_loop.is_running():
+                    return self.engine is not None or self.async_engine is not None
+
+                loop = asyncio.new_event_loop()
+                try:
+                    asyncio.set_event_loop(loop)
                     health_result = loop.run_until_complete(self.unified_service.health_check())
                     return health_result.get('healthy', False)
                 finally:
                     loop.close()
-            else:
-                # Basic check - if we have engines, assume healthy
-                return self.engine is not None or self.async_engine is not None
+
+            # Basic check - if we have engines, assume healthy
+            return self.engine is not None or self.async_engine is not None
         except Exception:
             return False
 

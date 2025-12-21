@@ -124,7 +124,7 @@ fi
 echo "Testing Gateway endpoints..."
 
 # Test enterprises endpoint
-if curl -s $GATEWAY_URL/v1/enterprises | jq '.enterprises | length' | grep -q "6"; then
+if curl -s $GATEWAY_URL/v1/supra_enterprise | jq '.enterprises | length' | grep -q "6"; then
     echo -e "${GREEN}✅ Enterprises endpoint working${NC}"
 else
     echo -e "${RED}❌ Enterprises endpoint failed${NC}"

@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 import json
 import logging
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 try:
@@ -40,7 +40,7 @@ class HandoffData:
     constraints: Dict[str, Any] = field(default_factory=dict)
     context: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -91,7 +91,7 @@ class SectorExecutor:
         Returns:
             SectorResult with execution results
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             self.logger.info(f"Executing {self.sector.value} sector at {self.layer} layer")
@@ -105,7 +105,7 @@ class SectorExecutor:
             result = await self._execute_sector_logic(input_data, handoff, layer_capability)
             
             # Calculate execution metrics
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             execution_time = (end_time - start_time).total_seconds() * 1000
             
             result.execution_time_ms = int(execution_time)
@@ -121,7 +121,7 @@ class SectorExecutor:
             
         except Exception as e:
             self.logger.error(f"Error executing {self.sector.value} sector: {str(e)}")
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             execution_time = (end_time - start_time).total_seconds() * 1000
             
             return SectorResult(

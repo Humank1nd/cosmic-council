@@ -3,13 +3,13 @@ Agent coordinator for orchestrating enterprise agents in the Cosmic Council syst
 """
 
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import logging
 
 from ..base.agent import BaseAgent
 from ..base.communication import AgentCommunicationHub, AgentCollaboration
-from ..enterprises import (
+from ..supra_enterprise import (
     RedOwlAgent, OrangeOrangutanAgent, YellowHoneybeeAgent,
     GreenTortoiseAgent, BlueDolphinAgent, PurpleElephantAgent
 )
@@ -134,7 +134,7 @@ class AgentCoordinator:
                 'result': result,
                 'execution_time': 1.0,  # Placeholder
                 'success': True,
-                'timestamp': datetime.utcnow().isoformat()
+                'timestamp': datetime.now(timezone.utc).isoformat()
             }
             
         except Exception as e:
@@ -143,7 +143,7 @@ class AgentCoordinator:
                 'enterprise_type': enterprise_type.value,
                 'success': False,
                 'error': str(e),
-                'timestamp': datetime.utcnow().isoformat()
+                'timestamp': datetime.now(timezone.utc).isoformat()
             }
     
     def _prepare_enterprise_input(self, cycle: Cycle, enterprise_type: EnterpriseType) -> Dict[str, Any]:
@@ -261,7 +261,7 @@ class AgentCoordinator:
                 return False
             
             cycle.status = CycleStatus.PAUSED
-            cycle.updated_at = datetime.utcnow()
+            cycle.updated_at = datetime.now(timezone.utc)
             
             self.logger.info(f"Paused cycle: {cycle_id}")
             return True
@@ -283,7 +283,7 @@ class AgentCoordinator:
                 return False
             
             cycle.status = CycleStatus.RUNNING
-            cycle.updated_at = datetime.utcnow()
+            cycle.updated_at = datetime.now(timezone.utc)
             
             self.logger.info(f"Resumed cycle: {cycle_id}")
             return True
@@ -305,7 +305,7 @@ class AgentCoordinator:
                 return False
             
             cycle.status = CycleStatus.FAILED
-            cycle.completed_at = datetime.utcnow()
+            cycle.completed_at = datetime.now(timezone.utc)
             cycle.update_metadata('cancelled', True)
             
             # Remove from active cycles

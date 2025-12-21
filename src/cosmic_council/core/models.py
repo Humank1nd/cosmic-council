@@ -10,8 +10,7 @@ from sqlalchemy import (
     Column, Integer, String, Text, DateTime, Boolean, Float, JSON, 
     ForeignKey, Table, Index, UniqueConstraint, CheckConstraint, DECIMAL, DATE
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import declarative_base, relationship, backref
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from datetime import datetime, timezone
 from enum import Enum
@@ -30,7 +29,7 @@ problem_stakeholders = Table(
     Column('stakeholder_id', UUID(as_uuid=True), ForeignKey('stakeholders.id'), primary_key=True),
     Column('role', String(100)),  # e.g., 'primary', 'secondary', 'affected'
     Column('influence_level', String(20)),  # e.g., 'high', 'medium', 'low'
-    Column('created_at', DateTime(timezone=True), default=datetime.utcnow)
+    Column('created_at', DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 )
 
 problem_constraints = Table(
@@ -39,7 +38,7 @@ problem_constraints = Table(
     Column('problem_id', UUID(as_uuid=True), ForeignKey('problems.id'), primary_key=True),
     Column('constraint_id', UUID(as_uuid=True), ForeignKey('constraints.id'), primary_key=True),
     Column('constraint_value', Text),
-    Column('created_at', DateTime(timezone=True), default=datetime.utcnow)
+    Column('created_at', DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 )
 
 problem_success_criteria = Table(
@@ -49,7 +48,7 @@ problem_success_criteria = Table(
     Column('criterion_id', UUID(as_uuid=True), ForeignKey('success_criteria.id'), primary_key=True),
     Column('target_value', String(255)),
     Column('measurement_method', Text),
-    Column('created_at', DateTime(timezone=True), default=datetime.utcnow)
+    Column('created_at', DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 )
 
 cycle_enterprises = Table(
@@ -61,7 +60,7 @@ cycle_enterprises = Table(
     Column('status', String(20)),  # 'pending', 'in_progress', 'completed', 'failed'
     Column('started_at', DateTime(timezone=True)),
     Column('completed_at', DateTime(timezone=True)),
-    Column('created_at', DateTime(timezone=True), default=datetime.utcnow)
+    Column('created_at', DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 )
 
 solution_component_relationships = Table(
@@ -70,7 +69,7 @@ solution_component_relationships = Table(
     Column('solution_id', UUID(as_uuid=True), ForeignKey('solutions.id'), primary_key=True),
     Column('component_id', UUID(as_uuid=True), ForeignKey('solution_components.id'), primary_key=True),
     Column('relationship_type', String(50)),  # 'depends_on', 'conflicts_with', 'enhances'
-    Column('created_at', DateTime(timezone=True), default=datetime.utcnow)
+    Column('created_at', DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 )
 
 # ============================================================================
@@ -91,8 +90,8 @@ class Problem(Base):
     
     # Metadata
     created_by = Column(UUID(as_uuid=True), ForeignKey('users.id'))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, index=True)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     due_date = Column(DateTime(timezone=True))
     
     # Relationships
@@ -127,8 +126,8 @@ class Solution(Base):
     
     # Metadata
     created_by = Column(UUID(as_uuid=True), ForeignKey('users.id'))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problem = relationship("Problem", back_populates="solutions")
@@ -153,7 +152,7 @@ class Cycle(Base):
     status = Column(String(20), default='pending')  # 'pending', 'running', 'completed', 'failed'
     
     # Cycle metadata
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     total_duration = Column(Float)  # Duration in seconds
     overall_confidence = Column(Float, default=0.0)
@@ -209,7 +208,7 @@ class EnterpriseResult(Base):
     next_actions = Column(JSON)
     
     # Timestamps
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     
     # Relationships
@@ -236,15 +235,15 @@ class ResearchCoreProblem(Base):
     main_problem_statement = Column(Text, nullable=False)
     context = Column(Text)
     initial_observations = Column(Text)
-    date_identified = Column(DateTime(timezone=True), default=datetime.utcnow)
+    date_identified = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     submitted_by = Column(String(100))
     associated_themes = Column(JSON)
     severity_priority_rating = Column(String(20))
     problem_status = Column(String(20), default='active')
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     research_findings = relationship("ResearchFinding", back_populates="core_problem", cascade="all, delete-orphan")
@@ -271,7 +270,7 @@ class ResearchFinding(Base):
     summary = Column(Text, nullable=False)
     relevance_to_problem = Column(Text)
     keywords_tags = Column(JSON)
-    date_added = Column(DateTime(timezone=True), default=datetime.utcnow)
+    date_added = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Ratings
     credibility_rating = Column(Integer)
@@ -283,8 +282,8 @@ class ResearchFinding(Base):
     attachments = Column(JSON)  # Store file references and metadata
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     core_problem = relationship("ResearchCoreProblem", back_populates="research_findings")
@@ -307,15 +306,15 @@ class ResearchPrioritizedQuestion(Base):
     supporting_research_links = Column(JSON, default=[])  # Array of research_findings IDs
     importance_rating = Column(Integer)
     relevance_to_core_problem = Column(Text)
-    date_added = Column(DateTime(timezone=True), default=datetime.utcnow)
+    date_added = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     category_theme = Column(String(100))
     
     # Status tracking
     status = Column(String(20), default='pending')
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     core_problem = relationship("ResearchCoreProblem", back_populates="prioritized_questions")
@@ -348,8 +347,8 @@ class PlanningRelatedQuestion(Base):
     assigned_to = Column(String(100))
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     research_question = relationship("ResearchPrioritizedQuestion", back_populates="planning_questions")
@@ -378,8 +377,8 @@ class PlanningActionPlan(Base):
     completion_percentage = Column(DECIMAL(5, 2), default=0.0)
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     related_question = relationship("PlanningRelatedQuestion", back_populates="action_plans")
@@ -409,8 +408,8 @@ class PlanningDependency(Base):
     dependency_status = Column(String(20), default='identified')
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     action_plan = relationship("PlanningActionPlan", back_populates="dependencies")
@@ -443,8 +442,8 @@ class DevelopmentPrototype(Base):
     development_stage = Column(String(50))
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     action_plan = relationship("PlanningActionPlan", back_populates="prototypes")
@@ -477,9 +476,9 @@ class DevelopmentInternalTesting(Base):
     efficiency_rating = Column(Integer)
     
     # Metadata
-    test_date = Column(DateTime(timezone=True), default=datetime.utcnow)
+    test_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     tested_by = Column(String(100))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     prototype = relationship("DevelopmentPrototype", back_populates="internal_testing")
@@ -508,7 +507,7 @@ class DevelopmentCreativeNote(Base):
     implementation_status = Column(String(20), default='idea')
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     created_by = Column(String(100))
     
     # Relationships
@@ -539,8 +538,8 @@ class BudgetResourceInventory(Base):
     unit_cost = Column(DECIMAL(12, 2))
     
     # Metadata
-    last_updated = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    last_updated = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class BudgetAllocation(Base):
     """Budget Allocation Table - Allocates funding for projects"""
@@ -561,8 +560,8 @@ class BudgetAllocation(Base):
     spent_amount = Column(DECIMAL(12, 2), default=0.0)
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     prototype = relationship("DevelopmentPrototype", back_populates="budget_allocations")
@@ -593,9 +592,9 @@ class BudgetTimeCostAnalysis(Base):
     recommendations = Column(Text)
     
     # Metadata
-    analysis_date = Column(DateTime(timezone=True), default=datetime.utcnow)
+    analysis_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     analyzed_by = Column(String(100))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     budget_allocation = relationship("BudgetAllocation", back_populates="time_cost_analysis")
@@ -629,8 +628,8 @@ class MarketInsight(Base):
     growth_potential = Column(String(20))
     
     # Metadata
-    insight_date = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    insight_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     prototype = relationship("DevelopmentPrototype", back_populates="market_insights")
@@ -664,8 +663,8 @@ class MarketCommunicationStrategy(Base):
     strategy_status = Column(String(20), default='draft')
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     market_insight = relationship("MarketInsight", back_populates="communication_strategies")
@@ -692,12 +691,12 @@ class MarketPerformanceMetric(Base):
     target_value = Column(DECIMAL(15, 2))
     
     # Performance data
-    measurement_date = Column(DateTime(timezone=True), default=datetime.utcnow)
+    measurement_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     performance_rating = Column(Integer)
     notes = Column(Text)
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     communication_strategy = relationship("MarketCommunicationStrategy", back_populates="performance_metrics")
@@ -732,8 +731,8 @@ class SupportUserFeedback(Base):
     feedback_status = Column(String(20), default='received')
     
     # Metadata
-    feedback_date = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    feedback_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     communication_strategy = relationship("MarketCommunicationStrategy", back_populates="user_feedback")
@@ -766,9 +765,9 @@ class SupportPerformanceAssessment(Base):
     assessment_status = Column(String(20), default='in_progress')
     
     # Metadata
-    assessment_date = Column(DateTime(timezone=True), default=datetime.utcnow)
+    assessment_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     assessed_by = Column(String(100))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     user_feedback = relationship("SupportUserFeedback", back_populates="performance_assessments")
@@ -805,8 +804,8 @@ class SupportContinuousImprovement(Base):
     research_priority = Column(Boolean, default=False)
     
     # Metadata
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     performance_assessment = relationship("SupportPerformanceAssessment", back_populates="continuous_improvements")
@@ -833,8 +832,8 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     last_login = Column(DateTime(timezone=True))
     
     # Relationships
@@ -860,8 +859,8 @@ class Stakeholder(Base):
     influence_level = Column(String(20))  # 'high', 'medium', 'low'
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problems = relationship("Problem", secondary=problem_stakeholders, back_populates="stakeholders")
@@ -883,8 +882,8 @@ class Constraint(Base):
     severity = Column(String(20))  # 'low', 'medium', 'high', 'critical'
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problems = relationship("Problem", secondary=problem_constraints, back_populates="constraints")
@@ -906,8 +905,8 @@ class SuccessCriterion(Base):
     target_value = Column(String(255))
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     problems = relationship("Problem", secondary=problem_success_criteria, back_populates="success_criteria")
@@ -930,8 +929,8 @@ class SolutionComponent(Base):
     priority = Column(String(20))  # 'low', 'medium', 'high', 'critical'
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     solution = relationship("Solution", back_populates="components")
@@ -955,8 +954,8 @@ class ImplementationTracking(Base):
     # Timestamps
     started_at = Column(DateTime(timezone=True))
     completed_at = Column(DateTime(timezone=True))
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     solution = relationship("Solution", back_populates="implementation_tracking")
@@ -982,7 +981,7 @@ class CycleAnalytics(Base):
     recommendations_generated = Column(Integer)
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     cycle = relationship("Cycle", back_populates="analytics")
@@ -1007,7 +1006,7 @@ class SystemMetrics(Base):
     system_uptime = Column(Float, default=0.0)
     
     # Timestamps
-    recorded_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    recorded_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Indexes
     __table_args__ = (
@@ -1026,7 +1025,7 @@ class AuditLog(Base):
     details = Column(JSON)
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     user = relationship("User")
@@ -1053,7 +1052,7 @@ class WorkflowSession(Base):
     current_step = Column(String(50))  # Current workflow step
     
     # Session metadata
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     total_duration = Column(Integer)  # Duration in seconds
     
@@ -1183,8 +1182,8 @@ class PerpetualThinkingSession(Base):
     success_criteria = Column(JSON)  # List of strings
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, index=True)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     ended_at = Column(DateTime(timezone=True))
     
     # Session data
@@ -1234,7 +1233,7 @@ class PerpetualCycle(Base):
     meta_insights = Column(JSON)  # List of strings
     
     # Timestamps
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     duration = Column(Float)  # Duration in seconds
     
@@ -1272,7 +1271,7 @@ class PerpetualThinkTankResult(Base):
     processing_time = Column(Float, default=0.0)
     
     # Timestamps
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     
     # Relationships
@@ -1301,8 +1300,8 @@ class BreakthroughMoment(Base):
     implications = Column(JSON)  # List of implications
     
     # Timestamps
-    occurred_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    occurred_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     session = relationship("PerpetualThinkingSession", back_populates="breakthrough_moments")
@@ -1330,8 +1329,8 @@ class HumanFeedbackPoint(Base):
     impact_score = Column(Float, default=0.0)
     
     # Timestamps
-    provided_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    provided_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     session = relationship("PerpetualThinkingSession", back_populates="human_feedback_points")
@@ -1363,7 +1362,7 @@ class MetaCycle(Base):
     evolution_insights = Column(JSON)  # List of evolution insights
     
     # Timestamps
-    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    started_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     completed_at = Column(DateTime(timezone=True))
     duration = Column(Float)  # Duration in seconds
     
@@ -1393,7 +1392,7 @@ class PerpetualSystemMetrics(Base):
     system_uptime = Column(Float, default=0.0)
     
     # Timestamps
-    recorded_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    recorded_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Indexes
     __table_args__ = (
@@ -1415,9 +1414,9 @@ class PerpetualPatternHistory(Base):
     frequency = Column(Integer, default=1)
     
     # Timestamps
-    first_detected = Column(DateTime(timezone=True), default=datetime.utcnow)
-    last_detected = Column(DateTime(timezone=True), default=datetime.utcnow)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    first_detected = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    last_detected = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     session = relationship("PerpetualThinkingSession")

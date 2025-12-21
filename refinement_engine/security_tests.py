@@ -9,7 +9,7 @@ import json
 import hashlib
 import time
 from typing import Dict, Any, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch, AsyncMock
 
 from fastapi.testclient import TestClient
@@ -150,7 +150,7 @@ class TestSecurityManager:
         
         # User should be locked
         assert user.locked_until is not None
-        assert user.locked_until > datetime.utcnow()
+        assert user.locked_until > datetime.now(timezone.utc)
         
         # Authentication should fail even with correct password
         locked_user = asyncio.run(

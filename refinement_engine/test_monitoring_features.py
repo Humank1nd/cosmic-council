@@ -9,7 +9,7 @@ import sys
 import logging
 import time
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional, List
 import traceback
 
@@ -222,7 +222,7 @@ class MonitoringFeatureTester:
                     status=HealthStatus.HEALTHY,
                     message="Custom check passed",
                     response_time_ms=10.5,
-                    timestamp=datetime.utcnow()
+                    timestamp=datetime.now(timezone.utc)
                 )
             
             self.health_checker.register_check("custom_test", custom_check)

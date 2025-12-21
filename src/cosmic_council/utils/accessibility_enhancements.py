@@ -24,7 +24,7 @@ import asyncio
 import time
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -95,7 +95,7 @@ class ScreenReaderSupport:
             announcement = {
                 'message': message,
                 'priority': priority,
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(timezone.utc)
             }
             self.announcements.append(announcement)
             logger.info(f"Screen reader announcement: {message}")
@@ -160,7 +160,7 @@ class KeyboardNavigation:
                 'id': element_id,
                 'type': element_type,
                 'tab_index': tab_index,
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(timezone.utc)
             }
             self.focus_order.append(element)
             # Sort by tab_index
@@ -202,7 +202,7 @@ class KeyboardNavigation:
             self.keyboard_shortcuts[key_combination] = {
                 'action': action,
                 'description': description,
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(timezone.utc)
             }
     
     def get_keyboard_shortcuts(self) -> Dict[str, Dict[str, str]]:
@@ -347,7 +347,7 @@ class TextScaling:
         self.current_scale = scale
         self.scale_history.append({
             'scale': scale,
-            'timestamp': datetime.utcnow()
+            'timestamp': datetime.now(timezone.utc)
         })
         logger.info(f"Text scale set to: {scale}")
     
@@ -407,7 +407,7 @@ class VoiceControl:
         self.voice_commands[command.lower()] = {
             'action': action,
             'description': description,
-            'timestamp': datetime.utcnow()
+            'timestamp': datetime.now(timezone.utc)
         }
         logger.info(f"Voice command registered: {command}")
     
@@ -421,7 +421,7 @@ class VoiceControl:
                 self.last_command = command
                 self.command_history.append({
                     'command': command,
-                    'timestamp': datetime.utcnow(),
+                    'timestamp': datetime.now(timezone.utc),
                     'success': True
                 })
                 logger.info(f"Voice command executed: {command}")
@@ -430,7 +430,7 @@ class VoiceControl:
                 logger.error(f"Voice command failed: {e}")
                 self.command_history.append({
                     'command': command,
-                    'timestamp': datetime.utcnow(),
+                    'timestamp': datetime.now(timezone.utc),
                     'success': False,
                     'error': str(e)
                 })

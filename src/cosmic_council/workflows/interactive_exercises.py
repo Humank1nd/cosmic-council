@@ -8,7 +8,7 @@ import random
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 from src.core.types import ProblemStatement, ProblemComplexity, EnterpriseType
@@ -194,7 +194,7 @@ class InteractiveExerciseEngine:
         self.current_session = {
             "session_id": session_id,
             "user_id": user_id,
-            "started_at": datetime.utcnow(),
+            "started_at": datetime.now(timezone.utc),
             "exercises_completed": [],
             "current_exercise": None,
             "session_score": 0.0
@@ -305,7 +305,7 @@ class InteractiveExerciseEngine:
     
     async def execute_facet_identification_exercise(self, exercise: FacetIdentificationExercise, user_answers: Dict[str, Any]) -> ExerciseResult:
         """Execute and evaluate a facet identification exercise"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Evaluate user answers
         selected_facets = user_answers.get("selected_facets", [])
@@ -337,7 +337,7 @@ class InteractiveExerciseEngine:
             else:
                 feedback.append(f"✗ Missed {facet.value} - consider: {exercise.facet_descriptions[facet]}")
         
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         time_taken = (end_time - start_time).total_seconds()
         
         result = ExerciseResult(
@@ -360,7 +360,7 @@ class InteractiveExerciseEngine:
     
     async def execute_solution_brainstorming_exercise(self, exercise: SolutionBrainstormingExercise, user_answers: Dict[str, Any]) -> ExerciseResult:
         """Execute and evaluate a solution brainstorming exercise"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Evaluate user answers
         solutions_by_facet = user_answers.get("solutions_by_facet", {})
@@ -410,7 +410,7 @@ class InteractiveExerciseEngine:
         feedback.append(f"Created {len(integrated_solutions)} integrated solutions")
         feedback.append(f"Defined {len(evaluation_criteria)} evaluation criteria")
         
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         time_taken = (end_time - start_time).total_seconds()
         
         result = ExerciseResult(
@@ -433,7 +433,7 @@ class InteractiveExerciseEngine:
     
     async def execute_action_planning_exercise(self, exercise: ActionPlanningExercise, user_answers: Dict[str, Any]) -> ExerciseResult:
         """Execute and evaluate an action planning exercise"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Evaluate user answers
         phases = user_answers.get("phases", [])
@@ -498,7 +498,7 @@ class InteractiveExerciseEngine:
         feedback.append(f"Identified {len(risks)} risk factors")
         feedback.append(f"Established {len(metrics)} success metrics")
         
-        end_time = datetime.utcnow()
+        end_time = datetime.now(timezone.utc)
         time_taken = (end_time - start_time).total_seconds()
         
         result = ExerciseResult(

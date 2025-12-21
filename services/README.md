@@ -37,7 +37,7 @@ This directory contains the microservices that power the Cosmic Council system, 
 
 **Key Endpoints**:
 - `GET /v1/analytics/cycles` - Get cycle analytics
-- `GET /v1/analytics/enterprises` - Get enterprise performance
+- `GET /v1/analytics/supra_enterprise` - Get enterprise performance
 - `GET /v1/analytics/system-health` - Get system health metrics
 - `GET /v1/analytics/dashboard` - Get analytics dashboards
 

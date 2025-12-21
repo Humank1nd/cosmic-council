@@ -3,7 +3,7 @@ Agent communication system for the Cosmic Council.
 """
 
 from typing import Dict, Any, List, Optional, Callable
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import logging
 import uuid
@@ -22,7 +22,7 @@ class Message:
         self.recipient_id = recipient_id
         self.message_type = message_type
         self.content = content
-        self.timestamp = datetime.utcnow()
+        self.timestamp = datetime.now(timezone.utc)
         self.delivered = False
         self.read = False
     
@@ -173,7 +173,7 @@ class AgentCollaboration:
             self.active_collaborations[collaboration_id] = {
                 'participants': participants,
                 'goal': goal,
-                'started_at': datetime.utcnow(),
+                'started_at': datetime.now(timezone.utc),
                 'status': 'active',
                 'messages': []
             }
@@ -205,7 +205,7 @@ class AgentCollaboration:
             
             collaboration = self.active_collaborations[collaboration_id]
             collaboration['status'] = 'completed'
-            collaboration['ended_at'] = datetime.utcnow()
+            collaboration['ended_at'] = datetime.now(timezone.utc)
             collaboration['results'] = results
             
             # Notify all participants

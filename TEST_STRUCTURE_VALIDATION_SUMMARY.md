@@ -32,7 +32,7 @@ tests_new/
 │   │   ├── test_cycles.py
 │   │   └── test_solutions.py
 │   ├── agents/             # Agent tests
-│   │   ├── test_enterprises/
+│   │   ├── test_supra_enterprise/
 │   │   │   ├── test_red_owl.py
 │   │   │   ├── test_orange_orangutan.py
 │   │   │   ├── test_yellow_honeybee.py

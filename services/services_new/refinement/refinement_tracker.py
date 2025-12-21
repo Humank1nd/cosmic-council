@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional, List, Tuple
 from dataclasses import dataclass, field
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from enum import Enum
 
@@ -56,7 +56,7 @@ class RefinementNode:
     layer_run_id: Optional[str] = None
     status: str = "pending"
     metrics: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
 
 
@@ -116,7 +116,7 @@ class RefinementTracker:
             event_id=event_id,
             event_type=event_type,
             problem_id=problem_id,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             data=data,
             metadata=metadata or {}
         )
@@ -207,7 +207,7 @@ class RefinementTracker:
         
         node = self.refinement_nodes[node_id]
         node.status = status
-        node.completed_at = completed_at or datetime.utcnow()
+        node.completed_at = completed_at or datetime.now(timezone.utc)
         
         if metrics:
             node.metrics.update(metrics)

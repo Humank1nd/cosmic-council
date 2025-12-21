@@ -9,7 +9,7 @@ that learns how to learn better.
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -74,7 +74,7 @@ class MetaCycle:
     adaptation_success_rate: float = 0.0
     
     # Timestamps
-    started_at: datetime = field(default_factory=datetime.utcnow)
+    started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
     
     # Meta-data
@@ -183,7 +183,7 @@ class MetaCyclicalArchitecture:
             await self._test_and_implement(meta_cycle)
             
             meta_cycle.status = MetaCycleStatus.COMPLETED
-            meta_cycle.completed_at = datetime.utcnow()
+            meta_cycle.completed_at = datetime.now(timezone.utc)
             
             logger.info(f"🌀 Meta-cycle {meta_cycle_id} completed successfully")
             
@@ -300,7 +300,7 @@ class MetaCyclicalArchitecture:
                 "description": insight.description,
                 "confidence": insight.confidence,
                 "evidence": insight.supporting_evidence,
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(timezone.utc)
             }
         
         meta_cycle.meta_learning_insights.extend(learning_insights)

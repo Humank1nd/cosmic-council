@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 import json
 import logging
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from enum import Enum
 
@@ -177,7 +177,7 @@ class LayerOrchestrator:
         try:
             # Update status
             layer_run.status = LayerRunStatus.IN_PROGRESS
-            layer_run.started_at = datetime.utcnow()
+            layer_run.started_at = datetime.now(timezone.utc)
             
             # Get problem context
             problem_context = self.active_problems.get(layer_run.problem_id)
@@ -209,7 +209,7 @@ class LayerOrchestrator:
             else:
                 layer_run.status = LayerRunStatus.COMPLETED
             
-            layer_run.finished_at = datetime.utcnow()
+            layer_run.finished_at = datetime.now(timezone.utc)
             
             self.logger.info(f"Completed layer run {layer_run.layer_run_id} with status {layer_run.status.value}")
             
@@ -217,7 +217,7 @@ class LayerOrchestrator:
             self.logger.error(f"Error executing layer run {layer_run.layer_run_id}: {str(e)}")
             layer_run.status = LayerRunStatus.FAILED
             layer_run.error_message = str(e)
-            layer_run.finished_at = datetime.utcnow()
+            layer_run.finished_at = datetime.now(timezone.utc)
         
         return layer_run
     
@@ -356,14 +356,14 @@ class LayerOrchestrator:
             },
             "confidence_score": latest_run.metrics.get("confidence_score", 0.0),
             "completeness_score": latest_run.metrics.get("completeness_score", 0.0),
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat()
         }
         
         problem_context.answers.append(answer)
         
         # Mark problem as resolved
         problem_context.metadata["status"] = "resolved"
-        problem_context.metadata["resolved_at"] = datetime.utcnow().isoformat()
+        problem_context.metadata["resolved_at"] = datetime.now(timezone.utc).isoformat()
         problem_context.metadata["resolution_decision"] = decision
     
     async def _refine_problem(self, problem_context: ProblemContext, decision: Dict[str, Any]):
@@ -382,7 +382,7 @@ class LayerOrchestrator:
             "to_layer": to_layer,
             "rationale": decision["reason"],
             "refined_question": refined_question,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat()
         }
         
         problem_context.refinements.append(refinement)

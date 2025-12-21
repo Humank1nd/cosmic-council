@@ -6,7 +6,7 @@ Comprehensive templates for business, personal, and global scenarios
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 from src.core.types import ProblemStatement, ProblemComplexity
@@ -42,7 +42,7 @@ class CaseStudyTemplate:
     resources_needed: List[str]
     success_metrics: List[str]
     tags: List[str] = field(default_factory=list)
-    created_date: datetime = field(default_factory=datetime.utcnow)
+    created_date: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CaseStudyTemplateLibrary:
     """Library of case study templates"""

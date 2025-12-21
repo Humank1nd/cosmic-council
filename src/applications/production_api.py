@@ -20,7 +20,7 @@ from production_config import get_config
 from error_handling import handle_error, ErrorContext, ErrorSeverity, ErrorCategory
 from health_monitoring import get_health_monitor, run_health_checks, get_system_health, record_request
 from src.core.services import CosmicCouncil, ProblemStatement, ProblemComplexity
-from src.agents.enterprises import EnterpriseType
+from src.agents.supra_enterprise import EnterpriseType
 from rules_engine import list_rules, evaluate_rules, follow_up_question
 from structured_interaction import structured_engine, StructuredResponse
 from manual import get_manual, get_examples
@@ -320,7 +320,7 @@ async def solve_problem(
         ))
         raise HTTPException(status_code=500, detail="Failed to solve problem")
 
-@app.get("/api/v1/enterprises")
+@app.get("/api/v1/supra_enterprise")
 async def get_enterprises(token: str = Depends(verify_token)):
     """Get information about all enterprises"""
     try:
@@ -449,7 +449,7 @@ async def get_usage(token: str = Depends(verify_token)):
         ],
         "endpoints": {
             "solve_problem": "/api/v1/problems/solve",
-            "process_totem": "/api/v1/enterprises/{enterprise}/process",
+            "process_totem": "/api/v1/supra_enterprise/{enterprise}/process",
             "iterate": "/api/v1/problems/iterate",
             "simulate": "/api/v1/examples/simulate",
             "airtable_upsert": "/api/v1/integrations/airtable/upsert",
@@ -459,7 +459,7 @@ async def get_usage(token: str = Depends(verify_token)):
     return {"status": "success", "usage": guide, "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
-@app.post("/api/v1/enterprises/{enterprise}/process")
+@app.post("/api/v1/supra_enterprise/{enterprise}/process")
 async def process_with_enterprise(enterprise: str, payload: Dict[str, Any], token: str = Depends(verify_token)):
     """Run a single totem on a problem and return its partial result"""
     try:
@@ -675,12 +675,12 @@ async def root():
             "structured_interaction": "/api/v1/structured-interaction",
             "structured_example": "/api/v1/structured-interaction/example",
             "solve_problem": "/api/v1/problems/solve",
-            "process_totem": "/api/v1/enterprises/{enterprise}/process",
+            "process_totem": "/api/v1/supra_enterprise/{enterprise}/process",
             "iterate": "/api/v1/problems/iterate",
             "simulate": "/api/v1/examples/simulate",
             "airtable_upsert": "/api/v1/integrations/airtable/upsert",
             "make_trigger": "/api/v1/integrations/make/trigger",
-            "enterprises": "/api/v1/enterprises",
+            "enterprises": "/api/v1/supra_enterprise",
             "status": "/api/v1/status",
             "config": "/api/v1/config"
         }

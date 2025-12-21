@@ -86,7 +86,7 @@ The system provides two complementary visualization approaches:
 ### RESTful Endpoints
 
 #### Core API
-- `GET /api/enterprises` - Get enterprise configuration
+- `GET /api/supra_enterprise` - Get enterprise configuration
 - `GET /api/state` - Get current visualization state
 - `POST /api/problem` - Set current problem
 - `POST /api/sector/{enterprise}/toggle` - Toggle sector state

@@ -42,7 +42,7 @@ async def get_problem_analytics(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
 
-@router.get("/enterprises/{enterprise_type}", response_model=Dict[str, Any])
+@router.get("/supra_enterprise/{enterprise_type}", response_model=Dict[str, Any])
 async def get_enterprise_performance(
     enterprise_type: str,
     days: int = 30,

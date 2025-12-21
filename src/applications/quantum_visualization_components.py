@@ -6,7 +6,7 @@ Advanced visualization components for quantum and spiritual elements in the web 
 import asyncio
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -39,7 +39,7 @@ class QuantumVisualizationData:
     coherence_level: float
     spiritual_alignment: float
     animation_properties: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuantumVisualizationEngine:
     """
@@ -60,7 +60,7 @@ class QuantumVisualizationEngine:
                                                coherence_level: float) -> QuantumVisualizationData:
         """Create visualization for quantum field of possibilities"""
         
-        visualization_id = f"quantum_field_{datetime.utcnow().timestamp()}"
+        visualization_id = f"quantum_field_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate quantum field visualization data
         field_visualization = {
@@ -104,7 +104,7 @@ class QuantumVisualizationEngine:
                                                       network_strength: float) -> QuantumVisualizationData:
         """Create visualization for quantum entanglement network"""
         
-        visualization_id = f"entanglement_network_{datetime.utcnow().timestamp()}"
+        visualization_id = f"entanglement_network_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate entanglement network visualization data
         network_visualization = {
@@ -188,7 +188,7 @@ class QuantumVisualizationEngine:
                                                 wave_amplitude: float) -> QuantumVisualizationData:
         """Create visualization for quantum coherence waves"""
         
-        visualization_id = f"coherence_wave_{datetime.utcnow().timestamp()}"
+        visualization_id = f"coherence_wave_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate coherence wave visualization data
         wave_visualization = {
@@ -232,7 +232,7 @@ class QuantumVisualizationEngine:
                                                   energy_level: float) -> QuantumVisualizationData:
         """Create visualization for spiritual energy fields"""
         
-        visualization_id = f"spiritual_energy_{datetime.utcnow().timestamp()}"
+        visualization_id = f"spiritual_energy_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate spiritual energy visualization data
         energy_visualization = {
@@ -276,7 +276,7 @@ class QuantumVisualizationEngine:
                                                  sacred_proportion: float) -> QuantumVisualizationData:
         """Create visualization for sacred geometry"""
         
-        visualization_id = f"sacred_geometry_{datetime.utcnow().timestamp()}"
+        visualization_id = f"sacred_geometry_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate sacred geometry visualization data
         geometry_visualization = {
@@ -320,7 +320,7 @@ class QuantumVisualizationEngine:
                                                   cosmic_alignment: float) -> QuantumVisualizationData:
         """Create visualization for cosmic synthesis"""
         
-        visualization_id = f"cosmic_synthesis_{datetime.utcnow().timestamp()}"
+        visualization_id = f"cosmic_synthesis_{datetime.now(timezone.utc).timestamp()}"
         
         # Generate cosmic synthesis visualization data
         synthesis_visualization = {

@@ -4,7 +4,7 @@ Provides structured error handling with context and logging.
 """
 
 from typing import Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 class CosmicCouncilException(Exception):
     """Base exception class for all Cosmic Council exceptions."""
@@ -21,7 +21,7 @@ class CosmicCouncilException(Exception):
         self.error_code = error_code or self.__class__.__name__
         self.context = context or {}
         self.cause = cause
-        self.timestamp = datetime.utcnow()
+        self.timestamp = datetime.now(timezone.utc)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert exception to dictionary for serialization."""

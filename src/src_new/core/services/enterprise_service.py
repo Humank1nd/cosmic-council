@@ -3,7 +3,7 @@ Enterprise service for managing enterprises in the Cosmic Council system.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from ..models.enterprise import Enterprise, EnterpriseResult
@@ -82,7 +82,7 @@ class EnterpriseService:
                     if hasattr(enterprise, key):
                         setattr(enterprise, key, value)
                 
-                enterprise.updated_at = datetime.utcnow()
+                enterprise.updated_at = datetime.now(timezone.utc)
                 
                 if not enterprise.validate():
                     raise ValueError("Invalid updated enterprise data")
@@ -103,12 +103,12 @@ class EnterpriseService:
             if not enterprise:
                 raise ValueError(f"Enterprise {enterprise_type} not found")
             
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             
             # Execute enterprise logic based on type
             result_data = await self._execute_enterprise_logic(enterprise_type, input_data)
             
-            end_time = datetime.utcnow()
+            end_time = datetime.now(timezone.utc)
             execution_time = (end_time - start_time).total_seconds()
             
             # Create result
