@@ -74,6 +74,12 @@ BACKUP_RETENTION=30
 BACKUP_PATH=/app/backups
 ```
 
+`docker-compose.yml` now reads the `POSTGRES_*` variables plus the helper `DB_*` keys (host, port, database, user, and password) that the gateway, analytics, and reflection services consume. Make sure `DB_PASSWORD` matches `POSTGRES_PASSWORD` (or override it explicitly), and keep the `.env` file private.
+
+For local development, `docker-compose.dev.yml` sources the `DEV_` prefixed overrides (e.g., `DEV_POSTGRES_PASSWORD`, `DEV_DATABASE_URL`, `DEV_PERPETUAL_DATABASE_URL`). Update those values when you need separate credentials for dev or perpetual thinking databases so that you never commit production passwords.
+
+The `.env.example` file in the repo lists the recommended names for each variable and the GitHub secrets required for release workflows (see `docs/deployment.md#environment-variables-and-secrets`).
+
 ### 3. Deploy with Docker Compose
 
 #### Production Deployment

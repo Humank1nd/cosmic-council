@@ -6,9 +6,9 @@ services:
     image: postgres:13
     container_name: cosmic-council-postgres-dev
     environment:
-      POSTGRES_DB: cosmic_council_dev
-      POSTGRES_USER: cosmic_council
-      POSTGRES_PASSWORD: cosmic_council_dev_password
+      POSTGRES_DB: ${DEV_POSTGRES_DB:-cosmic_council_dev}
+      POSTGRES_USER: ${DEV_POSTGRES_USER:-cosmic_council}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD:-cosmic_council_dev_password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
@@ -28,9 +28,9 @@ services:
     image: postgres:13
     container_name: cosmic-council-postgres-perpetual-dev
     environment:
-      POSTGRES_DB: cosmic_council_perpetual_dev
-      POSTGRES_USER: cosmic_council
-      POSTGRES_PASSWORD: cosmic_council_dev_password
+      POSTGRES_DB: ${DEV_POSTGRES_PERPETUAL_DB:-cosmic_council_perpetual_dev}
+      POSTGRES_USER: ${DEV_POSTGRES_PERPETUAL_USER:-cosmic_council}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_PERPETUAL_PASSWORD:-cosmic_council_dev_password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_perpetual_dev_data:/var/lib/postgresql/data
@@ -74,8 +74,8 @@ services:
       target: development
     container_name: cosmic-council-api-dev
     environment:
-      - DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-dev:5432/cosmic_council_dev
-      - REDIS_URL=redis://redis-dev:6379/0
+      - DATABASE_URL=${DEV_DATABASE_URL:-postgresql://${DEV_POSTGRES_USER:-cosmic_council}:${DEV_POSTGRES_PASSWORD:-cosmic_council_dev_password}@postgres-dev:5432/${DEV_POSTGRES_DB:-cosmic_council_dev}}
+      - REDIS_URL=${DEV_REDIS_URL:-redis://redis-dev:6379/0}
       - ENVIRONMENT=development
       - LOG_LEVEL=DEBUG
       - SECRET_KEY=dev-secret-key
@@ -83,7 +83,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       # Perpetual Thinking System Configuration (Development)
-      - PERPETUAL_DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-perpetual-dev:5432/cosmic_council_perpetual_dev
+      - PERPETUAL_DATABASE_URL=${DEV_PERPETUAL_DATABASE_URL:-postgresql://${DEV_POSTGRES_PERPETUAL_USER:-cosmic_council}:${DEV_POSTGRES_PERPETUAL_PASSWORD:-cosmic_council_dev_password}@postgres-perpetual-dev:5432/${DEV_POSTGRES_PERPETUAL_DB:-cosmic_council_perpetual_dev}}
       - PERPETUAL_AI_ENABLED=true
       - PERPETUAL_AI_PROVIDER=mock
       - PERPETUAL_AI_MODEL=gpt-4

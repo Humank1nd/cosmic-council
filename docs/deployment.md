@@ -46,6 +46,23 @@ docker-compose logs -f
 - **Database**: localhost:5432
 - **Redis**: localhost:6379
 
+## Environment variables and secrets
+
+Every deployment surface in this repo derives its runtime configuration from an `.env` file generated from `.env.example`. This keeps credentials out of source control while still providing fallback defaults when you run the stacks locally.
+
+- `docker-compose.yml` reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` for the managed Postgres instance and exposes the application-side settings via `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`.
+- `docker-compose.dev.yml` is driven by the `DEV_*` overrides (`DEV_POSTGRES_*`, `DEV_DATABASE_URL`, `DEV_PERPETUAL_DATABASE_URL`, etc.) so you can tailor development credentials without touching production values.
+- Always keep `.env` out of the repo (`.gitignore` already ignores it) and rotate `POSTGRES_PASSWORD` / `DB_PASSWORD` before promoting to a shared environment. The `.env.example` file lists the current recommendations for each key.
+
+### CI/CD secrets
+
+The GitHub workflows that run after a release depend on repository secrets to post updates to social platforms:
+
+  * `TWITTER_API_KEY`, `TWITTER_API_SECRET`, `TWITTER_ACCESS_TOKEN`, `TWITTER_ACCESS_TOKEN_SECRET`
+  * `REDDIT_USERNAME`, `REDDIT_PASSWORD`, `REDDIT_APP_ID`, `REDDIT_APP_SECRET`
+
+Configure those values in _Settings > Secrets and variables > Actions_ so that the release workflow can publish announcements without exposing credentials in the repo.
+
 ## Production Deployment with Kubernetes
 
 ### 1. Prepare Kubernetes Cluster
