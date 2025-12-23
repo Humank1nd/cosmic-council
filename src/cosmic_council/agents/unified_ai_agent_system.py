@@ -13,6 +13,7 @@ import math
 import random
 import uuid
 from abc import ABC, abstractmethod
+from collections import Counter
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Union, Tuple
 from dataclasses import dataclass, field
@@ -29,11 +30,12 @@ from ..integrations.llm_provider import BaseLLMProvider, LLMRequest, LLMMessage
 from ..core.models import (
     ResearchCoreProblem, ResearchFinding, ResearchPrioritizedQuestion,
     PlanningRelatedQuestion, PlanningActionPlan, PlanningDependency,
-    DevelopmentPrototype, DevelopmentInternalTesting, DevelopmentCreativeNote,
+    DevelopmentPrototype, DevelopmentInternalTesting, DevelopmentCreativeNote,  
     BudgetResourceInventory, BudgetAllocation, BudgetTimeCostAnalysis,
-    MarketInsight, MarketCommunicationStrategy, MarketPerformanceMetric,
+    MarketInsight, MarketCommunicationStrategy, MarketPerformanceMetric,        
     SupportUserFeedback, SupportPerformanceAssessment, SupportContinuousImprovement
 )
+from core.memory import MemoryManager
 
 logger = logging.getLogger(__name__)
 
@@ -167,6 +169,19 @@ class AgentResult:
     quantum_coherence: float = 0.0
     breakthrough_achieved: bool = False
     cosmic_insights: List[str] = field(default_factory=list)
+    contribution_summary: Optional[str] = None
+    consultations: List[Dict[str, Any]] = field(default_factory=list)
+    vote_choice: Optional[str] = None
+
+
+@dataclass
+class CollaborationRecord:
+    """Record of agent contribution for collaboration tracking."""
+    agent_type: AgentType
+    confidence_score: float
+    contribution_summary: str
+    consultations: List[Dict[str, Any]]
+    vote_choice: Optional[str]
 
 @dataclass
 class LLMConfig:
@@ -911,7 +926,12 @@ class UnifiedCosmicCouncilAgentOrchestrator:
         # Initialize agents
         self.agents: Dict[AgentType, UnifiedCosmicCouncilAgent] = {}
         self._initialize_agents()
-        
+
+        self.collaboration_order = list(AgentType)
+        self._memory = MemoryManager()
+        self._collaboration_reports: Dict[str, Dict[str, Any]] = {}
+        self._last_problem_id: Optional[str] = None
+
         logger.info(f"🤖 Unified Cosmic Council Agent Orchestrator initialized in {mode.value} mode")
 
     def _initialize_agents(self):
@@ -925,42 +945,172 @@ class UnifiedCosmicCouncilAgentOrchestrator:
                 session_factory=self.session_factory
             )
 
-    async def process_problem(self, 
+    async def process_problem(self,
                             problem_id: str,
                             problem_statement: str,
                             context: Dict[str, Any] = None) -> Dict[AgentType, AgentResult]:
         """
-        Process a problem using all enterprise agents
-        
+        Process a problem using all enterprise agents with collaboration tracking.
+
         Args:
             problem_id: Unique problem identifier
             problem_statement: Problem description
             context: Additional context data
-            
+
         Returns:
             Dict mapping agent types to their results
         """
         logger.info(f"🚀 Processing problem {problem_id} with all enterprise agents")
-        
+
         context = context or {}
-        results = {}
-        
-        # Process with each agent
-        for agent_type, agent in self.agents.items():
+        results: Dict[AgentType, AgentResult] = {}
+        previous_handoff: Dict[str, Any] = {}
+        collaboration_records: List[CollaborationRecord] = []
+
+        # Process in ROYGBV order to honor handoff protocol
+        for agent_type in self.collaboration_order:
+            agent = self.agents[agent_type]
             agent_context = AgentContext(
                 problem_id=problem_id,
                 stage_data={
                     "problem_statement": problem_statement,
+                    "handoff": previous_handoff,
                     **context
                 },
                 previous_stage_results=results
             )
-            
+
             result = await agent.process(agent_context)
+            summary = self._summarize_contribution(agent_type, result)
+            result.contribution_summary = summary
+
+            consultations = []
+            if result.confidence_score < 0.6:
+                consultations = await self._handle_consultation(agent_type, problem_id)
+                result.consultations.extend(consultations)
+
+            vote_choice = self._determine_vote_choice(agent_type, result)
+            record = CollaborationRecord(
+                agent_type=agent_type,
+                confidence_score=result.confidence_score,
+                contribution_summary=summary,
+                consultations=consultations,
+                vote_choice=vote_choice,
+            )
+            collaboration_records.append(record)
+
+            await self._memory.record_contribution(
+                problem_id,
+                agent_type.value,
+                summary,
+                metadata=result.processed_data
+            )
+            await self._memory.add_shared_knowledge(
+                topic=agent_type.value,
+                payload={
+                    "confidence_score": result.confidence_score,
+                    "recommendations": result.recommendations,
+                    "insights": result.insights,
+                },
+                tags=[agent_type.value]
+            )
+
             results[agent_type] = result
-        
+            previous_handoff = {
+                "from": agent_type.value,
+                "summary": summary,
+                "confidence": result.confidence_score
+            }
+
+        consensus = self._determine_consensus(collaboration_records)
+        report = {
+            "problem_id": problem_id,
+            "records": [self._record_to_dict(rec) for rec in collaboration_records],
+            "consensus": consensus
+        }
+        self._collaboration_reports[problem_id] = report
+        self._last_problem_id = problem_id
+
         logger.info(f"✅ Problem {problem_id} processed by all agents")
         return results
+
+    def get_collaboration_report(self, problem_id: Optional[str] = None) -> Dict[str, Any]:
+        """Retrieve the latest collaboration report or specific problem history."""
+        if problem_id:
+            return self._collaboration_reports.get(problem_id, {})
+        if not self._last_problem_id:
+            return {}
+        return self._collaboration_reports.get(self._last_problem_id, {})
+
+    def _record_to_dict(self, record: CollaborationRecord) -> Dict[str, Any]:
+        return {
+            "agent_type": record.agent_type.value,
+            "confidence_score": record.confidence_score,
+            "contribution_summary": record.contribution_summary,
+            "consultations": record.consultations,
+            "vote_choice": record.vote_choice,
+        }
+
+    def _summarize_contribution(self, agent_type: AgentType, result: AgentResult) -> str:
+        if result.contribution_summary:
+            return result.contribution_summary
+        pieces = []
+        if isinstance(result.processed_data, dict):
+            summary = result.processed_data.get("summary") or result.processed_data.get("decision")
+            if summary:
+                pieces.append(str(summary))
+        if result.recommendations:
+            pieces.append(f"Recommendations: {', '.join(result.recommendations[:2])}")
+        if result.insights:
+            pieces.append(f"Insights: {result.insights[0]}")
+        if not pieces:
+            pieces.append(f"{agent_type.value} completed with status {result.status.value}")
+        return " | ".join(pieces)
+
+    async def _handle_consultation(self, agent_type: AgentType, problem_id: str) -> List[Dict[str, Any]]:
+        consultations = []
+        session_context = await self._memory.get_recent_context(problem_id)
+        if session_context:
+            consultations.append({
+                "type": "session_memory",
+                "entries": session_context[-2:]
+            })
+        shared_knowledge = await self._memory.query_shared_knowledge(tags=[agent_type.value], limit=2)
+        if shared_knowledge:
+            consultations.append({
+                "type": "shared_knowledge",
+                "entries": shared_knowledge
+            })
+        return consultations
+
+    def _determine_vote_choice(self, agent_type: AgentType, result: AgentResult) -> str:
+        if result.vote_choice:
+            return result.vote_choice
+        if result.recommendations:
+            return result.recommendations[0]
+        if isinstance(result.processed_data, dict):
+            decision = result.processed_data.get("decision")
+            if decision:
+                return str(decision)
+        return agent_type.value
+
+    def _determine_consensus(self, records: List[CollaborationRecord]) -> Dict[str, Any]:
+        if not records:
+            return {}
+        tally: Counter[str] = Counter()
+        total_weight = 0.0
+        for record in records:
+            key = record.vote_choice or record.agent_type.value
+            tally[key] += record.confidence_score
+            total_weight += record.confidence_score
+        winner, weight = tally.most_common(1)[0]
+        confidence_share = weight / total_weight if total_weight else 0.0
+        return {
+            "decision": winner,
+            "confidence_score": weight,
+            "confidence_share": confidence_share,
+            "votes": len(records)
+        }
 
     async def get_agent_status(self, agent_type: AgentType) -> AgentStatus:
         """Get the status of a specific agent"""

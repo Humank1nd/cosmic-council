@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from enum import Enum
 import logging
 
+from ..integrations.knowledge_base_client import knowledge_base_client
+
 logger = logging.getLogger(__name__)
 
 class AnalysisDepth(Enum):
@@ -60,6 +62,7 @@ class WorkingEnhancedRedOwlAgent:
             research_scope = self._determine_research_scope(problem)
             stakeholder_analysis = self._analyze_stakeholders(problem)
             knowledge_gaps = self._identify_knowledge_gaps(problem)
+            knowledge_context = await self._gather_knowledge_context(knowledge_gaps)
             research_methods = self._select_research_methods(problem)
             
             # Perform specialized analysis
@@ -86,11 +89,12 @@ class WorkingEnhancedRedOwlAgent:
                 recommendations=recommendations,
                 next_actions=next_actions,
                 specialized_analysis={
-                    "research_scope": research_scope,
-                    "stakeholder_analysis": stakeholder_analysis,
-                    "knowledge_gaps": knowledge_gaps,
-                    "root_cause_analysis": root_cause_analysis,
-                    "environmental_scan": environmental_scan,
+                "research_scope": research_scope,
+                "stakeholder_analysis": stakeholder_analysis,
+                "knowledge_gaps": knowledge_gaps,
+                "knowledge_context": knowledge_context,
+                "root_cause_analysis": root_cause_analysis,
+                "environmental_scan": environmental_scan,
                     "trend_analysis": trend_analysis,
                     "research_methods": research_methods
                 },
@@ -148,6 +152,14 @@ class WorkingEnhancedRedOwlAgent:
         if problem.complexity.value == "systemic":
             gaps.extend(["Cross-domain impacts", "Long-term implications"])
         return gaps
+
+    async def _gather_knowledge_context(self, gaps: List[str]) -> Dict[str, List[Dict[str, Any]]]:
+        """Fetch contextual documents from the knowledge base for each gap."""
+
+        if not gaps:
+            return {}
+
+        return await knowledge_base_client.gather_gap_contexts(gaps, limit_per_gap=2)
     
     def _select_research_methods(self, problem) -> List[str]:
         """Select appropriate research methods"""
