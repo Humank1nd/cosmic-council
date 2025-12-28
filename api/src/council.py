@@ -1,4 +1,4 @@
-"""Cosmic Council - The six enterprises working together."""
+"""Agent Orchestrator - The six enterprises working together."""
 import asyncio
 import logging
 from typing import Dict, List, Any, Optional
@@ -14,7 +14,7 @@ logger = logging.getLogger("CosmicCouncil")
 
 class CosmicCouncil:
     """
-    The Cosmic Council - Six enterprises solving problems together.
+    The Agent Orchestrator - Six enterprises solving problems together.
 
     Flow: Red -> Orange -> Yellow -> Green -> Blue -> Purple -> Synthesis
 
@@ -91,7 +91,7 @@ class CosmicCouncil:
                 ent_info = ENTERPRISE_INFO[resp.enterprise]
                 context_text += f"\n{ent_info['name']} ({resp.question}):\n{resp.analysis}\n"
 
-        prompt = f"""You are the {info['name']}, part of the Cosmic Council.
+        prompt = f"""You are the {info['name']}, part of the Agent Orchestrator.
 
 Your role: {info['role']}
 Your guiding principle: {info['principle']}
@@ -123,7 +123,7 @@ RECOMMENDATIONS:
 CONFIDENCE: [X]%"""
 
         messages = [
-            {"role": "system", "content": f"You are {info['name']}, the {info['animal']} of the Cosmic Council."},
+            {"role": "system", "content": f"You are {info['name']}, the {info['animal']} of the Agent Orchestrator."},
             {"role": "user", "content": prompt}
         ]
 
@@ -222,7 +222,7 @@ CONFIDENCE: [X]%"""
             info = ENTERPRISE_INFO[resp.enterprise]
             summary += f"{info['name']} ({resp.question}):\n{resp.analysis[:500]}...\n\n"
 
-        prompt = f"""As the Cosmic Council Synthesizer, combine the wisdom of all six enterprises.
+        prompt = f"""As the Agent Orchestrator Synthesizer, combine the wisdom of all six enterprises.
 
 PROBLEM: {problem.title}
 {problem.description}
@@ -238,7 +238,7 @@ Create a unified synthesis that:
 Keep the synthesis concise but comprehensive (3-4 paragraphs)."""
 
         messages = [
-            {"role": "system", "content": "You are the Cosmic Council Synthesizer, unifying the wisdom of all six enterprises."},
+            {"role": "system", "content": "You are the Agent Orchestrator Synthesizer, unifying the wisdom of all six enterprises."},
             {"role": "user", "content": prompt}
         ]
 

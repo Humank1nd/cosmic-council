@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council API Server Runner
+Agent Orchestrator API Server Runner
 """
 import sys
 import os
@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Cosmic Council API Server")
+    parser = argparse.ArgumentParser(description="Agent Orchestrator API Server")
     parser.add_argument("--host", default="0.0.0.0", help="Host to bind")
     parser.add_argument("--port", type=int, default=8000, help="Port to bind")
     parser.add_argument("--reload", action="store_true", help="Enable auto-reload")
@@ -41,7 +41,7 @@ def main():
 +===========================================================================+
     """)
 
-    print(f"Starting Cosmic Council API on http://{args.host}:{args.port}")
+    print(f"Starting Agent Orchestrator API on http://{args.host}:{args.port}")
     print(f"API docs: http://localhost:{args.port}/docs")
     print()
 

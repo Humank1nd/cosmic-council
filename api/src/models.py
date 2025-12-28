@@ -1,4 +1,4 @@
-"""Cosmic Council data models."""
+"""Agent Orchestrator data models."""
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 from enum import Enum
@@ -7,7 +7,7 @@ import uuid
 
 
 class Enterprise(str, Enum):
-    """The six enterprises of the Cosmic Council."""
+    """The six enterprises of the Agent Orchestrator."""
     RED_OWL = "red"           # WHY - Knowledge Gathering
     ORANGE_ORANGUTAN = "orange"  # HOW - Logistics Planning
     YELLOW_HONEYBEE = "yellow"   # WHAT - Prototype Development

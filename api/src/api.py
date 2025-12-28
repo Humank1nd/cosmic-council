@@ -1,4 +1,4 @@
-"""Cosmic Council REST API."""
+"""Agent Orchestrator REST API."""
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
@@ -17,14 +17,14 @@ logger = logging.getLogger("CosmicCouncil.API")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown."""
-    logger.info("Cosmic Council API starting...")
+    logger.info("Agent Orchestrator API starting...")
     yield
     await council.close()
-    logger.info("Cosmic Council API shutdown")
+    logger.info("Agent Orchestrator API shutdown")
 
 
 app = FastAPI(
-    title="Cosmic Council API",
+    title="Agent Orchestrator API",
     description="The Six Enterprises solving problems through collective wisdom",
     version="1.0.0",
     lifespan=lifespan
@@ -93,7 +93,7 @@ class EnterpriseQueryRequest(BaseModel):
 async def root():
     """API root."""
     return {
-        "name": "Cosmic Council API",
+        "name": "Agent Orchestrator API",
         "version": "1.0.0",
         "description": "Six enterprises solving problems through collective wisdom",
         "enterprises": [
@@ -109,7 +109,7 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "healthy",
-        "service": "cosmic-council-api",
+        "service": "service-agent-orchestrator-api",
         "timestamp": datetime.utcnow().isoformat(),
         "problems_count": len(council.problems),
         "cycles_count": len(council.cycles),

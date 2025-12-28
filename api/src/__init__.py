@@ -1,1 +1,1 @@
-"""Cosmic Council API - Simplified standalone version."""
+"""Agent Orchestrator API - Simplified standalone version."""
