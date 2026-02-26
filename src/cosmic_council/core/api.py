@@ -270,18 +270,40 @@ class AuditLogRepository:
                   user_id: str, old_values: Optional[Dict] = None, 
                   new_values: Optional[Dict] = None):
         """Log an audit action"""
+        def _coerce_uuid(value: Any) -> Optional[uuid.UUID]:
+            if isinstance(value, uuid.UUID):
+                return value
+            if value in (None, "", "anonymous"):
+                return None
+            try:
+                return uuid.UUID(str(value))
+            except Exception:
+                return None
+
+        def _json_safe(value: Any) -> Any:
+            try:
+                return json.loads(json.dumps(value, default=str))
+            except Exception:
+                return {"repr": repr(value)}
+
         try:
             db_manager = get_database_manager()
             with db_manager.get_session() as session:
+                parsed_user_id = _coerce_uuid(user_id)
+                parsed_resource_id = _coerce_uuid(resource_id)
                 audit_log = AuditLogModel(
                     id=uuid.uuid4(),
                     action=action,
                     resource_type=resource_type,
-                    resource_id=str(resource_id),
-                    user_id=user_id,
-                    old_values=old_values or {},
-                    new_values=new_values or {},
-                    timestamp=datetime.now(timezone.utc)
+                    resource_id=parsed_resource_id,
+                    user_id=parsed_user_id,
+                    details={
+                        "old_values": _json_safe(old_values or {}),
+                        "new_values": _json_safe(new_values or {}),
+                        "raw_resource_id": str(resource_id) if resource_id is not None else None,
+                        "raw_user_id": str(user_id) if user_id is not None else None,
+                    },
+                    created_at=datetime.now(timezone.utc),
                 )
                 session.add(audit_log)
                 session.commit()
