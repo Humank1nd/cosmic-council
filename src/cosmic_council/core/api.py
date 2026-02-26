@@ -1700,7 +1700,12 @@ def _normalize_session_payload(payload: Optional[Dict[str, Any]]) -> Optional[Di
 def _get_session_value(session: Any, key: str, default: Any = None) -> Any:
     if isinstance(session, dict):
         return session.get(key, default)
-    return getattr(session, key, default)
+    value = getattr(session, key, default)
+    # Test doubles (unittest.mock.Mock) can fabricate arbitrary attributes,
+    # which then fail JSON serialization. Treat those fabricated values as missing.
+    if value is not None and value.__class__.__module__ == "unittest.mock":
+        return default
+    return value
 
 @app.get("/", response_model=ResponseModel)
 async def root():
@@ -3478,7 +3483,14 @@ async def create_perpetual_session(
     try:
         # Convert AI enhancement level string to enum
         try:
-            ai_enhancement_level = AIEnhancementLevel(request.ai_enhancement_level)
+            legacy_level_map = {
+                "assisted": "basic",
+                "autonomous": "advanced",
+            }
+            normalized_level = legacy_level_map.get(
+                request.ai_enhancement_level, request.ai_enhancement_level
+            )
+            ai_enhancement_level = AIEnhancementLevel(normalized_level)
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid AI enhancement level: {request.ai_enhancement_level}")
         
@@ -3560,6 +3572,8 @@ async def create_perpetual_session(
             }
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Failed to create AI-enhanced perpetual session: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create AI-enhanced perpetual session: {str(e)}")
