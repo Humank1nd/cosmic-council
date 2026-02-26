@@ -91,19 +91,25 @@ class UnifiedDatabaseManager:
         if url.startswith("sqlite+aiosqlite:///"):
             raw_path = url[len("sqlite+aiosqlite:///"):]
         elif url.startswith("sqlite:///"):
-            raw_path = url[len("sqlite///"):]
+            raw_path = url[len("sqlite:///"):]
         else:
             # Fallback: take part after scheme
             raw_path = url.split("://")[-1]
 
-        db_path = Path(raw_path)
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-
-        # Create synchronous engine (use sqlite:/// path)
-        if url.startswith("sqlite+aiosqlite:///"):
-            sync_url = "sqlite:///" + raw_path
+        if raw_path == ":memory:":
+            sync_url = "sqlite:///:memory:"
+            async_url = "sqlite+aiosqlite:///:memory:"
         else:
-            sync_url = url
+            db_path = Path(raw_path)
+            if not db_path.is_absolute():
+                # Anchor relative SQLite paths to repo root to avoid cwd drift.
+                project_root = Path(__file__).resolve().parents[3]
+                db_path = (project_root / db_path).resolve()
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+            normalized_path = db_path.as_posix()
+            sync_url = f"sqlite:///{normalized_path}"
+            async_url = f"sqlite+aiosqlite:///{normalized_path}"
+
         self.engine = create_engine(
             sync_url,
             poolclass=StaticPool,
@@ -111,13 +117,6 @@ class UnifiedDatabaseManager:
             echo=self.config.get('echo', False)
         )
 
-        # Create async engine (use sqlite+aiosqlite:/// path)
-        if url.startswith("sqlite+aiosqlite:///"):
-            async_url = url
-        elif url.startswith("sqlite:///"):
-            async_url = url.replace("sqlite///", "sqlite+aiosqlite///")
-        else:
-            async_url = "sqlite+aiosqlite:///" + raw_path
         self.async_engine = create_async_engine(
             async_url,
             poolclass=StaticPool,
