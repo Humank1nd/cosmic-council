@@ -12,7 +12,7 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./infrastructure/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5433:5432"
     networks:
@@ -34,7 +34,7 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_perpetual_dev_data:/var/lib/postgresql/data
-      - ./docker/postgres/init_perpetual.sql:/docker-entrypoint-initdb.d/init_perpetual.sql
+      - ./infrastructure/docker/postgres/init_perpetual.sql:/docker-entrypoint-initdb.d/init_perpetual.sql
     ports:
       - "5435:5432"
     networks:
@@ -155,7 +155,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./infrastructure/docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
       - ./static:/var/www/static
     depends_on:
       - api-dev
@@ -170,7 +170,7 @@ services:
     ports:
       - "9091:9090"
     volumes:
-      - ./docker/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/docker/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml
       - prometheus_dev_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -193,8 +193,8 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_dev_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning
-      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./infrastructure/docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./infrastructure/monitoring/grafana-dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus-dev
     networks:

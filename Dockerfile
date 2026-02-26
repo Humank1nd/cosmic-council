@@ -1,5 +1,5 @@
 # Base image
-FROM python:3.11-slim
+FROM python:3.11-slim AS base
 
 # Set workdir
 WORKDIR /app
@@ -22,5 +22,12 @@ COPY . /app
 # Expose default ports (gateway 8000, analytics 8001, reflection 8002)
 EXPOSE 8000 8001 8002
 
-# Default command (override in docker-compose)
+# Development stage
+FROM base AS development
+ENV ENVIRONMENT=development
+CMD ["python", "services/gateway/main.py"]
+
+# Production stage
+FROM base AS production
+ENV ENVIRONMENT=production
 CMD ["python", "services/gateway/main.py"]
