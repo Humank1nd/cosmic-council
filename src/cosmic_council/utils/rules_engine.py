@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Rules Engine
+Agent Orchestrator Rules Engine
 
 Implements the 22 operational rules and provides lightweight evaluations and
 follow-up prompts to keep the thinking cycle alive.

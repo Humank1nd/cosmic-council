@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced Communication & Education System for Cosmic Council Framework
+Enhanced Communication & Education System for Agent Orchestrator Framework
 Advanced capabilities for explaining complex ideas and inspiring innovation
 """
 

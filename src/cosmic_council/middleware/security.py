@@ -1,5 +1,5 @@
 """
-API Security Middleware for Cosmic Council.
+API Security Middleware for Agent Orchestrator.
 
 Provides:
 - JWT authentication

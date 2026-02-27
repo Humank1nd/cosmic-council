@@ -1,5 +1,5 @@
 """
-Cosmic Council Middleware.
+Agent Orchestrator Middleware.
 
 Security, rate limiting, and request processing middleware.
 """

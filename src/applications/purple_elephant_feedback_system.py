@@ -1,6 +1,6 @@
 """
 Purple Elephant Feedback Loop System
-Advanced continuous improvement system for the Cosmic Council framework
+Advanced continuous improvement system for the Agent Orchestrator framework
 """
 
 import asyncio

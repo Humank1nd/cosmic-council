@@ -1,6 +1,6 @@
 """
 AI-Enhanced Problem-Solving Workflow
-Integrates AI/LLM capabilities with the Cosmic Council workflow system
+Integrates AI/LLM capabilities with the Agent Orchestrator workflow system
 """
 
 import asyncio
