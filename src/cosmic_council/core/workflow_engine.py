@@ -605,7 +605,7 @@ class UnifiedCosmicCouncilWorkflowEngine:
 
 class CosmicCouncilWorkflowEngine:
     """
-    Backward compatibility wrapper for the basic Cosmic Council Workflow Engine.
+    Backward compatibility wrapper for the basic Agent Orchestrator Workflow Engine.
     This class provides the same interface as the original but uses the unified implementation.
     """
     
@@ -624,7 +624,7 @@ class CosmicCouncilWorkflowEngine:
         self.database_url = database_url
         self.openai_client = self.unified_engine.openai_client
         self.make_com_webhook_url = make_com_webhook_url
-        logger.info("🗄️ Cosmic Council Workflow Engine (backward compatibility) initialized")
+        logger.info("🗄️ Agent Orchestrator Workflow Engine (backward compatibility) initialized")
     
     async def start_new_cycle(self, problem_statement: str, cycle_number: Optional[int] = None) -> str:
         """Start a new workflow cycle (backward compatibility)"""
@@ -643,7 +643,7 @@ class CosmicCouncilWorkflowEngine:
 
 class CosmicCouncilDetailedWorkflowEngine:
     """
-    Backward compatibility wrapper for the detailed Cosmic Council Workflow Engine.
+    Backward compatibility wrapper for the detailed Agent Orchestrator Workflow Engine.
     This class provides the same interface as the original but uses the unified implementation.
     """
     
@@ -662,7 +662,7 @@ class CosmicCouncilDetailedWorkflowEngine:
         self.database_url = database_url
         self.openai_client = self.unified_engine.openai_client
         self.n8n_webhook_url = n8n_webhook_url
-        logger.info("🗄️ Cosmic Council Detailed Workflow Engine (backward compatibility) initialized")
+        logger.info("🗄️ Agent Orchestrator Detailed Workflow Engine (backward compatibility) initialized")
     
     async def create_new_problem(self, 
                                 problem_statement: str,
