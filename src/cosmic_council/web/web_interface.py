@@ -1,5 +1,5 @@
 """
-Cosmic Council Web Interface
+Agent Orchestrator Web Interface
 Modern web interface with consistent UI theme matching other game UIs
 """
 
@@ -50,8 +50,8 @@ except ImportError:
 
 # Create FastAPI application for web interface
 app = FastAPI(
-    title="Cosmic Council Web Interface",
-    description="Modern web interface for the Cosmic Council problem-solving framework",
+    title="Agent Orchestrator Web Interface",
+    description="Modern web interface for the Agent Orchestrator problem-solving framework",
     version="1.0.0"
 )
 
@@ -185,7 +185,7 @@ async def home(request: Request):
     # Fallback to template if React not built yet
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "title": "Cosmic Council - Problem Solving Framework",
+        "title": "Agent Orchestrator - Problem Solving Framework",
         "page": "home"
     })
 
@@ -204,7 +204,7 @@ async def problems_page(request: Request):
     """Problems management page"""
     return templates.TemplateResponse("problems.html", {
         "request": request,
-        "title": "Problems - Cosmic Council",
+        "title": "Problems - Agent Orchestrator",
         "page": "problems"
     })
 
@@ -213,7 +213,7 @@ async def cycles_page(request: Request):
     """Cycles management page"""
     return templates.TemplateResponse("cycles.html", {
         "request": request,
-        "title": "Cycles - Cosmic Council",
+        "title": "Cycles - Agent Orchestrator",
         "page": "cycles"
     })
 
@@ -222,7 +222,7 @@ async def solutions_page(request: Request):
     """Solutions management page"""
     return templates.TemplateResponse("solutions.html", {
         "request": request,
-        "title": "Solutions - Cosmic Council",
+        "title": "Solutions - Agent Orchestrator",
         "page": "solutions"
     })
 
@@ -231,7 +231,7 @@ async def analytics_page(request: Request):
     """Analytics dashboard page"""
     return templates.TemplateResponse("analytics.html", {
         "request": request,
-        "title": "Analytics - Cosmic Council",
+        "title": "Analytics - Agent Orchestrator",
         "page": "analytics"
     })
 
@@ -240,7 +240,7 @@ async def workflow_page(request: Request):
     """Interactive workflow page"""
     return templates.TemplateResponse("workflow.html", {
         "request": request,
-        "title": "Workflow - Cosmic Council",
+        "title": "Workflow - Agent Orchestrator",
         "page": "workflow"
     })
 
@@ -249,7 +249,7 @@ async def hexagon_page(request: Request):
     """Interactive hexagon visualization page"""
     return templates.TemplateResponse("hexagon.html", {
         "request": request,
-        "title": "Hexagon Visualization - Cosmic Council",
+        "title": "Hexagon Visualization - Agent Orchestrator",
         "page": "hexagon"
     })
 
@@ -258,7 +258,7 @@ async def perpetual_page(request: Request):
     """Perpetual thinking engine page"""
     return templates.TemplateResponse("perpetual.html", {
         "request": request,
-        "title": "Perpetual Thinking - Cosmic Council",
+        "title": "Perpetual Thinking - Agent Orchestrator",
         "page": "perpetual"
     })
 
@@ -640,7 +640,7 @@ async def health_check():
     return JSONResponse(content={
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "service": "cosmic-council-web-interface"
+        "service": "service-agent-orchestrator-web-interface"
     })
 
 # Main execution
