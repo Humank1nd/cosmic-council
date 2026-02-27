@@ -16,6 +16,7 @@ import hashlib
 import json
 import shutil
 import sqlite3
+from sqlite3 import dump as sqlite_dump
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -93,10 +94,95 @@ def export_schema(db_path: Path, out_file: Path) -> None:
     out_file.write_text("".join(lines), encoding="utf-8")
 
 
+def _iterdump_best_effort(connection: sqlite3.Connection) -> list[str]:
+    """
+    Best-effort SQL dump for DBs with broken FK metadata.
+
+    Python 3.13's sqlite3.iterdump() runs PRAGMA foreign_key_check first;
+    malformed FK definitions can raise OperationalError before any output.
+    This fallback skips the pre-check and emits the transaction anyway.
+    """
+    writeable_schema = False
+    cu = connection.cursor()
+    cu.row_factory = None
+
+    lines: list[str] = []
+    lines.append("PRAGMA foreign_keys=OFF;")
+    lines.append("BEGIN TRANSACTION;")
+
+    q_tables = """
+        SELECT "name", "type", "sql"
+        FROM "sqlite_master"
+        WHERE "sql" NOT NULL AND "type" == 'table'
+        ORDER BY "name"
+    """
+    schema_res = cu.execute(q_tables)
+    sqlite_sequence: list[str] = []
+    for table_name, _type, sql in schema_res.fetchall():
+        if table_name == "sqlite_sequence":
+            rows = cu.execute('SELECT * FROM "sqlite_sequence";')
+            sqlite_sequence = ['DELETE FROM "sqlite_sequence"']
+            sqlite_sequence += [
+                f'INSERT INTO "sqlite_sequence" VALUES({sqlite_dump._quote_value(seq_name)},{seq_value})'
+                for seq_name, seq_value in rows.fetchall()
+            ]
+            continue
+        if table_name == "sqlite_stat1":
+            lines.append('ANALYZE "sqlite_master";')
+        elif table_name.startswith("sqlite_"):
+            continue
+        elif sql.startswith("CREATE VIRTUAL TABLE"):
+            if not writeable_schema:
+                writeable_schema = True
+                lines.append("PRAGMA writable_schema=ON;")
+            lines.append(
+                "INSERT INTO sqlite_master(type,name,tbl_name,rootpage,sql)"
+                f"VALUES('table',{sqlite_dump._quote_value(table_name)},{sqlite_dump._quote_value(table_name)},0,{sqlite_dump._quote_value(sql)});"
+            )
+        else:
+            lines.append(f"{sql};")
+
+        table_name_ident = sqlite_dump._quote_name(table_name)
+        res = cu.execute(f"PRAGMA table_info({table_name_ident})")
+        column_names = [str(table_info[1]) for table_info in res.fetchall()]
+        q_rows = "SELECT 'INSERT INTO {0} VALUES('{1}')' FROM {0};".format(
+            table_name_ident,
+            "','".join(
+                "||quote({0})||".format(sqlite_dump._quote_name(col))
+                for col in column_names
+            ),
+        )
+        query_res = cu.execute(q_rows)
+        for row in query_res:
+            lines.append(f"{row[0]};")
+
+    q_other = """
+        SELECT "name", "type", "sql"
+        FROM "sqlite_master"
+        WHERE "sql" NOT NULL AND "type" IN ('index', 'trigger', 'view')
+    """
+    schema_res = cu.execute(q_other)
+    for _name, _type, sql in schema_res.fetchall():
+        lines.append(f"{sql};")
+
+    if writeable_schema:
+        lines.append("PRAGMA writable_schema=OFF;")
+
+    for row in sqlite_sequence:
+        lines.append(f"{row};")
+    lines.append("COMMIT;")
+    return lines
+
+
 def export_dump(db_path: Path, out_file: Path) -> None:
     conn = sqlite3.connect(str(db_path))
     try:
-        lines = list(conn.iterdump())
+        try:
+            lines = list(conn.iterdump())
+        except sqlite3.OperationalError as exc:
+            if "foreign key mismatch" not in str(exc).lower():
+                raise
+            lines = _iterdump_best_effort(conn)
     finally:
         conn.close()
     out_file.write_text("\n".join(lines) + "\n", encoding="utf-8")

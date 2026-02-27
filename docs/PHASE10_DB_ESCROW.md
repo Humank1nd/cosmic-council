@@ -38,3 +38,5 @@ Includes:
 
 - Non-destructive: does not mutate table data.
 - Intended as an additional safety net after DB recovery.
+- If Python `iterdump()` fails due FK metadata issues, the script falls back
+  to a best-effort dump path and still emits `cosmic_council.dump.sql`.
