@@ -27,7 +27,7 @@ from prometheus_client import Counter, Histogram, REGISTRY
 
 from ..core.core import (
     ProblemStatement, ProblemComplexity, EnterpriseType, 
-    CosmicCouncilRule, EnhancedEnterpriseResult, EnhancedCycleResult
+    CosmicCouncilRule, EnhancedEnterpriseResult, EnhancedCycleResult, TotemPersonality
 )
 from .cosmic_identity import CosmicCouncilIdentity, EnterpriseVisualIdentity
 from ..core.hexagon import CosmicCouncilHexagon
@@ -35,8 +35,7 @@ from ..agents.working_enhanced_agents import (
     WorkingEnhancedRedOwlAgent, WorkingEnhancedOrangeOrangutanAgent,
     AnalysisDepth
 )
-# Note: Other agents (Yellow, Green, Blue, Purple) are not yet implemented
-# Using base agent class as fallback
+from ..agents.hierarchical_enterprise import TaskContext
 
 logger = logging.getLogger(__name__)
 security = HTTPBearer(auto_error=False)
@@ -433,6 +432,154 @@ def get_analysis_depth(depth_str: str) -> AnalysisDepth:
     return depth_map.get(depth_str.lower() if depth_str else '', AnalysisDepth.COMPREHENSIVE)
 
 
+def _build_totem_personality(enterprise_type: EnterpriseType) -> TotemPersonality:
+    """Build a totem personality from visual identity for adapted agents."""
+    visual_identity = CosmicCouncilIdentity.get_enterprise_identity(enterprise_type)
+    if not visual_identity:
+        return TotemPersonality(
+            name=enterprise_type.value.replace("_", " ").title(),
+            animal="Unknown",
+            color="#000000",
+            core_principle="Clarity",
+            communication_style="Direct",
+            thinking_pattern="Systematic",
+            strengths=["Analysis"],
+            wisdom_approach="Structured",
+            metaphor=f"{enterprise_type.value} perspective",
+            greeting="Greetings.",
+            closing="Proceed with clarity.",
+        )
+    return TotemPersonality(
+        name=visual_identity.name,
+        animal=visual_identity.animal,
+        color=visual_identity.color_hex,
+        core_principle=visual_identity.core_principle,
+        communication_style="Direct",
+        thinking_pattern="Systematic",
+        strengths=[visual_identity.role, visual_identity.core_principle],
+        wisdom_approach="Structured synthesis",
+        metaphor=visual_identity.symbol,
+        greeting=f"Greetings from {visual_identity.name}.",
+        closing="May your path be clear.",
+    )
+
+
+def _build_task_agent_input_data(
+    enterprise_type: EnterpriseType,
+    problem: ProblemStatement,
+    context: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Map API problem/context payload into task-agent specific input_data."""
+    data: Dict[str, Any] = {"context": context or {}}
+    if enterprise_type == EnterpriseType.YELLOW_HONEYBEE:
+        data.setdefault("action_plan_id", problem.id)
+        data.setdefault("root_cause", problem.description or problem.title)
+        data.setdefault(
+            "actions",
+            context.get("actions")
+            or [
+                {
+                    "id": f"{problem.id}-action-1",
+                    "title": problem.title,
+                    "category": problem.domain or "general",
+                }
+            ],
+        )
+    elif enterprise_type == EnterpriseType.GREEN_TORTOISE:
+        data.setdefault("implementation_plan_id", problem.id)
+        data.setdefault(
+            "specifications",
+            context.get("specifications")
+            or [
+                {
+                    "id": f"{problem.id}-spec-1",
+                    "action_id": f"{problem.id}-action-1",
+                    "action_title": problem.title,
+                    "estimated_duration_seconds": 300,
+                }
+            ],
+        )
+        data.setdefault("dependencies", context.get("dependencies", []))
+    elif enterprise_type == EnterpriseType.BLUE_DOLPHIN:
+        data.setdefault("schedule_id", problem.id)
+        data.setdefault(
+            "slots",
+            context.get("slots")
+            or [
+                {
+                    "id": f"{problem.id}-slot-1",
+                    "action_id": f"{problem.id}-action-1",
+                    "action_title": problem.title,
+                }
+            ],
+        )
+    elif enterprise_type == EnterpriseType.PURPLE_ELEPHANT:
+        data.setdefault("location_plan_id", problem.id)
+        data.setdefault(
+            "targets",
+            context.get("targets")
+            or [
+                {
+                    "id": f"{problem.id}-target-1",
+                    "action_id": f"{problem.id}-action-1",
+                    "action_title": problem.title,
+                }
+            ],
+        )
+    return data
+
+
+async def _run_task_agent_as_enterprise_result(
+    enterprise_type: EnterpriseType,
+    agent: Any,
+    problem: ProblemStatement,
+    context: Dict[str, Any],
+) -> EnhancedEnterpriseResult:
+    """Adapt process_task agents to EnhancedEnterpriseResult shape."""
+    task_context = TaskContext(
+        task_id=str(uuid.uuid4()),
+        problem_id=problem.id,
+        enterprise=enterprise_type.value,
+        department="runtime",
+        current_agent=getattr(agent, "agent_id", enterprise_type.value),
+        task_description=f"{problem.title}\n{problem.description}",
+        input_data=_build_task_agent_input_data(enterprise_type, problem, context),
+        metadata={"source": "agent_interactions_adapter"},
+    )
+    task_result = await agent.process_task(task_context)
+    output = task_result.output if isinstance(task_result.output, dict) else {"output": task_result.output}
+    return EnhancedEnterpriseResult(
+        enterprise=enterprise_type,
+        totem_personality=_build_totem_personality(enterprise_type),
+        status="completed" if task_result.success else "failed",
+        insights=output,
+        recommendations=output.get("recommendations", []) if isinstance(output.get("recommendations"), list) else [],
+        confidence_score=float(task_result.confidence),
+        processing_time=float(task_result.processing_time),
+        dependencies=output.get("dependencies", []) if isinstance(output.get("dependencies"), list) else [],
+        next_actions=output.get("next_actions", []) if isinstance(output.get("next_actions"), list) else [],
+        personality_response=f"{enterprise_type.value} processed the problem",
+        applied_rules=[],
+        wisdom_insights=[],
+        questions_for_next_cycle=[],
+        timestamp=datetime.now(timezone.utc),
+    )
+
+
+async def _process_agent_with_fallback(
+    enterprise_type: EnterpriseType,
+    agent: Any,
+    problem: ProblemStatement,
+    context: Dict[str, Any],
+) -> Any:
+    """Run enhanced-processing agent path with process_task fallback."""
+    if hasattr(agent, "process_problem_enhanced"):
+        return await agent.process_problem_enhanced(problem, context)
+    if hasattr(agent, "process_task"):
+        return await _run_task_agent_as_enterprise_result(enterprise_type, agent, problem, context)
+    raise AttributeError("Agent does not support process_problem_enhanced or process_task")
+
+
 # ============================================================================
 # API Endpoints
 # ============================================================================
@@ -669,13 +816,7 @@ async def process_with_agent(
         
         # Process problem
         try:
-            # Check if agent has the method
-            if not hasattr(agent, 'process_problem_enhanced'):
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Agent {enterprise} does not support enhanced processing"
-                )
-            result = await agent.process_problem_enhanced(problem, request.context)
+            result = await _process_agent_with_fallback(enterprise_type, agent, problem, request.context)
         except HTTPException:
             # Re-raise HTTP exceptions (like 401 Unauthorized) as-is
             raise
@@ -797,7 +938,8 @@ async def process_agent_sequence(
             tasks = []
             for agent_name in request.agent_sequence:
                 agent = get_agent(agent_name)
-                tasks.append(agent.process_problem_enhanced(problem, context))
+                enterprise_type = EnterpriseType(agent_name)
+                tasks.append(_process_agent_with_fallback(enterprise_type, agent, problem, context))
             
             results = await asyncio.gather(*tasks)
             for agent_name, result in zip(request.agent_sequence, results):
@@ -843,7 +985,8 @@ async def process_agent_sequence(
             # Process agents sequentially
             for agent_name in request.agent_sequence:
                 agent = get_agent(agent_name)
-                result = await agent.process_problem_enhanced(problem, context)
+                enterprise_type = EnterpriseType(agent_name)
+                result = await _process_agent_with_fallback(enterprise_type, agent, problem, context)
                 
                 # Handle different result types (EnhancedResult vs EnhancedEnterpriseResult)
                 if hasattr(result, 'specialized_analysis'):
@@ -1120,19 +1263,50 @@ def initialize_agents(council_instance: Optional[CosmicCouncilHexagon] = None):
     # Initialize available agents with comprehensive analysis depth
     agents[EnterpriseType.RED_OWL] = WorkingEnhancedRedOwlAgent(AnalysisDepth.COMPREHENSIVE)
     agents[EnterpriseType.ORANGE_ORANGUTAN] = WorkingEnhancedOrangeOrangutanAgent(AnalysisDepth.COMPREHENSIVE)
-    
-    # Create stub agents for missing implementations
-    # These will use the base EnhancedEnterpriseAgent from core.core
+
+    # Initialize recovered task-style agents (adapted at runtime via process_task fallback).
     from ..core.core import EnhancedEnterpriseAgent
-    
-    # Initialize stub agents for missing implementations
-    for enterprise_type in [EnterpriseType.YELLOW_HONEYBEE, EnterpriseType.GREEN_TORTOISE,
-                           EnterpriseType.BLUE_DOLPHIN, EnterpriseType.PURPLE_ELEPHANT]:
+    try:
+        from ..agents.yellow_honeybee.agent import create_yellow_honeybee_agent
+        from ..agents.green_turtle.agent import create_green_turtle_agent
+        from ..agents.blue_dolphin.agent import create_blue_dolphin_agent
+        from ..agents.purple_elephant.agent import create_purple_elephant_agent
+        recovered_initializers = {
+            EnterpriseType.YELLOW_HONEYBEE: ("Yellow Honeybee", create_yellow_honeybee_agent),
+            EnterpriseType.GREEN_TORTOISE: ("Green Tortoise", create_green_turtle_agent),
+            EnterpriseType.BLUE_DOLPHIN: ("Blue Dolphin", create_blue_dolphin_agent),
+            EnterpriseType.PURPLE_ELEPHANT: ("Purple Elephant", create_purple_elephant_agent),
+        }
+    except Exception as exc:
+        logger.warning(f"Recovered agent module imports failed: {exc}")
+        recovered_initializers = {}
+
+    for enterprise_type, (label, factory) in recovered_initializers.items():
+        try:
+            agents[enterprise_type] = factory()
+            logger.info(f"Loaded recovered {label} agent")
+        except Exception as exc:
+            agents[enterprise_type] = EnhancedEnterpriseAgent(enterprise_type)
+            logger.warning(f"Using base agent for {enterprise_type.value} (recovered initialization failed: {exc})")
+
+    # Ensure all enterprises are initialized even if recovered imports failed.
+    for enterprise_type in [
+        EnterpriseType.YELLOW_HONEYBEE,
+        EnterpriseType.GREEN_TORTOISE,
+        EnterpriseType.BLUE_DOLPHIN,
+        EnterpriseType.PURPLE_ELEPHANT,
+    ]:
         if enterprise_type not in agents:
             agents[enterprise_type] = EnhancedEnterpriseAgent(enterprise_type)
-            logger.warning(f"Using base agent for {enterprise_type.value} (enhanced implementation not available)")
-    
-    logger.info(f"Initialized {len(agents)} enterprise agents ({len([a for a in agents.values() if isinstance(a, (WorkingEnhancedRedOwlAgent, WorkingEnhancedOrangeOrangutanAgent))])} enhanced, {len(agents) - len([a for a in agents.values() if isinstance(a, (WorkingEnhancedRedOwlAgent, WorkingEnhancedOrangeOrangutanAgent))])} base)")
+            logger.warning(f"Using base agent for {enterprise_type.value} (recovered implementation unavailable)")
+
+    enhanced_count = len(
+        [
+            a for a in agents.values()
+            if isinstance(a, (WorkingEnhancedRedOwlAgent, WorkingEnhancedOrangeOrangutanAgent))
+        ]
+    )
+    logger.info(f"Initialized {len(agents)} enterprise agents ({enhanced_count} working-enhanced, {len(agents) - enhanced_count} adapted/base)")
 
 def pre_warm_agent_list_cache():
     """Pre-warm the agent list cache on startup"""

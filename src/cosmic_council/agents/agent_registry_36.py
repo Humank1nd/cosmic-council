@@ -105,7 +105,7 @@ class BaseTotemAgent(SpecializedAgent):
         # Default mapping - can be customized per agent
         role_map = {
             AgentRole.DATA_MINER: AgentSpecialization.DATA_COLLECTOR,
-            AgentRole.TASK_DECOMPOSER: AgentSpecialization.TASK_DECOMPOSER,
+            AgentRole.PROCESS_MAPPER: AgentSpecialization.TASK_DECOMPOSER,
             AgentRole.PROTOTYPER: AgentSpecialization.PROTOTYPE_BUILDER,
             AgentRole.FINANCIAL_ANALYST: AgentSpecialization.COST_ESTIMATOR,
             AgentRole.CONTENT_CREATOR: AgentSpecialization.MESSAGE_CRAFTER,
