@@ -98,12 +98,17 @@ def main() -> int:
         "context": {},
         "analysis_depth": "quick",
     }
-    checks["agent_process_red_owl"] = request_json(
-        "POST", f"{base}/api/v1/agents/red_owl/process", process_payload
-    )
-    checks["agent_process_yellow_honeybee"] = request_json(
-        "POST", f"{base}/api/v1/agents/yellow_honeybee/process", process_payload
-    )
+    for enterprise in [
+        "red_owl",
+        "orange_orangutan",
+        "yellow_honeybee",
+        "green_tortoise",
+        "blue_dolphin",
+        "purple_elephant",
+    ]:
+        checks[f"agent_process_{enterprise}"] = request_json(
+            "POST", f"{base}/api/v1/agents/{enterprise}/process", process_payload
+        )
 
     summary = {
         "total_checks": len(checks),

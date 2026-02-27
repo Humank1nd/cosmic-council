@@ -6,7 +6,7 @@ Phase 11 adds a reproducible live-API probe for troubleshooting.
 
 - Validate runtime health endpoints against a running API instance.
 - Validate key perpetual endpoints.
-- Validate representative agent-processing calls.
+- Validate all six enterprise agent-processing endpoints.
 - Persist results to a JSON report for incident tracking.
 
 ## Command
