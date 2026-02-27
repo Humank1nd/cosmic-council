@@ -3368,7 +3368,7 @@ try:
         CycleType,
         AIEnhancementLevel
     )
-    from ..database.unified_database_service import DatabaseService, PerpetualDatabaseService
+    from ..database.unified_database_service import PerpetualDatabaseService
     from ..integrations.perpetual_guardrail_integration import (
         PolicyEngine,
         PerpetualGuardrailIntegration,
