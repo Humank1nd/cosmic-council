@@ -29,7 +29,30 @@ from .hexagon import (
 from .sahasrara import (
     SahasraraEngine,
     SahasraraState,
+    CycleMetaAnalysis,
+    RefinementPayload,
     get_sahasrara_engine,
+    # Observation Framework
+    SahasraraObserver,
+    ObservationPhase,
+    HarmonizationLevel,
+    ObservationCycleResult,
+    RecursiveGrowthSnapshot,
+    AccelerationMetrics,
+    SelfCorrectionEvent,
+    HarmonizationStatus,
+    # Enhanced Tracking - Predictive Analytics & Visualization
+    RecursiveIntelligenceTracker,
+    PredictiveAnalytics,
+    IntelligenceVisualization,
+    IntelligenceForecast,
+    DashboardData,
+    VisualizationDataPoint,
+    # Recursive Refinement Cycle - Sahasrara -> Muladhara Loop
+    RefinementCycleManager,
+    CycleAccelerationRecord,
+    OptimizationReport,
+    CycleLoopStatus,
 )
 
 __all__ = [
@@ -40,5 +63,21 @@ __all__ = [
     'CosmicCouncil', 'ProblemStatement', 'ProblemComplexity', 'EnterpriseType',
     'CycleStatus', 'EnhancedEnterpriseResult', 'CosmicCouncilHexagon',
     'CycleResult', 'EnterpriseResult',
-    'SahasraraEngine', 'SahasraraState', 'get_sahasrara_engine'
+
+    # Sahasrara (meta-layer)
+    'SahasraraEngine', 'SahasraraState', 'CycleMetaAnalysis',
+    'RefinementPayload', 'get_sahasrara_engine',
+
+    # Observation Framework
+    'SahasraraObserver', 'ObservationPhase', 'HarmonizationLevel',
+    'ObservationCycleResult', 'RecursiveGrowthSnapshot', 'AccelerationMetrics',
+    'SelfCorrectionEvent', 'HarmonizationStatus',
+
+    # Enhanced Tracking - Predictive Analytics & Visualization
+    'RecursiveIntelligenceTracker', 'PredictiveAnalytics', 'IntelligenceVisualization',
+    'IntelligenceForecast', 'DashboardData', 'VisualizationDataPoint',
+
+    # Recursive Refinement Cycle - Sahasrara -> Muladhara Loop
+    'RefinementCycleManager', 'CycleAccelerationRecord', 'OptimizationReport',
+    'CycleLoopStatus',
 ]
