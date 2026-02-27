@@ -619,8 +619,12 @@ async def list_agents(
             agent_list.append({
                 "enterprise": enterprise_type.value,
                 "name": visual_identity.name if visual_identity else (personality.name if personality else enterprise_type.value.replace('_', ' ').title()),
+                "semantic_name": getattr(visual_identity, "semantic_name", "") if visual_identity else "",
                 "animal": visual_identity.animal if visual_identity else (personality.animal if personality else ""),
                 "animal_emoji": visual_identity.animal_emoji if visual_identity else "",
+                "gemstone": getattr(visual_identity, "gemstone", "") if visual_identity else "",
+                "quantum_principle": getattr(visual_identity, "quantum_principle", "") if visual_identity else "",
+                "chakra": getattr(visual_identity, "chakra", "") if visual_identity else "",
                 "symbol": visual_identity.symbol if visual_identity else "",
                 "color": {
                     "name": visual_identity.color_name if visual_identity else "",
@@ -1333,8 +1337,12 @@ def pre_warm_agent_list_cache():
             agent_list.append({
                 "enterprise": enterprise_type.value,
                 "name": visual_identity.name if visual_identity else (personality.name if personality else enterprise_type.value.replace('_', ' ').title()),
+                "semantic_name": getattr(visual_identity, "semantic_name", "") if visual_identity else "",
                 "animal": visual_identity.animal if visual_identity else (personality.animal if personality else ""),
                 "animal_emoji": visual_identity.animal_emoji if visual_identity else "",
+                "gemstone": getattr(visual_identity, "gemstone", "") if visual_identity else "",
+                "quantum_principle": getattr(visual_identity, "quantum_principle", "") if visual_identity else "",
+                "chakra": getattr(visual_identity, "chakra", "") if visual_identity else "",
                 "symbol": visual_identity.symbol if visual_identity else "",
                 "color": {
                     "name": visual_identity.color_name if visual_identity else "",
