@@ -3,6 +3,7 @@ Pytest configuration and shared fixtures for the Cosmic Council Framework testin
 Updated to import directly from the current package layout.
 """
 
+import atexit
 import asyncio
 import pytest
 import tempfile
@@ -22,12 +23,31 @@ for p in [ROOT_DIR, SRC_DIR, APPS_DIR, CONFIG_DIR]:
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-# Isolate database writes to a temporary file for tests and allow anonymous access
-TEMP_DB_PATH = Path(tempfile.gettempdir()) / "cosmic_council_test.db"
-if TEMP_DB_PATH.exists():
-    TEMP_DB_PATH.unlink()
-os.environ.setdefault("DATABASE_URL", f"sqlite+aiosqlite:///{TEMP_DB_PATH}")
+# Isolate database writes to a temp SQLite file per process and allow anonymous access.
+# Process-scoped paths avoid create_all race collisions when multiple pytest sessions run.
+def _cleanup_sqlite_files(db_path: Path) -> None:
+    for suffix in ("", "-journal", "-wal", "-shm"):
+        candidate = Path(f"{db_path}{suffix}")
+        try:
+            candidate.unlink()
+        except FileNotFoundError:
+            pass
+        except PermissionError:
+            # Another process may still hold a transient handle; ignore during startup cleanup.
+            pass
+
+
+if "DATABASE_URL" in os.environ:
+    TEMP_DB_PATH = None
+else:
+    TEMP_DB_PATH = Path(tempfile.gettempdir()) / f"cosmic_council_test_{os.getpid()}.db"
+    _cleanup_sqlite_files(TEMP_DB_PATH)
+    os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{TEMP_DB_PATH}"
+
 os.environ.setdefault("ALLOW_ANONYMOUS", "true")
+
+if TEMP_DB_PATH is not None:
+    atexit.register(_cleanup_sqlite_files, TEMP_DB_PATH)
 
 # Ensure tables are created once for the temp DB
 import asyncio  # noqa: E402
