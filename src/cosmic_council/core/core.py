@@ -1,7 +1,7 @@
 """
-Unified Cosmic Council Core Framework
+Unified Agent Orchestrator Core Framework
 Implements the hexagonal problem-solving system with deep totem personalities,
-the 22 rules of the Cosmic Council methodology, and backward compatibility
+the 22 rules of the Agent Orchestrator methodology, and backward compatibility
 for basic implementations.
 
 This is the primary and only core framework file - all other core files
@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class EnterpriseType(Enum):
-    """The six enterprises of the Cosmic Council"""
+    """The six enterprises of the Agent Orchestrator"""
     RED_OWL = "red_owl"
     ORANGE_ORANGUTAN = "orange_orangutan"
     YELLOW_HONEYBEE = "yellow_honeybee"
@@ -46,7 +46,7 @@ class CycleStatus(Enum):
     PAUSED = "paused"
 
 class CosmicCouncilRule(Enum):
-    """The 22 Rules of the Cosmic Council"""
+    """The 22 Rules of the Agent Orchestrator"""
     # Foundation Rules (1-6)
     CURIOSITY_FIRST = "curiosity_first"
     EMBRACE_COMPLEXITY = "embrace_complexity"
@@ -87,7 +87,7 @@ class CosmicCouncilRule(Enum):
 
 @dataclass
 class ProblemStatement:
-    """Represents a problem to be solved by the Cosmic Council"""
+    """Represents a problem to be solved by the Agent Orchestrator"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     title: str = ""
     description: str = ""
@@ -280,7 +280,7 @@ class EnhancedEnterpriseAgent:
             )
     
     async def _apply_cosmic_council_rules(self, problem: ProblemStatement, context: Dict[str, Any]) -> List[CosmicCouncilRule]:
-        """Apply the applicable Cosmic Council rules to this problem"""
+        """Apply the applicable Agent Orchestrator rules to this problem"""
         applied_rules = []
         rule_context = {"applied_rules": applied_rules, "problem": problem, "context": context}
         
@@ -1981,14 +1981,14 @@ I have identified opportunities to build inclusive support systems that honor th
 
 class CosmicCouncil:
     """
-    Backward compatibility wrapper for the basic Cosmic Council.
+    Backward compatibility wrapper for the basic Agent Orchestrator.
     This class provides the same interface as the original cosmic_council_core.py
     but uses the enhanced implementation under the hood.
     """
     
     def __init__(self, mode: str = "enhanced"):
         """
-        Initialize Cosmic Council with backward compatibility
+        Initialize Agent Orchestrator with backward compatibility
         
         Args:
             mode: "basic" for simple mode, "enhanced" for full features
@@ -2078,7 +2078,7 @@ class CosmicCouncil:
 # ============================================================================
 
 class EnhancedCosmicCouncil:
-    """Enhanced Cosmic Council orchestrator with deep personality integration"""
+    """Enhanced Agent Orchestrator orchestrator with deep personality integration"""
     
     def __init__(self):
         self.enterprises = {
@@ -2154,7 +2154,7 @@ class EnhancedCosmicCouncil:
         cycle_result = EnhancedCycleResult(problem=problem, status=CycleStatus.RUNNING)
         start_time = datetime.now(timezone.utc)
         
-        logger.info(f"Starting Enhanced Cosmic Council cycle for problem: {problem.title}")
+        logger.info(f"Starting Enhanced Agent Orchestrator cycle for problem: {problem.title}")
         
         try:
             # Phase 1: Sequential processing through all enterprises
@@ -2198,10 +2198,10 @@ class EnhancedCosmicCouncil:
             cycle_result.overall_confidence = self._calculate_overall_confidence(cycle_result)
             cycle_result.status = CycleStatus.COMPLETED
             
-            logger.info(f"Enhanced Cosmic Council cycle completed successfully in {cycle_result.total_processing_time:.2f} seconds")
+            logger.info(f"Enhanced Agent Orchestrator cycle completed successfully in {cycle_result.total_processing_time:.2f} seconds")
             
         except Exception as e:
-            logger.error(f"Error in Enhanced Cosmic Council cycle: {e}")
+            logger.error(f"Error in Enhanced Agent Orchestrator cycle: {e}")
             cycle_result.status = CycleStatus.FAILED
             cycle_result.end_time = datetime.now(timezone.utc)
             cycle_result.total_processing_time = (cycle_result.end_time - start_time).total_seconds()
@@ -2266,7 +2266,7 @@ class EnhancedCosmicCouncil:
         for result in cycle_result.enterprise_results.values():
             wisdom_pieces.extend(result.wisdom_insights)
         
-        return f"""The Cosmic Council has spoken with one voice, weaving together the wisdom of all totems:
+        return f"""The Agent Orchestrator has spoken with one voice, weaving together the wisdom of all totems:
 
 {chr(10).join(f"• {wisdom}" for wisdom in wisdom_pieces[:5])}
 
@@ -2296,7 +2296,7 @@ The path forward is clear, but it is also flexible. We move with the wisdom of t
 
 # Example usage and testing
 async def main():
-    """Example usage of the Enhanced Cosmic Council"""
+    """Example usage of the Enhanced Agent Orchestrator"""
     
     # Create a sample problem
     problem = ProblemStatement(
@@ -2309,14 +2309,14 @@ async def main():
         success_criteria=["50% reduction in carbon emissions", "Improved accessibility", "Cost-effective solution"]
     )
     
-    # Initialize Enhanced Cosmic Council
+    # Initialize Enhanced Agent Orchestrator
     council = EnhancedCosmicCouncil()
     
     # Solve the problem
     result = await council.solve_problem_enhanced(problem)
     
     # Display results
-    print(f"\n=== Enhanced Cosmic Council Problem-Solving Results ===")
+    print(f"\n=== Enhanced Agent Orchestrator Problem-Solving Results ===")
     print(f"Problem: {result.problem.title}")
     print(f"Status: {result.status.value}")
     print(f"Processing Time: {result.total_processing_time:.2f} seconds")
