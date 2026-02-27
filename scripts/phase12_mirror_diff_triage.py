@@ -73,6 +73,8 @@ def triage_file(rel_path: str) -> FileTriage | None:
     added = [l[1:] for l in diff if l.startswith("+") and not l.startswith("+++")]
 
     total = len(added) + len(removed)
+    if total == 0:
+        return None
     has_signature = any(
         l.lstrip().startswith(("def ", "async def ", "class "))
         for l in added + removed
