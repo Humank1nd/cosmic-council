@@ -14,6 +14,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from collections import Counter
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -145,6 +146,13 @@ def main() -> int:
         "files": reports,
         "file_count": len(reports),
         "total_hunks": sum(report["hunk_count"] for report in reports),
+        "classification_counts": dict(
+            Counter(
+                hunk["classification"]
+                for report in reports
+                for hunk in report["hunks"]
+            )
+        ),
     }
 
     out_path = Path(args.json_out)
@@ -156,6 +164,8 @@ def main() -> int:
     print(f"PHASE14_HUNK_TRIAGE={out_path}")
     print(f"FILES={summary['file_count']}")
     print(f"HUNKS={summary['total_hunks']}")
+    for key, value in sorted(summary["classification_counts"].items()):
+        print(f"CLASS_{key.upper()}={value}")
     print("STATUS=ok")
     return 0
 
