@@ -9,7 +9,7 @@ from .base import BaseModel
 
 
 class User(BaseModel):
-    """Users in the Cosmic Council system"""
+    """Users in the Agent Orchestrator system"""
     __tablename__ = 'users'
     
     username = Column(String(100), nullable=False, unique=True, index=True)

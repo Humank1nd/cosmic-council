@@ -1,5 +1,5 @@
 """
-Database layer for the Cosmic Council system.
+Database layer for the Agent Orchestrator system.
 """
 
 from .connection import DatabaseConnection, get_database_connection

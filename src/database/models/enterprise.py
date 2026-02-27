@@ -9,7 +9,7 @@ from .base import BaseModel
 
 
 class Enterprise(BaseModel):
-    """Enterprises in the Cosmic Council"""
+    """Enterprises in the Agent Orchestrator"""
     __tablename__ = 'enterprises'
     
     enterprise_type = Column(String(50), nullable=False, unique=True)  # 'red_owl', 'orange_orangutan', etc.

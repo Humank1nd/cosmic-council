@@ -1,5 +1,5 @@
 """
-Database models for the Cosmic Council system.
+Database models for the Agent Orchestrator system.
 """
 
 from .base import Base

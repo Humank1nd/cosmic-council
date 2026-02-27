@@ -1,5 +1,5 @@
 """
-Repository layer for the Cosmic Council system.
+Repository layer for the Agent Orchestrator system.
 """
 
 from .base_repository import BaseRepository

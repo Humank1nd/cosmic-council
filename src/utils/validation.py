@@ -1,5 +1,5 @@
 """
-Validation utilities for the Cosmic Council system.
+Validation utilities for the Agent Orchestrator system.
 """
 
 import re

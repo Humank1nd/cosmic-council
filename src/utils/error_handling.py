@@ -1,5 +1,5 @@
 """
-Error handling utilities for the Cosmic Council system.
+Error handling utilities for the Agent Orchestrator system.
 """
 
 import logging
@@ -10,7 +10,7 @@ import uuid
 
 
 class CosmicCouncilError(Exception):
-    """Base exception for Cosmic Council system"""
+    """Base exception for Agent Orchestrator system"""
     
     def __init__(self, message: str, error_code: str = None, details: Dict[str, Any] = None):
         super().__init__(message)

@@ -1,5 +1,5 @@
 """
-Database connection management for the Cosmic Council system.
+Database connection management for the Agent Orchestrator system.
 """
 
 import asyncio

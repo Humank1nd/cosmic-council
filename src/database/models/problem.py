@@ -36,7 +36,7 @@ problem_success_criteria = Table(
 
 
 class Problem(BaseModel):
-    """Problems to be solved by the Cosmic Council"""
+    """Problems to be solved by the Agent Orchestrator"""
     __tablename__ = 'problems'
     
     title = Column(String(500), nullable=False, index=True)

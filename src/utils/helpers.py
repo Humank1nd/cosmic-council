@@ -1,5 +1,5 @@
 """
-Helper utilities for the Cosmic Council system.
+Helper utilities for the Agent Orchestrator system.
 """
 
 import uuid
