@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Advanced Monitoring and Observability
+Agent Orchestrator Framework - Advanced Monitoring and Observability
 
 This module provides comprehensive monitoring and observability features:
 
@@ -15,7 +15,7 @@ This module provides comprehensive monitoring and observability features:
 - Anomaly detection and root cause analysis
 - Business metrics and KPI tracking
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -111,7 +111,7 @@ class DistributedTracer:
         try:
             # Create resource
             resource = Resource.create({
-                "service.name": "cosmic-council",
+                "service.name": "service-agent-orchestrator",
                 "service.version": "1.0.0",
                 "deployment.environment": "production"
             })
@@ -1122,7 +1122,7 @@ class AdvancedMonitoringManager:
 
 async def demo_advanced_monitoring():
     """Demonstrate advanced monitoring capabilities"""
-    print("📊 Cosmic Council Framework - Advanced Monitoring Demo")
+    print("📊 Agent Orchestrator Framework - Advanced Monitoring Demo")
     print("=" * 70)
     
     # Create monitoring configuration
