@@ -71,3 +71,35 @@ def test_perpetual_status_wrapper_contract(client: TestClient) -> None:
     assert "active_ai_sessions" in data
     assert "perpetual_ai_engine_available" in data
 
+
+def test_web_perpetual_sessions_compat_contract(client: TestClient) -> None:
+    response = client.get("/api/web/perpetual/sessions")
+    assert response.status_code == 200
+    body = response.json()
+    _assert_response_wrapper(body)
+
+    data = body["data"]
+    assert "sessions" in data
+    assert isinstance(data["sessions"], list)
+
+
+def test_web_perpetual_status_compat_contract(client: TestClient) -> None:
+    response = client.get("/api/web/perpetual/status")
+    assert response.status_code == 200
+    body = response.json()
+    _assert_response_wrapper(body)
+
+    data = body["data"]
+    assert "active_ai_sessions" in data
+    assert "perpetual_ai_engine_available" in data
+
+
+def test_web_perpetual_ai_sessions_compat_contract(client: TestClient) -> None:
+    response = client.get("/api/web/perpetual/ai/sessions")
+    assert response.status_code == 200
+    body = response.json()
+    _assert_response_wrapper(body)
+
+    data = body["data"]
+    assert "sessions" in data
+    assert isinstance(data["sessions"], list)
