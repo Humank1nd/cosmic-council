@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Database Performance Optimization
+Agent Orchestrator Framework - Database Performance Optimization
 
 This module provides comprehensive database performance optimization including:
 
@@ -15,7 +15,7 @@ This module provides comprehensive database performance optimization including:
 - Database connection health monitoring
 - Performance metrics and analytics
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -692,7 +692,7 @@ def cache_query_result(ttl: int = 3600):
 
 async def demo_database_optimization():
     """Demonstrate database optimization capabilities"""
-    print("🗄️  Cosmic Council Framework - Database Optimization Demo")
+    print("🗄️  Agent Orchestrator Framework - Database Optimization Demo")
     print("=" * 70)
     
     # Create database configuration

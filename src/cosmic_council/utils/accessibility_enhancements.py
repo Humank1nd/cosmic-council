@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Accessibility Enhancements
+Agent Orchestrator Framework - Accessibility Enhancements
 
-This module provides comprehensive accessibility features for the Cosmic Council
+This module provides comprehensive accessibility features for the Agent Orchestrator
 Framework, ensuring the system is usable by people with various disabilities:
 
 - Screen reader compatibility
@@ -16,7 +16,7 @@ Framework, ensuring the system is usable by people with various disabilities:
 - Cognitive accessibility support
 - Multi-language support
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -584,7 +584,7 @@ class MultiLanguageSupport:
         # In a real implementation, this would load from JSON files
         self.translations = {
             'en': {
-                'welcome': 'Welcome to Cosmic Council',
+                'welcome': 'Welcome to Agent Orchestrator',
                 'start_cycle': 'Start Problem-Solving Cycle',
                 'view_results': 'View Results',
                 'settings': 'Settings',
@@ -839,7 +839,7 @@ class AccessibilityManager:
 
 async def demo_accessibility_features():
     """Demonstrate accessibility features"""
-    print("♿ Cosmic Council Framework - Accessibility Features Demo")
+    print("♿ Agent Orchestrator Framework - Accessibility Features Demo")
     print("=" * 70)
     
     # Create accessibility configuration
@@ -862,7 +862,7 @@ async def demo_accessibility_features():
         
         # Test screen reader support
         print("\n📢 Testing screen reader support...")
-        accessibility.screen_reader.announce("Welcome to the Cosmic Council Framework")
+        accessibility.screen_reader.announce("Welcome to the Agent Orchestrator Framework")
         accessibility.screen_reader.announce_urgent("Important system update available")
         
         announcements = accessibility.screen_reader.get_announcements()

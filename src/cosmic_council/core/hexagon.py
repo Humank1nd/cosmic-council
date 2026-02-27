@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🏛️ Cosmic Council Hexagon - The Brainstem
+🏛️ Agent Orchestrator Hexagon - The Brainstem
 Core linear cycle logic (ROYGBV) - strictly linear, clockwise-only processing
 """
 
@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class EnterpriseType(Enum):
-    """The six enterprises of the Cosmic Council"""
+    """The six enterprises of the Agent Orchestrator"""
     RED_OWL = "red_owl"                    # Research & Inquiry
     ORANGE_ORANGUTAN = "orange_orangutan"  # Planning & Logistics
     YELLOW_HONEYBEE = "yellow_honeybee"    # Development & Creativity
@@ -35,7 +35,7 @@ class ProblemComplexity(Enum):
 
 @dataclass
 class ProblemStatement:
-    """Represents a problem to be solved by the Cosmic Council"""
+    """Represents a problem to be solved by the Agent Orchestrator"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     title: str = ""
     description: str = ""
@@ -76,15 +76,15 @@ class CycleResult:
 
 class CosmicCouncilHexagon:
     """
-    🏛️ Cosmic Council Hexagon - The Brainstem
+    🏛️ Agent Orchestrator Hexagon - The Brainstem
     
-    This is the core nervous system of the Cosmic Council.
+    This is the core nervous system of the Agent Orchestrator.
     Strictly linear, clockwise-only processing through ROYGBV sequence.
     If deeper recursion is needed → handled via cycles.py (fractal branching).
     """
     
     def __init__(self):
-        self.name = "Cosmic Council Hexagon"
+        self.name = "Agent Orchestrator Hexagon"
         self.processing_order = [
             EnterpriseType.RED_OWL,
             EnterpriseType.ORANGE_ORANGUTAN,
@@ -100,7 +100,7 @@ class CosmicCouncilHexagon:
         # Processing history
         self.cycle_history: List[CycleResult] = []
         
-        logger.info("🏛️ Cosmic Council Hexagon initialized - Brainstem active")
+        logger.info("🏛️ Agent Orchestrator Hexagon initialized - Brainstem active")
     
     def register_enterprise(self, enterprise_type: EnterpriseType, enterprise_service: Any):
         """Register an enterprise service"""
@@ -287,7 +287,7 @@ class CosmicCouncilHexagon:
 async def demo_hexagon():
     """Demo the hexagon processing"""
     
-    print("🏛️ Cosmic Council Hexagon Demo")
+    print("🏛️ Agent Orchestrator Hexagon Demo")
     print("=" * 50)
     
     # Initialize hexagon

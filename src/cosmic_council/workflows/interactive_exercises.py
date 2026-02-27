@@ -1,5 +1,5 @@
 """
-Interactive Exercises for Cosmic Council Learning
+Interactive Exercises for Agent Orchestrator Learning
 Hands-on exercises for facet identification, solution brainstorming, and action planning
 """
 
@@ -66,7 +66,7 @@ class FacetIdentificationExercise(Exercise):
         super().__init__(
             id=f"facet_id_{random.randint(1000, 9999)}",
             title="Enterprise Facet Identification",
-            description="Identify which Cosmic Council enterprise facets are most relevant to the given problem scenario.",
+            description="Identify which Agent Orchestrator enterprise facets are most relevant to the given problem scenario.",
             exercise_type=ExerciseType.FACET_IDENTIFICATION,
             difficulty=DifficultyLevel.INTERMEDIATE,
             estimated_time="10-15 minutes",
@@ -563,7 +563,7 @@ class InteractiveExerciseEngine:
 # Demo function
 async def demo_interactive_exercises():
     """Demonstrate the interactive exercise system"""
-    print("🌌 Cosmic Council Interactive Exercises")
+    print("🌌 Agent Orchestrator Interactive Exercises")
     print("=" * 60)
     
     # Initialize exercise engine
@@ -710,7 +710,7 @@ async def demo_interactive_exercises():
     print()
     
     print("✅ Interactive exercise system demonstration completed!")
-    print("The system provides hands-on learning experiences for the Cosmic Council methodology.")
+    print("The system provides hands-on learning experiences for the Agent Orchestrator methodology.")
 
 if __name__ == "__main__":
     asyncio.run(demo_interactive_exercises())

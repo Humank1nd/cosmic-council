@@ -20,10 +20,10 @@ class InteractiveWorkflowInterface:
         
     async def start_interactive_session(self):
         """Start an interactive workflow session"""
-        print("🌌 Welcome to the Cosmic Council Problem-Solving Workflow")
+        print("🌌 Welcome to the Agent Orchestrator Problem-Solving Workflow")
         print("=" * 60)
         print("This guided workflow will help you solve complex problems using")
-        print("the Cosmic Council's hexagonal methodology.")
+        print("the Agent Orchestrator's hexagonal methodology.")
         print()
         
         # Start new session
@@ -655,7 +655,7 @@ class InteractiveWorkflowInterface:
             print(f"   Recommended Approach: {synthesis['recommended_approach']}")
         
         print(f"\n💾 Session data saved. You can resume or review this session later.")
-        print("Thank you for using the Cosmic Council Problem-Solving Workflow! 🌌")
+        print("Thank you for using the Agent Orchestrator Problem-Solving Workflow! 🌌")
 
 # Demo function
 async def demo_interactive_workflow():

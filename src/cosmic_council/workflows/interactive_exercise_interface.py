@@ -1,6 +1,6 @@
 """
 Interactive Exercise Interface
-User-friendly interface for accessing and completing Cosmic Council exercises
+User-friendly interface for accessing and completing Agent Orchestrator exercises
 """
 
 import asyncio
@@ -22,10 +22,10 @@ class InteractiveExerciseInterface:
     
     async def start_interactive_session(self):
         """Start an interactive exercise session"""
-        print("🌌 Cosmic Council Interactive Exercises")
+        print("🌌 Agent Orchestrator Interactive Exercises")
         print("=" * 60)
         print("Welcome to the interactive exercise system!")
-        print("Practice the Cosmic Council methodology through hands-on exercises.")
+        print("Practice the Agent Orchestrator methodology through hands-on exercises.")
         print()
         
         # Get user information
@@ -54,7 +54,7 @@ class InteractiveExerciseInterface:
             
             if choice == "0":
                 await self._show_session_summary()
-                print("Thank you for using the Cosmic Council Interactive Exercises! 🌌")
+                print("Thank you for using the Agent Orchestrator Interactive Exercises! 🌌")
                 break
             elif choice == "1":
                 await self._run_facet_identification_exercise()
@@ -77,7 +77,7 @@ class InteractiveExerciseInterface:
         """Run a facet identification exercise"""
         print("\n🎯 Facet Identification Exercise")
         print("-" * 50)
-        print("In this exercise, you'll identify which Cosmic Council enterprise")
+        print("In this exercise, you'll identify which Agent Orchestrator enterprise")
         print("facets are most relevant to a given problem scenario.")
         print()
         
@@ -420,7 +420,7 @@ class InteractiveExerciseInterface:
         print()
         
         if result.score >= 80:
-            print("🎉 Excellent work! You demonstrated strong understanding of the Cosmic Council methodology.")
+            print("🎉 Excellent work! You demonstrated strong understanding of the Agent Orchestrator methodology.")
         elif result.score >= 60:
             print("👍 Good job! You're making solid progress with the methodology.")
         else:
@@ -555,7 +555,7 @@ class InteractiveExerciseInterface:
             for i, exercise_result in enumerate(session['exercises_completed'], 1):
                 print(f"  {i}. Score: {exercise_result.score:.1f}% | Time: {exercise_result.time_taken:.1f}s")
         
-        print("\nThank you for practicing with the Cosmic Council methodology!")
+        print("\nThank you for practicing with the Agent Orchestrator methodology!")
         print("Keep exercising to improve your problem-solving skills! 🚀")
 
 # Demo function

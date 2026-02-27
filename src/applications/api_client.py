@@ -1,6 +1,6 @@
 """
-Cosmic Council API Client
-Python client for interacting with the Cosmic Council REST API
+Agent Orchestrator API Client
+Python client for interacting with the Agent Orchestrator REST API
 """
 
 import asyncio
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class CosmicCouncilAPIClient:
-    """Client for interacting with the Cosmic Council API"""
+    """Client for interacting with the Agent Orchestrator API"""
     
     def __init__(self, base_url: str = "http://localhost:8000", api_key: Optional[str] = None):
         """
@@ -350,7 +350,7 @@ class APIException(Exception):
 
 async def demo_api_client():
     """Demonstrate API client usage"""
-    print("🌐 Cosmic Council API Client Demo")
+    print("🌐 Agent Orchestrator API Client Demo")
     print("=" * 60)
     
     async with CosmicCouncilAPIClient() as client:
@@ -564,7 +564,7 @@ async def test_api_endpoints():
         print(f"Success Rate: {(endpoints_passed/endpoints_tested)*100:.1f}%")
 
 if __name__ == "__main__":
-    print("🌐 Cosmic Council API Client")
+    print("🌐 Agent Orchestrator API Client")
     print("Choose an option:")
     print("1. Demo API Client")
     print("2. Test API Endpoints")

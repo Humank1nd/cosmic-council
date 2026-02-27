@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Performance Integration System
+Agent Orchestrator Framework - Performance Integration System
 
 This module integrates all performance optimization components into a unified system:
 
 - Performance optimization coordinator
 - System-wide performance management
-- Integration with existing Cosmic Council components
+- Integration with existing Agent Orchestrator components
 - Performance optimization strategies
 - Real-time performance tuning
 - Performance benchmarking and testing
@@ -15,7 +15,7 @@ This module integrates all performance optimization components into a unified sy
 - Performance optimization automation
 - Performance metrics aggregation and analysis
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -649,7 +649,7 @@ def performance_monitored(manager: PerformanceIntegrationManager):
 
 async def demo_performance_integration():
     """Demonstrate integrated performance optimization"""
-    print("🚀 Cosmic Council Framework - Performance Integration Demo")
+    print("🚀 Agent Orchestrator Framework - Performance Integration Demo")
     print("=" * 70)
     
     # Create performance integration configuration

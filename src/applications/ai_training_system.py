@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - AI Training System
+Agent Orchestrator Framework - AI Training System
 
 This module provides a comprehensive AI training system for creating custom
-AI assistants using the Cosmic Council's Hexagon model:
+AI assistants using the Agent Orchestrator's Hexagon model:
 
 - Data collection and preparation for the six facets
 - Model selection and fine-tuning capabilities
@@ -11,7 +11,7 @@ AI assistants using the Cosmic Council's Hexagon model:
 - Testing and evaluation systems
 - Continuous learning and adaptation
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -954,7 +954,7 @@ class AITrainingSystem:
 
 async def demo_ai_training_system():
     """Demonstrate AI training system capabilities"""
-    print("🤖 Cosmic Council Framework - AI Training System Demo")
+    print("🤖 Agent Orchestrator Framework - AI Training System Demo")
     print("=" * 70)
     
     # Create AI training configuration

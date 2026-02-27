@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🔍 Cosmic Council Explain - Explainability Utilities
+🔍 Agent Orchestrator Explain - Explainability Utilities
 Transparent decision-making and insight explanation
 """
 
@@ -69,15 +69,15 @@ class ExplanationResult:
 
 class CosmicCouncilExplain:
     """
-    🔍 Cosmic Council Explain - Explainability Utilities
+    🔍 Agent Orchestrator Explain - Explainability Utilities
     
     This system provides transparent explanations for all decisions,
-    insights, and processes in the Cosmic Council. It ensures that
+    insights, and processes in the Agent Orchestrator. It ensures that
     the system's reasoning is clear, understandable, and trustworthy.
     """
     
     def __init__(self):
-        self.name = "Cosmic Council Explain"
+        self.name = "Agent Orchestrator Explain"
         
         # Explanation history
         self.explanation_history: List[ExplanationResult] = []
@@ -88,7 +88,7 @@ class CosmicCouncilExplain:
         # Clarity metrics
         self.clarity_metrics: Dict[str, float] = {}
         
-        logger.info("🔍 Cosmic Council Explain initialized - Transparency active")
+        logger.info("🔍 Agent Orchestrator Explain initialized - Transparency active")
     
     async def explain_cycle_result(self, 
                                   cycle_result: CycleResult,
@@ -685,7 +685,7 @@ class CosmicCouncilExplain:
 async def demo_explain():
     """Demo the explanation system"""
     
-    print("🔍 Cosmic Council Explain Demo")
+    print("🔍 Agent Orchestrator Explain Demo")
     print("=" * 50)
     
     # Initialize explanation system

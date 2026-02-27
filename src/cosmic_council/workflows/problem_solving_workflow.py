@@ -1,6 +1,6 @@
 """
 Step-by-Step Problem-Solving Workflow
-Implements the Cosmic Council's hexagon methodology with guided workflows
+Implements the Agent Orchestrator's hexagon methodology with guided workflows
 """
 
 import asyncio
@@ -12,7 +12,7 @@ from enum import Enum
 import json
 import logging
 
-# Import Cosmic Council components
+# Import Agent Orchestrator components
 from ..core.core import (
     CosmicCouncil, ProblemStatement, ProblemComplexity, 
     EnterpriseType, CycleStatus
@@ -817,7 +817,7 @@ class ProblemSolvingWorkflow:
 # Demo function
 async def demo_workflow():
     """Demonstrate the problem-solving workflow"""
-    print("🌌 Cosmic Council Problem-Solving Workflow Demo")
+    print("🌌 Agent Orchestrator Problem-Solving Workflow Demo")
     print("=" * 60)
     
     # Create workflow instance
