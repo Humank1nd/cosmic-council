@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument("--rel-path", required=True)
     parser.add_argument("--classification")
     parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--index", type=int)
     args = parser.parse_args()
 
     report_path = Path(args.report)
@@ -34,12 +35,30 @@ def main() -> int:
     if args.classification:
         hunks = [h for h in hunks if h["classification"] == args.classification]
 
-    for idx, hunk in enumerate(hunks[: args.limit], start=1):
+    selected_hunks = hunks
+    if args.index is not None:
+        if args.index < 1 or args.index > len(hunks):
+            print("STATUS=invalid_index")
+            return 1
+        selected_hunks = [hunks[args.index - 1]]
+    else:
+        selected_hunks = hunks[: args.limit]
+
+    for idx, hunk in enumerate(selected_hunks, start=1):
         print(f"HUNK={idx}")
         print(f"HEADER={hunk['header']}")
         print(f"CLASSIFICATION={hunk['classification']}")
         print(f"SYMBOL={hunk['symbol']}")
         print(f"CHANGED_LINES={hunk['changed_lines']}")
+        if args.index is not None:
+            print("REMOVED_LINES_BEGIN")
+            for line in hunk["removed"]:
+                print(line)
+            print("REMOVED_LINES_END")
+            print("ADDED_LINES_BEGIN")
+            for line in hunk["added"]:
+                print(line)
+            print("ADDED_LINES_END")
         print("---")
 
     print(f"TOTAL={len(hunks)}")

@@ -1325,7 +1325,7 @@ async def lifespan(app: FastAPI):
             perpetual_108_cycle_integration = None
         
         logger.info("AI integration and enhanced workflow initialized")
-        logger.info("Cosmic Council API Server started successfully")
+        logger.info("Agent Orchestrator API Server started successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize API server: {str(e)}")
