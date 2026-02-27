@@ -48,6 +48,23 @@ class ProblemComplexity(Enum):
     def __hash__(self):
         return hash(self.value)
 
+class ProblemDomain(Enum):
+    """Specific domains for Agent Orchestrator problem statements."""
+    SCIENCE_AI = "science_ai"
+    GOVERNANCE = "governance"
+    BUSINESS = "business"
+    CREATIVITY = "creativity"
+    PERSONAL_GROWTH = "personal_growth"
+    GENERAL = "general"
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.value == other
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return hash(self.value)
+
 class CycleStatus(Enum):
     """Cycle processing status"""
     PENDING = "pending"
@@ -86,7 +103,7 @@ class ProblemStatement:
     title: str
     description: str
     complexity: ProblemComplexity
-    domain: str
+    domain: str | ProblemDomain
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     stakeholders: List[str] = field(default_factory=list)
     constraints: Dict[str, Any] = field(default_factory=dict)
@@ -97,6 +114,10 @@ class ProblemStatement:
     def __post_init__(self):
         if not self.title:
             raise ValueError("title cannot be empty")
+        if isinstance(self.domain, ProblemDomain):
+            self.domain = self.domain.value
+        if not self.domain:
+            raise ValueError("domain cannot be empty")
 
     def __str__(self) -> str:
         return f"ProblemStatement(title={self.title!r}, description={self.description!r}, complexity={self.complexity.value})"
