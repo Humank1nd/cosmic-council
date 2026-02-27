@@ -48,7 +48,7 @@ from .sahasrara import (
     IntelligenceForecast,
     DashboardData,
     VisualizationDataPoint,
-    # Recursive Refinement Cycle - Sahasrara -> Muladhara Loop
+    # Recursive Refinement Cycle - Sahasrara → Muladhara Loop
     RefinementCycleManager,
     CycleAccelerationRecord,
     OptimizationReport,
@@ -58,7 +58,7 @@ from .sahasrara import (
 __all__ = [
     # Core modules
     'hexagon', 'cycles', 'reflection', 'explain', 'core', 'types', 'sahasrara',
-    
+
     # Key classes
     'CosmicCouncil', 'ProblemStatement', 'ProblemComplexity', 'EnterpriseType',
     'CycleStatus', 'EnhancedEnterpriseResult', 'CosmicCouncilHexagon',
@@ -77,7 +77,7 @@ __all__ = [
     'RecursiveIntelligenceTracker', 'PredictiveAnalytics', 'IntelligenceVisualization',
     'IntelligenceForecast', 'DashboardData', 'VisualizationDataPoint',
 
-    # Recursive Refinement Cycle - Sahasrara -> Muladhara Loop
+    # Recursive Refinement Cycle - Sahasrara → Muladhara Loop
     'RefinementCycleManager', 'CycleAccelerationRecord', 'OptimizationReport',
     'CycleLoopStatus',
 ]
