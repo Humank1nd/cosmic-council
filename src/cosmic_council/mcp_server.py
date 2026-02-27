@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Codex MCP Server for Cosmic Council Framework
+Codex MCP Server for Agent Orchestrator Framework
 Provides Codex capabilities as an MCP server for multi-agent integration
 """
 
@@ -33,7 +33,7 @@ class CodexMCPServer:
     """MCP Server that provides Codex capabilities to other agents."""
     
     def __init__(self):
-        self.server = Server("codex-cosmic-council")
+        self.server = Server("codex-service-agent-orchestrator")
         self.setup_handlers()
         self.codex_config = self._load_codex_config()
     
@@ -47,9 +47,9 @@ class CodexMCPServer:
         }
     
     def _get_base_instructions(self) -> str:
-        """Get base instructions for Codex based on Cosmic Council standards."""
+        """Get base instructions for Codex based on Agent Orchestrator standards."""
         return """
-        You are working with the Cosmic Council AI-Powered Problem Solving System.
+        You are working with the Agent Orchestrator AI-Powered Problem Solving System.
         
         Follow these guidelines:
         - Use feature-based directory structure
@@ -265,7 +265,7 @@ class CodexMCPServer:
         file_pattern = args.get("file_pattern", "src/**/*.py")
         
         prompt = f"""
-        Analyze the Cosmic Council codebase with focus on {focus_area}.
+        Analyze the Agent Orchestrator codebase with focus on {focus_area}.
         Look at files matching pattern: {file_pattern}
         
         Provide:
@@ -276,7 +276,7 @@ class CodexMCPServer:
         5. Documentation improvements
         6. Specific actionable recommendations
         
-        Focus on the Cosmic Council coding standards and architecture.
+        Focus on the Agent Orchestrator coding standards and architecture.
         """
         
         return await self._execute_codex({"prompt": prompt})
@@ -296,7 +296,7 @@ class CodexMCPServer:
         - Include edge cases and error conditions
         - Add proper fixtures and mocks
         - Ensure good test coverage
-        - Follow Cosmic Council testing standards
+        - Follow Agent Orchestrator testing standards
         - Add docstrings to test functions
         - Use descriptive test names
         
@@ -312,7 +312,7 @@ class CodexMCPServer:
                 read_stream,
                 write_stream,
                 InitializationOptions(
-                    server_name="codex-cosmic-council",
+                    server_name="codex-service-agent-orchestrator",
                     server_version="1.0.0",
                     capabilities=self.server.get_capabilities(
                         notification_options=None,
