@@ -837,6 +837,12 @@ async def process_with_agent(
         # Handle different result types (EnhancedResult vs EnhancedEnterpriseResult)
         if hasattr(result, 'specialized_analysis'):
             # EnhancedResult from working_enhanced_agents
+            agent_name = getattr(agent, "name", enterprise_type.value.replace("_", " ").title())
+            agent_animal = getattr(agent, "animal", "")
+            if agent_animal:
+                personality_response = f"{agent_name} ({agent_animal}) processed the problem"
+            else:
+                personality_response = f"{agent_name} processed the problem"
             payload = AgentProcessResponse(
                 enterprise=enterprise_type.value,
                 status=result.status,
@@ -846,7 +852,7 @@ async def process_with_agent(
                 recommendations=result.recommendations,
                 next_actions=result.next_actions,
                 dependencies=[],
-                personality_response=f"{agent.name} ({agent.animal}) processed the problem",
+                personality_response=personality_response,
                 applied_rules=[],
                 wisdom_insights=[],
                 questions_for_next_cycle=[],

@@ -177,6 +177,25 @@ def test_sequence_endpoint_contract(
     assert set(payload["agent_sequence"]).issubset(set(body["agent_results"].keys()))
 
 
+def test_recovered_agents_accept_specialized_result_shape(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def _fake_process(*_args: Any, **_kwargs: Any) -> Any:
+        enterprise = getattr(_args[0], "value", str(_args[0]))
+        return _StubEnhancedResult(enterprise)
+
+    monkeypatch.setattr(agent_api, "_process_agent_with_fallback", _fake_process)
+    payload = _sample_process_payload()
+
+    for enterprise in ["yellow_honeybee", "green_tortoise", "blue_dolphin", "purple_elephant"]:
+        response = client.post(f"/api/v1/agents/{enterprise}/process", json=payload)
+        assert response.status_code == 200
+        body = response.json()
+        assert body["enterprise"] == enterprise
+        assert isinstance(body["personality_response"], str)
+        assert "processed the problem" in body["personality_response"]
+
+
 def test_status_endpoint_contract(client: TestClient) -> None:
     response = client.get("/api/v1/agents/red_owl/status")
     assert response.status_code == 200
