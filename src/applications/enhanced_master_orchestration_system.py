@@ -1,5 +1,5 @@
 """
-Unified Master Orchestration System for Cosmic Council
+Unified Master Orchestration System for Agent Orchestrator
 Integrates the master orchestration system with the detailed ROYGBV workflow engine
 and provides backward compatibility for basic orchestration functionality.
 
@@ -316,7 +316,7 @@ class MasterOrchestrationSystem:
 class EnhancedMasterOrchestrationSystem:
     """
     Enhanced Master Orchestration System
-    Orchestrates all components of the Cosmic Council system
+    Orchestrates all components of the Agent Orchestrator system
     """
     
     def __init__(self, 

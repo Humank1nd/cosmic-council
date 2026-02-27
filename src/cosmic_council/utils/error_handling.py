@@ -1,5 +1,5 @@
 """
-Enhanced error handling utilities for Cosmic Council API
+Enhanced error handling utilities for Agent Orchestrator API
 Provides standardized error responses with actionable messages, error codes, and troubleshooting hints
 """
 
@@ -9,7 +9,7 @@ from enum import Enum
 
 
 class ErrorCode(str, Enum):
-    """Standard error codes for the Cosmic Council API"""
+    """Standard error codes for the Agent Orchestrator API"""
     # Authentication & Authorization
     AUTH_REQUIRED = "AUTH_001"
     AUTH_INVALID = "AUTH_002"
