@@ -1,28 +1,37 @@
 """
-Interactive Hexagon Visualization System for Cosmic Council
+Interactive Hexagon Visualization System for Agent Orchestrator
 Real-time visualization with sector toggling and enterprise integration
 """
 
 import turtle
 import math
-import time
 import asyncio
 import threading
+from queue import Empty, Queue
 from datetime import datetime, timezone
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, Callable
 from dataclasses import dataclass
 from enum import Enum
-import json
 
-# Import the Cosmic Council components
-from src.core.types import (
-    CosmicCouncil, ProblemStatement, ProblemComplexity, 
-    EnterpriseType, CycleStatus
-)
-from working_enhanced_agents import (
-    WorkingEnhancedRedOwlAgent, WorkingEnhancedOrangeOrangutanAgent,
-    AnalysisDepth
-)
+# Import the Agent Orchestrator components
+try:
+    from src.cosmic_council.core.types import (
+        ProblemStatement,
+        ProblemComplexity,
+        EnterpriseType,
+    )
+except ImportError:
+    # Backward-compatible import path for older repo layouts.
+    from src.core.types import (  # type: ignore
+        ProblemStatement,
+        ProblemComplexity,
+        EnterpriseType,
+    )
+
+try:
+    from src.cosmic_council.core.core import CosmicCouncil
+except ImportError:
+    CosmicCouncil = None  # type: ignore
 
 class VisualizationMode(Enum):
     """Visualization modes for the hexagon"""
@@ -66,6 +75,8 @@ class InteractiveHexagonVisualization:
         self.visualization_mode = VisualizationMode.INTERACTIVE
         self.animation_speed = 0.1
         self.update_callbacks = []
+        self.update_queue: Queue = Queue()
+        self.cycle_running = False
         
         # Enterprise configuration
         self.enterprise_config = {
@@ -126,7 +137,7 @@ class InteractiveHexagonVisualization:
         self.screen = turtle.Screen()
         self.screen.setup(width=self.width, height=self.height)
         self.screen.bgcolor("white")
-        self.screen.title("Cosmic Council - Interactive Hexagon Visualization")
+        self.screen.title("Agent Orchestrator - Interactive Hexagon Visualization")
         self.screen.tracer(0)  # Turn off automatic updates for smooth animation
         
         # Create turtles for each sector
@@ -151,7 +162,8 @@ class InteractiveHexagonVisualization:
         
         # Setup keyboard bindings
         self._setup_keyboard_bindings()
-    
+        self._schedule_queue_processing()
+
     def _setup_keyboard_bindings(self):
         """Setup keyboard bindings for interaction"""
         self.screen.listen()
@@ -169,6 +181,34 @@ class InteractiveHexagonVisualization:
         self.screen.onkeypress(self.show_help, "h")
         self.screen.onkeypress(self.toggle_animation, "a")
         self.screen.onkeypress(self.cycle_mode, "c")
+        self.screen.onkeypress(self.quit_visualization, "q")
+
+    def _schedule_queue_processing(self):
+        """Process queued state updates on the turtle main thread."""
+        if not self.screen:
+            return
+        self._process_queued_updates()
+        self.screen.ontimer(self._schedule_queue_processing, 50)
+
+    def _process_queued_updates(self):
+        """Drain queued updates and render once for smooth animations."""
+        has_updates = False
+        while True:
+            try:
+                enterprise_type, state, progress, confidence, data = self.update_queue.get_nowait()
+            except Empty:
+                break
+            self._apply_sector_state(
+                enterprise_type=enterprise_type,
+                state=state,
+                progress=progress,
+                confidence=confidence,
+                data=data,
+            )
+            has_updates = True
+
+        if has_updates and self.screen:
+            self.update_visualization()
     
     def draw_hexagon(self, center_x: float = 0, center_y: float = 0, radius: float = 200):
         """Draw the main hexagon structure"""
@@ -254,20 +294,32 @@ class InteractiveHexagonVisualization:
         
         # Draw progress indicator if processing
         if sector.state == SectorState.PROCESSING and sector.progress > 0:
-            self._draw_progress_indicator(t, center_x, center_y, x1, y1, x2, y2, sector.progress)
+            self._draw_progress_indicator(
+                enterprise_type=enterprise_type,
+                t=t,
+                center_x=center_x,
+                center_y=center_y,
+                progress=sector.progress,
+            )
         
         # Draw confidence indicator
         if sector.confidence > 0:
             self._draw_confidence_indicator(t, center_x, center_y, position, sector.confidence)
     
-    def _draw_progress_indicator(self, t: turtle.Turtle, center_x: float, center_y: float, 
-                                x1: float, y1: float, x2: float, y2: float, progress: float):
+    def _draw_progress_indicator(
+        self,
+        enterprise_type: EnterpriseType,
+        t: turtle.Turtle,
+        center_x: float,
+        center_y: float,
+        progress: float,
+    ):
         """Draw progress indicator within sector"""
         # Calculate progress line position
         progress_angle = progress * 60  # 60 degrees per sector
         progress_radius = 150  # Inner radius for progress line
-        
-        angle1 = math.radians(60 * self.enterprise_config[self.sectors[t].enterprise]["position"])
+
+        angle1 = math.radians(60 * self.enterprise_config[enterprise_type]["position"])
         progress_x = center_x + progress_radius * math.cos(angle1 + math.radians(progress_angle))
         progress_y = center_y + progress_radius * math.sin(angle1 + math.radians(progress_angle))
         
@@ -399,9 +451,15 @@ class InteractiveHexagonVisualization:
         self.update_visualization()
         print(f"Toggled {sector.name} to {sector.state.value}")
     
-    def set_sector_state(self, enterprise_type: EnterpriseType, state: SectorState, 
-                        progress: float = 0.0, confidence: float = 0.0, data: Dict[str, Any] = None):
-        """Set a sector's state and data"""
+    def _apply_sector_state(
+        self,
+        enterprise_type: EnterpriseType,
+        state: SectorState,
+        progress: float = 0.0,
+        confidence: float = 0.0,
+        data: Dict[str, Any] = None,
+    ):
+        """Apply sector state without forcing an immediate redraw."""
         sector = self.sectors[enterprise_type]
         sector.state = state
         sector.progress = progress
@@ -409,22 +467,52 @@ class InteractiveHexagonVisualization:
         sector.last_update = datetime.now(timezone.utc)
         if data:
             sector.data = data
-        
-        self.update_visualization()
+
+    def set_sector_state(
+        self,
+        enterprise_type: EnterpriseType,
+        state: SectorState,
+        progress: float = 0.0,
+        confidence: float = 0.0,
+        data: Dict[str, Any] = None,
+        refresh: bool = True,
+    ):
+        """Set a sector's state and data."""
+        self._apply_sector_state(enterprise_type, state, progress, confidence, data)
+
+        if refresh and self.screen:
+            self.update_visualization()
+        sector = self.sectors[enterprise_type]
         print(f"Set {sector.name} to {state.value} (progress: {progress:.2f}, confidence: {confidence:.2f})")
-    
+
+    def queue_sector_state(
+        self,
+        enterprise_type: EnterpriseType,
+        state: SectorState,
+        progress: float = 0.0,
+        confidence: float = 0.0,
+        data: Dict[str, Any] = None,
+    ):
+        """Queue state updates so turtle draws only on the main thread."""
+        self.update_queue.put((enterprise_type, state, progress, confidence, data))
+
     def start_cycle(self):
         """Start a problem-solving cycle"""
         if not self.current_problem:
             print("No problem set. Please set a problem first.")
             return
-        
-        print("Starting Cosmic Council cycle...")
-        
+        if self.cycle_running:
+            print("Cycle already running.")
+            return
+
+        print("Starting Agent Orchestrator cycle...")
+        self.cycle_running = True
+
         # Reset all sectors to inactive
         for enterprise_type in self.sectors.keys():
-            self.set_sector_state(enterprise_type, SectorState.INACTIVE)
-        
+            self.set_sector_state(enterprise_type, SectorState.INACTIVE, refresh=False)
+        self.update_visualization()
+
         # Start the cycle in a separate thread
         cycle_thread = threading.Thread(target=self._run_cycle_async)
         cycle_thread.daemon = True
@@ -434,13 +522,20 @@ class InteractiveHexagonVisualization:
         """Run the cycle asynchronously"""
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        loop.run_until_complete(self._execute_cycle())
-        loop.close()
+        try:
+            loop.run_until_complete(self._execute_cycle())
+        finally:
+            self.cycle_running = False
+            loop.close()
     
     async def _execute_cycle(self):
         """Execute the problem-solving cycle"""
-        if not self.council:
-            self.council = CosmicCouncil()
+        if CosmicCouncil is not None and not self.council:
+            try:
+                self.council = CosmicCouncil()
+            except Exception as exc:
+                print(f"Warning: unable to initialize CosmicCouncil ({exc})")
+                self.council = None
         
         # Process through each enterprise in order
         processing_order = [
@@ -454,21 +549,25 @@ class InteractiveHexagonVisualization:
         
         for i, enterprise_type in enumerate(processing_order):
             # Set sector to processing
-            self.set_sector_state(enterprise_type, SectorState.PROCESSING, progress=0.0)
-            
+            self.queue_sector_state(enterprise_type, SectorState.PROCESSING, progress=0.0)
+
             # Simulate processing with progress updates
             for progress in [0.2, 0.4, 0.6, 0.8, 1.0]:
                 await asyncio.sleep(0.5)  # Simulate processing time
-                self.set_sector_state(enterprise_type, SectorState.PROCESSING, progress=progress)
-            
+                self.queue_sector_state(enterprise_type, SectorState.PROCESSING, progress=progress)
+
             # Simulate completion with confidence score
             confidence = 0.7 + (i * 0.05)  # Increasing confidence
-            self.set_sector_state(enterprise_type, SectorState.COMPLETED, 
-                                progress=1.0, confidence=confidence)
-            
+            self.queue_sector_state(
+                enterprise_type,
+                SectorState.COMPLETED,
+                progress=1.0,
+                confidence=confidence,
+            )
+
             await asyncio.sleep(1.0)  # Pause between enterprises
-        
-        print("Cosmic Council cycle completed!")
+
+        print("Agent Orchestrator cycle completed!")
     
     def set_problem(self, problem: ProblemStatement):
         """Set the current problem for the visualization"""
@@ -480,14 +579,20 @@ class InteractiveHexagonVisualization:
     def reset_visualization(self):
         """Reset the visualization to initial state"""
         for enterprise_type in self.sectors.keys():
-            self.set_sector_state(enterprise_type, SectorState.INACTIVE, 
-                                progress=0.0, confidence=0.0)
+            self.set_sector_state(
+                enterprise_type,
+                SectorState.INACTIVE,
+                progress=0.0,
+                confidence=0.0,
+                refresh=False,
+            )
+        self.update_visualization()
         print("Visualization reset")
     
     def show_help(self):
         """Show help information"""
         help_text = """
-Cosmic Council Hexagon Visualization Controls:
+Agent Orchestrator Hexagon Visualization Controls:
 
 Number Keys (1-6): Toggle enterprise sectors
   - 1: Red Owl (Research)
@@ -554,10 +659,15 @@ Confidence Indicators:
         except turtle.Terminator:
             print("Visualization closed")
 
+    def quit_visualization(self):
+        """Close the visualization window cleanly."""
+        if self.screen:
+            self.screen.bye()
+
 # Demo function
 def demo_interactive_hexagon():
     """Demonstrate the interactive hexagon visualization"""
-    print("Cosmic Council Interactive Hexagon Visualization Demo")
+    print("Agent Orchestrator Interactive Hexagon Visualization Demo")
     print("=" * 60)
     
     # Create visualization
