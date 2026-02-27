@@ -30,6 +30,15 @@ from .unified_database_service import UnifiedDatabaseService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def _health_is_ok(health_result: Optional[Dict[str, Any]]) -> bool:
+    """Accept both legacy `healthy=True` and current `status='healthy'` shapes."""
+    if not health_result:
+        return False
+    if health_result.get("healthy") is True:
+        return True
+    return health_result.get("status") == "healthy"
+
 class UnifiedDatabaseManager:
     """Unified database connection, session, and operations management"""
     
@@ -267,6 +276,7 @@ class UnifiedDatabaseManager:
                 table_count = result.scalar() or 0
             
             health_status.update({
+                'healthy': basic_connectivity and health_status.get('status') == 'healthy',
                 'basic_connectivity': basic_connectivity,
                 'table_count': table_count,
                 'database_url': self.database_url.split('@')[-1] if '@' in self.database_url else 'local',
@@ -342,7 +352,7 @@ class UnifiedDatabaseManager:
                 try:
                     asyncio.set_event_loop(loop)
                     health_result = loop.run_until_complete(self.unified_service.health_check())
-                    return health_result.get('healthy', False)
+                    return _health_is_ok(health_result)
                 finally:
                     loop.close()
 
@@ -407,7 +417,7 @@ class DatabaseManager:
         """Check if database connection is healthy"""
         try:
             health_result = self.health_check()
-            return health_result.get('healthy', False)
+            return _health_is_ok(health_result)
         except Exception:
             return False
     

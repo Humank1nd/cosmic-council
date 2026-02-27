@@ -84,6 +84,11 @@ async def run_checks(database_url: str) -> dict[str, Any]:
         add_check("health_check", False, f"{type(exc).__name__}: {exc}")
 
     try:
+        add_check("check_connection", manager.check_connection(), "sync wrapper result")
+    except Exception as exc:
+        add_check("check_connection", False, f"{type(exc).__name__}: {exc}")
+
+    try:
         table_count = await _table_count(manager)
         add_check("table_count_positive", table_count > 0, f"count={table_count}")
     except Exception as exc:
