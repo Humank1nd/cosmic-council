@@ -4,6 +4,7 @@ from . import hexagon
 from . import cycles
 from . import reflection
 from . import explain
+from . import sahasrara
 
 # Core system modules - import only the working ones
 from . import core
@@ -25,12 +26,19 @@ from .hexagon import (
     EnterpriseResult
 )
 
+from .sahasrara import (
+    SahasraraEngine,
+    SahasraraState,
+    get_sahasrara_engine,
+)
+
 __all__ = [
     # Core modules
-    'hexagon', 'cycles', 'reflection', 'explain', 'core', 'types',
+    'hexagon', 'cycles', 'reflection', 'explain', 'core', 'types', 'sahasrara',
     
     # Key classes
     'CosmicCouncil', 'ProblemStatement', 'ProblemComplexity', 'EnterpriseType',
     'CycleStatus', 'EnhancedEnterpriseResult', 'CosmicCouncilHexagon',
-    'CycleResult', 'EnterpriseResult'
+    'CycleResult', 'EnterpriseResult',
+    'SahasraraEngine', 'SahasraraState', 'get_sahasrara_engine'
 ]
