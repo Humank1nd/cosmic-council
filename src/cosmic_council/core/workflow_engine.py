@@ -1,5 +1,5 @@
 """
-Unified Cosmic Council Workflow Engine
+Unified Agent Orchestrator Workflow Engine
 Combines basic and detailed workflow engines with full ROYGBV workflow implementation.
 
 This is the primary and only workflow engine file - all other workflow engine files
@@ -383,7 +383,7 @@ class UnifiedCosmicCouncilWorkflowEngine:
             response = await self.openai_client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are an expert problem-solving assistant for the Cosmic Council system."},
+                    {"role": "system", "content": "You are an expert problem-solving assistant for the Agent Orchestrator system."},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=1000,
