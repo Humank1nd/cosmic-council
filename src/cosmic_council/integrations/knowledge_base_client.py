@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class KnowledgeBaseClient:
-    """Async knowledge-base API client used by the Cosmic Council."""
+    """Async knowledge-base API client used by the Agent Orchestrator."""
 
     def __init__(self, base_url: Optional[str] = None, timeout: float = 8.0) -> None:
         config = get_config()
@@ -28,7 +28,7 @@ class KnowledgeBaseClient:
         query: str,
         limit: int = 5,
         min_quality: int = 3,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Dict[str, Any]]:
         """Search the knowledge base and return the raw results."""
 
@@ -48,17 +48,14 @@ class KnowledgeBaseClient:
     async def gather_gap_contexts(
         self,
         gaps: List[str],
-        limit_per_gap: int = 2
+        limit_per_gap: int = 2,
     ) -> Dict[str, List[Dict[str, Any]]]:
         """Return focused KB contexts for each knowledge gap."""
 
         if not gaps:
             return {}
 
-        tasks = [
-            self._context_for_gap(gap, limit_per_gap)
-            for gap in gaps
-        ]
+        tasks = [self._context_for_gap(gap, limit_per_gap) for gap in gaps]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         context_map: Dict[str, List[Dict[str, Any]]] = {}
@@ -81,7 +78,7 @@ class KnowledgeBaseClient:
                 "path": result.get("document", {}).get("path"),
                 "summary": result.get("document", {}).get("summary") or "",
                 "score": result.get("score", 0.0),
-                "highlights": result.get("highlights", [])
+                "highlights": result.get("highlights", []),
             }
             for result in raw_results
         ]
