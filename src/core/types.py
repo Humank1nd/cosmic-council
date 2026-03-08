@@ -4,20 +4,36 @@ Re-exports key types from the current `cosmic_council` package.
 """
 from enum import Enum
 
-from cosmic_council.core.core import (
-    CosmicCouncil as _BaseCosmicCouncil,
-    CosmicCouncilRule,
-)
-from cosmic_council.core.types import (
-    EnterpriseType,
-    ProblemComplexity,
-    CycleStatus,
-    ErrorSeverity,
-    ErrorCategory,
-    HealthStatus,
-    ProblemStatement,
-    EnterpriseResult,
-)
+try:
+    from cosmic_council.core.core import (
+        CosmicCouncil as _BaseCosmicCouncil,
+        CosmicCouncilRule,
+    )
+    from cosmic_council.core.types import (
+        EnterpriseType,
+        ProblemComplexity,
+        CycleStatus,
+        ErrorSeverity,
+        ErrorCategory,
+        HealthStatus,
+        ProblemStatement,
+        EnterpriseResult,
+    )
+except ModuleNotFoundError:
+    from src.cosmic_council.core.core import (
+        CosmicCouncil as _BaseCosmicCouncil,
+        CosmicCouncilRule,
+    )
+    from src.cosmic_council.core.types import (
+        EnterpriseType,
+        ProblemComplexity,
+        CycleStatus,
+        ErrorSeverity,
+        ErrorCategory,
+        HealthStatus,
+        ProblemStatement,
+        EnterpriseResult,
+    )
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from datetime import datetime

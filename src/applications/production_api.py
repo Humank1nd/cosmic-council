@@ -16,7 +16,10 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import uvicorn
 
-from production_config import get_config
+try:
+    from production_config import get_config
+except ModuleNotFoundError:
+    from config.production_config import get_config
 from error_handling import handle_error, ErrorContext, ErrorSeverity, ErrorCategory
 from health_monitoring import get_health_monitor, run_health_checks, get_system_health, record_request
 from src.core.services import CosmicCouncil, ProblemStatement, ProblemComplexity

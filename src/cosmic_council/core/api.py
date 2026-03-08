@@ -4491,11 +4491,15 @@ async def websocket_endpoint(websocket: WebSocket):
 # Main execution
 def main():
     """Main function to start the API server"""
+    host = os.environ.get("API_HOST", "127.0.0.1")
+    port = int(os.environ.get("API_PORT", "8012"))
+    reload_enabled = os.environ.get("API_RELOAD", "false").lower() == "true"
+
     uvicorn.run(
         "src.cosmic_council.core.api:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
+        host=host,
+        port=port,
+        reload=reload_enabled,
         log_level="info"
     )
 

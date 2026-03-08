@@ -35,7 +35,10 @@ from ..core.models import (
     MarketInsight, MarketCommunicationStrategy, MarketPerformanceMetric,        
     SupportUserFeedback, SupportPerformanceAssessment, SupportContinuousImprovement
 )
-from core.memory import MemoryManager
+try:
+    from core.memory import MemoryManager
+except ModuleNotFoundError:
+    from src.core.memory import MemoryManager
 
 logger = logging.getLogger(__name__)
 

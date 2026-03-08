@@ -95,6 +95,16 @@ pip install -r requirements.txt
 python -m database_migrations run_migrations
 ```
 
+### Local API Validation
+
+```bash
+# Start the API on the Phase 14 validation port
+python run_server.py
+
+# In a second terminal, run the validation bundle
+python scripts/phase14_validation_bundle.py --base-url http://127.0.0.1:8012
+```
+
 ### Basic Usage: Use Any AI Model
 
 ```python

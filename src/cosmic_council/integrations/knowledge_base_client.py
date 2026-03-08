@@ -5,7 +5,11 @@ from typing import Any, Dict, List, Optional
 import httpx
 from httpx import AsyncClient, RequestError, TimeoutException
 
-from production_config import get_config
+try:
+    from production_config import get_config
+except ModuleNotFoundError:
+    # Support imports when the repository root is on PYTHONPATH but config/ is not.
+    from config.production_config import get_config
 
 logger = logging.getLogger(__name__)
 
