@@ -36,6 +36,7 @@ ENV/
 
 # Database
 *.db
+*.db.backup-*
 *.sqlite
 *.sqlite3
 *.db-wal
@@ -65,9 +66,15 @@ htmlcov/
 # Node/React
 node_modules/
 frontend/node_modules/
+frontend/.next/
+frontend/.dev_stdout.log
+frontend/.dev_stderr.log
 frontend/dist/
 frontend/.vite/
 static/react/
+
+# Local runtime oddities
+nul
 
 # OS
 .DS_Store
