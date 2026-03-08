@@ -1,4 +1,4 @@
-"\"\"\"Memory manager for Cosmic Council agents.\"\"\""
+"\"\"\"Memory manager for Agent Orchestrator agents.\"\"\""
 
 import asyncio
 import json

@@ -69,7 +69,7 @@ class RealTimePerpetualMotionIntegration:
     
     Creates true integration between:
     - Perpetual motion symbolism (White Rabbit, Rainbow Snake, Black Snake)
-    - Actual Cosmic Council problem-solving
+    - Actual Agent Orchestrator problem-solving
     - Real-time feedback loops
     - Eternal Dance of knowledge and wisdom
     """
@@ -201,7 +201,7 @@ class RealTimePerpetualMotionIntegration:
     async def _initiate_rainbow_snake_processing(self, 
                                                problem: ProblemStatement,
                                                white_rabbit_result: Dict[str, Any]) -> Dict[str, Any]:
-        """Initiate Rainbow Snake processing through Cosmic Council"""
+        """Initiate Rainbow Snake processing through Agent Orchestrator"""
         
         logger.info("🌈 Initiating Rainbow Snake processing...")
         
@@ -214,7 +214,7 @@ class RealTimePerpetualMotionIntegration:
             interconnectedness_type="cosmic_council_processing"
         )
         
-        # Process through Cosmic Council in parallel
+        # Process through Agent Orchestrator in parallel
         cosmic_council_result = await self.parallel_processor.solve_problem_parallel(
             problem, ProcessingMode.PARALLEL_WITH_DEPENDENCIES
         )
@@ -266,7 +266,7 @@ class RealTimePerpetualMotionIntegration:
             output_type="cosmic_council_solution"
         )
         
-        # Generate outputs based on Cosmic Council result
+        # Generate outputs based on Agent Orchestrator result
         outputs_produced = []
         output_strength = 0.0
         
@@ -508,13 +508,13 @@ async def demo_realtime_perpetual_motion():
     problems = [
         ProblemStatement(
             title="White Rabbit's Escape Strategy",
-            description="A white rabbit must escape from a black snake using the Cosmic Council framework",
+            description="A white rabbit must escape from a black snake using the Agent Orchestrator framework",
             complexity=ProblemComplexity.MEDIUM,
             context={"scenario": "escape", "urgency": "high"}
         ),
         ProblemStatement(
             title="Cosmic Harmony Optimization",
-            description="Optimize the harmony between all Cosmic Council segments",
+            description="Optimize the harmony between all Agent Orchestrator segments",
             complexity=ProblemComplexity.HIGH,
             context={"optimization": "harmony", "scope": "global"}
         ),

@@ -1,5 +1,5 @@
 """
-Enhanced Perpetual Thinking Integration for Cosmic Council
+Enhanced Perpetual Thinking Integration for Agent Orchestrator
 Integrates the perpetual thinking engine with the workflow system for continuous learning
 """
 

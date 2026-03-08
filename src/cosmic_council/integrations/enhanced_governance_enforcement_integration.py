@@ -1,5 +1,5 @@
 """
-Enhanced Governance Enforcement Integration for Cosmic Council
+Enhanced Governance Enforcement Integration for Agent Orchestrator
 Integrates the enhanced enforcement system with agent performance tracking
 """
 

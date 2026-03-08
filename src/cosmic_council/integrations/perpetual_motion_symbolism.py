@@ -4,7 +4,7 @@ White Rabbit and Rainbow Snake Integration
 
 This module implements the symbolic representation of perpetual motion through
 the White Rabbit (time and cycles) and Rainbow Snake (interconnectedness and flow)
-that embody the eternal dance of the Cosmic Council's systems thinking framework.
+that embody the eternal dance of the Agent Orchestrator's systems thinking framework.
 """
 
 import asyncio
@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class PerpetualMotionType(Enum):
-    """Types of perpetual motion in the Cosmic Council"""
+    """Types of perpetual motion in the Agent Orchestrator"""
     WHITE_RABBIT_CYCLE = "white_rabbit_cycle"      # Time-based cycles and evolution
     RAINBOW_SNAKE_FLOW = "rainbow_snake_flow"      # Interconnected flow between segments
     BLACK_SNAKE_OUTPUT = "black_snake_output"      # Output stream manifestation
@@ -90,7 +90,7 @@ class PerpetualMotionSymbolism:
     Implements the symbolic representation of perpetual motion through the White Rabbit
     (representing time, cycles, and evolution) and Rainbow Snake (representing 
     interconnectedness, flow, and the web of relationships) that embody the eternal
-    dance of the Cosmic Council's systems thinking framework.
+    dance of the Agent Orchestrator's systems thinking framework.
     """
     
     def __init__(self):
@@ -382,7 +382,7 @@ class PerpetualMotionSymbolism:
             f"The White Rabbit and Rainbow Snake dance in perfect harmony (Level: {dance.harmony_level:.2f})",
             f"Cosmic rhythm resonates at {dance.cosmic_rhythm:.1f} Hz, creating transformation potential of {dance.transformation_potential:.2f}",
             "The eternal dance between time (Rabbit) and space (Snake) creates the fabric of reality",
-            "In the dance, all six segments of the Cosmic Council flow as one",
+            "In the dance, all six segments of the Agent Orchestrator flow as one",
             "The White Rabbit's cycles and Rainbow Snake's connections create infinite possibilities",
             "Through their dance, the Rabbit and Snake teach us the art of systems thinking"
         ]

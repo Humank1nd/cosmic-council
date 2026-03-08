@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Working Quantum Integration for Cosmic Council Framework
+Working Quantum Integration for Agent Orchestrator Framework
 Fixed implementation without import errors
 """
 
@@ -103,14 +103,14 @@ class QuantumSpiritualEngine:
         self.pi = math.pi
         self.e = math.e
         
-        # Energy frequencies for each enterprise
+        # Energy frequencies for each enterprise (aligned with canonical chakra mappings)
         self.enterprise_frequencies = {
-            EnterpriseType.RED_OWL: 432.0,      # Root chakra - Grounding
-            EnterpriseType.ORANGE_ORANGUTAN: 528.0,  # Sacral chakra - Creativity
-            EnterpriseType.YELLOW_HONEYBEE: 639.0,   # Solar plexus - Power
-            EnterpriseType.GREEN_TORTOISE: 741.0,    # Heart chakra - Love
-            EnterpriseType.BLUE_DOLPHIN: 852.0,      # Throat chakra - Communication
-            EnterpriseType.PURPLE_ELEPHANT: 963.0    # Crown chakra - Spirituality
+            EnterpriseType.RED_OWL: 432.0,           # Muladhara (Root) - Grounding & Inquiry
+            EnterpriseType.ORANGE_ORANGUTAN: 528.0,  # Svadisthana (Sacral) - Planning & Flow
+            EnterpriseType.YELLOW_HONEYBEE: 639.0,   # Manipura (Solar Plexus) - Creativity & Power
+            EnterpriseType.GREEN_TORTOISE: 741.0,    # Anahata (Heart) - Sustainability & Love
+            EnterpriseType.BLUE_DOLPHIN: 852.0,      # Vishuddha (Throat) - Communication
+            EnterpriseType.PURPLE_ELEPHANT: 963.0    # Ajna (Third Eye) - Empathy & Reflection
         }
         
         logger.info("🔮 Quantum-Spiritual Integration Engine initialized")
@@ -426,10 +426,10 @@ class QuantumSpiritualEngine:
         return min(1.0, max(0.0, breakthrough_probability))
 
 class QuantumEnhancedCosmicCouncil:
-    """Quantum-Enhanced Cosmic Council with working integration"""
+    """Quantum-Enhanced Agent Orchestrator with working integration"""
     
     def __init__(self):
-        self.name = "Quantum-Enhanced Cosmic Council"
+        self.name = "Quantum-Enhanced Agent Orchestrator"
         self.quantum_engine = QuantumSpiritualEngine()
         self.enterprises = {}
         
@@ -437,7 +437,7 @@ class QuantumEnhancedCosmicCouncil:
         for enterprise_type in EnterpriseType:
             self.enterprises[enterprise_type] = self._create_quantum_enterprise(enterprise_type)
         
-        logger.info("🔮 Quantum-Enhanced Cosmic Council initialized")
+        logger.info("🔮 Quantum-Enhanced Agent Orchestrator initialized")
     
     def _create_quantum_enterprise(self, enterprise_type: EnterpriseType) -> Dict[str, Any]:
         """Create quantum-enhanced enterprise"""
