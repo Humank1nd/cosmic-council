@@ -105,6 +105,32 @@ python run_server.py
 python scripts/phase14_validation_bundle.py --base-url http://127.0.0.1:8012
 ```
 
+### Local UI Operation
+
+```bash
+# Terminal 1: start the validated backend
+python run_server.py
+
+# Terminal 2: start the nested Vite frontend
+cd frontend/think-tank/frontend
+npm install
+npm run dev -- --host 127.0.0.1 --port 3000
+```
+
+- Open `http://127.0.0.1:3000`
+- Dashboard loads agents from `GET /api/v1/agents/`
+- Solve runs the current synchronous sequence API at `POST /api/v1/agents/sequence`
+- System Status checks backend reachability through `GET /health`
+
+For a static frontend build instead of Vite dev mode:
+
+```bash
+cd frontend/think-tank/frontend
+npm run build
+```
+
+This writes the built UI to `static/react/`.
+
 ### Basic Usage: Use Any AI Model
 
 ```python

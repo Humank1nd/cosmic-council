@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 """
 🏛️ Agent Orchestrator Hexagon - The Brainstem
-Core linear cycle logic (ROYGBV) - strictly linear, clockwise-only processing
+
+Core linear cycle logic (ROYGBV) - strictly linear, clockwise-only processing.
+
+The Six Totems flow in ROYGBV order (clockwise hexagonal processing):
+1️⃣ 🔴 Red Owl → Seeks truth (Quantum Entanglement)
+2️⃣ 🟠 Orange Orangutan → Builds the plan (Quantum Tunneling)
+3️⃣ 🟡 Yellow Honeybee → Creates solutions (Quantum Superposition)
+4️⃣ 🟢 Green Tortoise → Ensures sustainability (Quantum Teleportation)
+5️⃣ 🔵 Blue Dolphin → Spreads awareness (Wave-Particle Duality)
+6️⃣ 🟣 Purple Elephant → Reflects and evolves wisdom (Quantum Field Theory)
+
+Then the cycle begins again, continuously evolving.
 """
 
 import asyncio
@@ -13,18 +24,34 @@ from enum import Enum
 import logging
 import uuid
 
+# Import canonical definitions
+from ..canon.cosmic_canon import (
+    ROYGBV_ORDER, COSMIC_COUNCIL_CANON, TotemColor,
+    get_totem_by_color, get_next_totem
+)
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class EnterpriseType(Enum):
-    """The six enterprises of the Agent Orchestrator"""
-    RED_OWL = "red_owl"                    # Research & Inquiry
-    ORANGE_ORANGUTAN = "orange_orangutan"  # Planning & Logistics
-    YELLOW_HONEYBEE = "yellow_honeybee"    # Development & Creativity
-    GREEN_TORTOISE = "green_tortoise"      # Budget & Resources
-    BLUE_DOLPHIN = "blue_dolphin"          # Communication & Marketing
-    PURPLE_ELEPHANT = "purple_elephant"    # Reflection & Empathy
+    """
+    The six enterprises of the Agent Orchestrator (Cosmic Council Totems)
+
+    Each enterprise embodies a chakra, quantum principle, and spirit animal:
+    - Red Owl: Muladhara (Root) + Entanglement - The Seeker of Truth
+    - Orange Orangutan: Svadisthana (Sacral) + Tunneling - The Architect of Strategy
+    - Yellow Honeybee: Manipura (Solar Plexus) + Superposition - The Creator & Experimenter
+    - Green Tortoise: Anahata (Heart) + Teleportation - The Guardian of Longevity
+    - Blue Dolphin: Vishuddha (Throat) + Wave-Particle Duality - The Messenger & Storyteller
+    - Purple Elephant: Ajna (Third Eye) + Field Theory - The Sage & Ethical Guardian
+    """
+    RED_OWL = "red_owl"                    # Inquiry & Research - The Seeker of Truth
+    ORANGE_ORANGUTAN = "orange_orangutan"  # Strategy & Planning - The Architect of Strategy
+    YELLOW_HONEYBEE = "yellow_honeybee"    # Creation & Innovation - The Creator & Experimenter
+    GREEN_TORTOISE = "green_tortoise"      # Resource Management & Sustainability - The Guardian of Longevity
+    BLUE_DOLPHIN = "blue_dolphin"          # Communication & Influence - The Messenger & Storyteller
+    PURPLE_ELEPHANT = "purple_elephant"    # Reflection & Ethics - The Sage & Ethical Guardian
 
 class ProblemComplexity(Enum):
     """Problem complexity levels"""
@@ -77,22 +104,41 @@ class CycleResult:
 class CosmicCouncilHexagon:
     """
     🏛️ Agent Orchestrator Hexagon - The Brainstem
-    
+
     This is the core nervous system of the Agent Orchestrator.
     Strictly linear, clockwise-only processing through ROYGBV sequence.
     If deeper recursion is needed → handled via cycles.py (fractal branching).
+
+    The Cosmic Council Canon:
+    The hexagon represents the six totems arranged in sacred geometry.
+    Processing flows clockwise through the ROYGBV cycle, with each totem
+    contributing its unique quantum principle and perspective:
+
+    1. Red Owl (Inquiry) - Quantum Entanglement: Knowledge is never isolated
+    2. Orange Orangutan (Strategy) - Quantum Tunneling: Finding pathways through barriers
+    3. Yellow Honeybee (Creation) - Quantum Superposition: Multiple possibilities until selection
+    4. Green Tortoise (Sustainability) - Quantum Teleportation: Efficient resource transfer
+    5. Blue Dolphin (Communication) - Wave-Particle Duality: Perception depends on observation
+    6. Purple Elephant (Reflection) - Quantum Field Theory: Everything interconnected in the field
+
+    The cycle is continuous - Purple Elephant's reflections feed back to Red Owl,
+    initiating new inquiry with evolved wisdom.
     """
-    
+
+    # Canonical ROYGBV processing order
+    CANONICAL_ORDER = [
+        EnterpriseType.RED_OWL,
+        EnterpriseType.ORANGE_ORANGUTAN,
+        EnterpriseType.YELLOW_HONEYBEE,
+        EnterpriseType.GREEN_TORTOISE,
+        EnterpriseType.BLUE_DOLPHIN,
+        EnterpriseType.PURPLE_ELEPHANT
+    ]
+
     def __init__(self):
         self.name = "Agent Orchestrator Hexagon"
-        self.processing_order = [
-            EnterpriseType.RED_OWL,
-            EnterpriseType.ORANGE_ORANGUTAN,
-            EnterpriseType.YELLOW_HONEYBEE,
-            EnterpriseType.GREEN_TORTOISE,
-            EnterpriseType.BLUE_DOLPHIN,
-            EnterpriseType.PURPLE_ELEPHANT
-        ]
+        # Use canonical ROYGBV order for processing
+        self.processing_order = self.CANONICAL_ORDER.copy()
         
         # Enterprise registry (will be populated by enterprise services)
         self.enterprises: Dict[EnterpriseType, Any] = {}

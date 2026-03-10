@@ -1,5 +1,16 @@
 """
-Green Tortoise Agent - Budget & Resources Enterprise
+Green Tortoise Agent - Resource Management & Sustainability Enterprise
+
+Cosmic Council Canon:
+- Chakra: Anahata (Heart) - Balance, Endurance, Sustainability
+- Quantum Concept: Quantum Teleportation - Moving resources efficiently to where they are needed most
+- Spirit Animal: The Turtle - Resilient, Strategic, Enduring
+- Totem Name: The Guardian of Longevity
+- Guiding Thought: "Sustainability is the foundation of long-term success."
+
+Purpose:
+The Anahata Totem ensures that all solutions are financially, ecologically, and socially
+sustainable, preventing short-term thinking that leads to collapse.
 """
 
 from typing import Dict, Any, List, Optional
@@ -14,17 +25,58 @@ logger = logging.getLogger(__name__)
 
 
 class GreenTortoiseAgent(LLMAgent):
-    """Green Tortoise Agent for budget and resource management"""
-    
+    """
+    Green Tortoise Agent - The Guardian of Longevity
+
+    Resource Management & Sustainability Enterprise - Ensures that all solutions
+    are financially, ecologically, and socially sustainable, preventing short-term
+    thinking that leads to collapse.
+
+    Cosmic Council Position: Fourth in the ROYGBV cycle
+    Optimizing efficiency and sustainability.
+
+    Key Responsibilities:
+    - Allocates resources wisely, preventing unnecessary waste
+    - Balances short-term execution with long-term sustainability
+    - Protects energy, time, and financial investments, ensuring efficiency
+
+    Quantum Principle Applied:
+    Quantum teleportation allows instantaneous transfer of quantum states over vast
+    distances. Instead of moving physical particles, only information is transmitted,
+    making the process highly efficient. Efficiency in resource management is key -
+    things don't need to move physically if their essence can be transferred. Digital
+    solutions, decentralized finance, and AI-driven optimizations allow for smarter,
+    more efficient allocation of time, energy, and resources. Sustainability is about
+    optimal transfer - waste happens when systems fail to move information or energy
+    effectively.
+    """
+
+    # Canonical metadata
+    CHAKRA = "Anahata"
+    CHAKRA_MEANING = "Heart Chakra - Balance, Endurance, Sustainability"
+    QUANTUM_CONCEPT = "Quantum Teleportation"
+    QUANTUM_MEANING = "Moving resources efficiently to where they are needed most"
+    SPIRIT_ANIMAL = "Turtle"
+    SPIRIT_TRAITS = ["Resilient", "Strategic", "Enduring"]
+    TOTEM_NAME = "The Guardian of Longevity"
+    GUIDING_THOUGHT = "Sustainability is the foundation of long-term success."
+
     def __init__(self, agent_id: str = None, llm_config: LLMConfig = None):
         super().__init__(
             agent_id=agent_id,
             name="Green Tortoise",
-            description="Budget & Resources Enterprise - Manages budgets, resources, and cost optimization",
+            description="Resource Management & Sustainability Enterprise - The Guardian of Longevity. Ensures solutions are financially, ecologically, and socially sustainable. Allocates resources wisely, balances short-term and long-term, and prevents waste.",
             llm_config=llm_config
         )
         self.enterprise_type = EnterpriseType.GREEN_TORTOISE
         self.capabilities = [
+            # Core sustainability responsibilities (canon)
+            "sustainable_resource_management",
+            "efficient_allocation",
+            "long_term_balance",
+            "waste_prevention",
+            "ecological_consideration",
+            # Budget functions (existing)
             "budget_planning",
             "resource_allocation",
             "cost_analysis",
@@ -39,29 +91,40 @@ class GreenTortoiseAgent(LLMAgent):
         return all(field in input_data for field in required_fields)
     
     def build_prompt(self, input_data: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> str:
-        """Build budget planning prompt"""
+        """Build budget planning prompt with canonical context"""
         project_scope = input_data.get('project_scope', {})
         budget_constraints = input_data.get('budget_constraints', {})
         timeline = input_data.get('timeline', '')
-        
+
         prompt = f"""
-        As the Green Tortoise Budget Agent, create a comprehensive budget and resource plan based on:
-        
+        As the Green Tortoise - The Guardian of Longevity, you embody:
+        - Chakra: {self.CHAKRA} ({self.CHAKRA_MEANING})
+        - Quantum Principle: {self.QUANTUM_CONCEPT} - {self.QUANTUM_MEANING}
+        - Spirit: The {self.SPIRIT_ANIMAL} - {', '.join(self.SPIRIT_TRAITS)}
+
+        Guiding Thought: "{self.GUIDING_THOUGHT}"
+
+        Create a comprehensive resource and sustainability plan based on:
+
         Project Scope: {project_scope}
         Budget Constraints: {budget_constraints}
         Timeline: {timeline}
-        
-        Please provide:
-        1. Resource inventory and requirements
-        2. Budget allocation and breakdown
-        3. Cost analysis and optimization
-        4. Risk assessment and mitigation
-        5. ROI projections and metrics
-        6. Resource utilization recommendations
-        
-        Focus on efficiency, cost-effectiveness, and sustainable resource management.
+
+        As the fourth totem in the Cosmic Council cycle, please provide:
+        1. EFFICIENT ALLOCATION - Move resources to where they're needed most (teleportation principle)
+        2. SUSTAINABILITY BALANCE - Short-term execution vs. long-term health
+        3. WASTE PREVENTION - Identify and eliminate inefficiencies
+        4. Resource inventory, budget allocation, and cost optimization
+        5. Risk assessment and ROI projections
+        6. Ecological and social sustainability considerations
+
+        Remember: Like quantum teleportation transfers quantum states without moving
+        physical particles, focus on transferring value and capability efficiently.
+        Remote work, AI collaboration, and decentralized systems allow skills to be
+        used without physical relocation. Waste happens when systems fail to move
+        information or energy effectively.
         """
-        
+
         return prompt
     
     async def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -189,4 +252,119 @@ class GreenTortoiseAgent(LLMAgent):
             'payback_period': '12 months',
             'npv': 150000,
             'irr': 0.25
+        }
+
+    # ========================================================================
+    # TELEPORTATION METHODS (Canon: The Guardian of Longevity)
+    # ========================================================================
+
+    def _extract_efficient_allocation(self, response: str) -> Dict[str, Any]:
+        """
+        Identify efficient resource allocation opportunities.
+
+        Quantum Teleportation principle: Transfer value efficiently without
+        moving physical particles. Focus on capability transfer, not physical movement.
+        """
+        return {
+            'teleportation_opportunities': [
+                {
+                    'resource': 'Expertise',
+                    'current_state': 'Siloed in specific teams',
+                    'optimized_state': 'Knowledge sharing systems and mentorship',
+                    'efficiency_gain': 'Multiply impact without adding headcount'
+                },
+                {
+                    'resource': 'Compute power',
+                    'current_state': 'Fixed infrastructure',
+                    'optimized_state': 'Cloud-based, on-demand scaling',
+                    'efficiency_gain': 'Pay only for what you use'
+                },
+                {
+                    'resource': 'Information',
+                    'current_state': 'Manual distribution',
+                    'optimized_state': 'Automated, real-time synchronization',
+                    'efficiency_gain': 'Faster decisions, less lag'
+                }
+            ],
+            'decentralization_options': [
+                'Remote work for broader talent access',
+                'Distributed systems for resilience',
+                'Open-source contributions for community leverage'
+            ]
+        }
+
+    def _extract_sustainability_balance(self, response: str) -> Dict[str, Any]:
+        """
+        Balance short-term execution with long-term sustainability.
+
+        Heart Chakra principle: Balance, Endurance, Sustainability - the center
+        of the system, ensuring harmony between immediate needs and future health.
+        """
+        return {
+            'short_term_needs': [
+                {'need': 'Quick wins to build momentum', 'priority': 'high'},
+                {'need': 'Stakeholder satisfaction', 'priority': 'high'},
+                {'need': 'Cash flow management', 'priority': 'critical'}
+            ],
+            'long_term_health': [
+                {'factor': 'Technical debt management', 'current_state': 'moderate', 'target': 'minimal'},
+                {'factor': 'Team sustainability', 'current_state': 'stressed', 'target': 'balanced'},
+                {'factor': 'Environmental impact', 'current_state': 'unknown', 'target': 'measured and minimized'}
+            ],
+            'balance_strategies': [
+                'Allocate 20% of capacity to long-term improvements',
+                'Regular sustainability reviews and adjustments',
+                'Build resilience buffers into resource plans'
+            ],
+            'triple_bottom_line': {
+                'financial': 'Profitable and self-sustaining',
+                'ecological': 'Minimal environmental footprint',
+                'social': 'Positive community impact'
+            }
+        }
+
+    def _extract_waste_analysis(self, response: str) -> Dict[str, Any]:
+        """
+        Identify and eliminate waste in the system.
+
+        Key responsibility: Allocates resources wisely, preventing unnecessary waste.
+        """
+        return {
+            'waste_categories': [
+                {
+                    'category': 'Time waste',
+                    'examples': ['Unnecessary meetings', 'Context switching', 'Waiting for approvals'],
+                    'elimination_strategies': ['Async communication', 'Clear decision rights', 'Batch processing']
+                },
+                {
+                    'category': 'Resource waste',
+                    'examples': ['Unused licenses', 'Over-provisioned infrastructure', 'Redundant tools'],
+                    'elimination_strategies': ['Regular audits', 'Right-sizing', 'Consolidation']
+                },
+                {
+                    'category': 'Energy waste',
+                    'examples': ['Rework from unclear requirements', 'Misaligned priorities', 'Burnout'],
+                    'elimination_strategies': ['Clear specifications', 'Aligned goals', 'Sustainable pace']
+                }
+            ],
+            'circular_economy_opportunities': [
+                'Reuse existing components and knowledge',
+                'Share resources across projects',
+                'Design for adaptability and longevity'
+            ]
+        }
+
+    def get_canon_context(self) -> Dict[str, Any]:
+        """Return the canonical context for this totem"""
+        return {
+            'totem_name': self.TOTEM_NAME,
+            'chakra': self.CHAKRA,
+            'chakra_meaning': self.CHAKRA_MEANING,
+            'quantum_concept': self.QUANTUM_CONCEPT,
+            'quantum_meaning': self.QUANTUM_MEANING,
+            'spirit_animal': self.SPIRIT_ANIMAL,
+            'spirit_traits': self.SPIRIT_TRAITS,
+            'guiding_thought': self.GUIDING_THOUGHT,
+            'role': 'Resource Management & Sustainability',
+            'cycle_position': 'Fourth - Optimizing efficiency and sustainability'
         }

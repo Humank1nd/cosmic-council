@@ -12,7 +12,10 @@
 ```powershell
 python -m pytest tests/unit/test_phase14_intentional_divergences.py -q
 python scripts/phase14_validation_bundle.py --base-url http://127.0.0.1:8012
+npm run build
 ```
+
+Frontend verification was performed from `frontend/think-tank/frontend/`, with Vite proxying to the validated backend on `http://127.0.0.1:8012`.
 
 ## Validation Results
 
@@ -26,6 +29,8 @@ python scripts/phase14_validation_bundle.py --base-url http://127.0.0.1:8012
 - `run_server.py` now defaults to the Phase 14 validation port `8012` and injects the required import paths consistently.
 - Plain repo-root imports of `src.cosmic_council.core.api` now work, and `src.cosmic_council.core.api:main()` uses the same `API_HOST` / `API_PORT` / `API_RELOAD` environment settings.
 - `CODEX_STATUS.md` is historical and should not be treated as the current source of truth.
+- The only coherent frontend app is `frontend/think-tank/frontend/`; repo-root `frontend/` is still a mixed workspace snapshot.
+- The nested frontend now targets `GET /api/v1/agents/`, `POST /api/v1/agents/sequence`, and `GET /health` through the canonical backend port.
 
 ## Repo Hygiene Findings
 
