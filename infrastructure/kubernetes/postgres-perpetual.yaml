@@ -24,9 +24,9 @@ spec:
         - containerPort: 5432
         env:
         - name: POSTGRES_DB
-          value: "cosmic_council_perpetual"
+          value: "dream_caesar_perpetual"
         - name: POSTGRES_USER
-          value: "cosmic_council"
+          value: "dream_caesar"
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -51,9 +51,9 @@ spec:
             command:
             - pg_isready
             - -U
-            - cosmic_council
+            - dream_caesar
             - -d
-            - cosmic_council_perpetual
+            - dream_caesar_perpetual
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
@@ -63,9 +63,9 @@ spec:
             command:
             - pg_isready
             - -U
-            - cosmic_council
+            - dream_caesar
             - -d
-            - cosmic_council_perpetual
+            - dream_caesar_perpetual
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 5

@@ -11,8 +11,8 @@ data:
   # Database configuration
   DATABASE_HOST: "postgres-service"
   DATABASE_PORT: "5432"
-  DATABASE_NAME: "cosmic_council"
-  DATABASE_USER: "cosmic_council"
+  DATABASE_NAME: "dream_caesar"
+  DATABASE_USER: "dream_caesar"
   
   # Redis configuration
   REDIS_HOST: "redis-service"

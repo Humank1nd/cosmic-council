@@ -11,13 +11,27 @@ def _prepend_import_paths() -> Path:
     return project_root
 
 
+def _load_environment(project_root: Path) -> None:
+    env_file = project_root / ".env"
+    if not env_file.exists():
+        return
+
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(env_file, override=False)
+    except Exception as exc:
+        print(f"Warning: failed to load {env_file}: {exc}")
+
+
 def main() -> None:
-    _prepend_import_paths()
+    project_root = _prepend_import_paths()
 
     os.environ.setdefault("ALLOW_ANONYMOUS", "true")
     os.environ.setdefault("API_HOST", "127.0.0.1")
     os.environ.setdefault("API_PORT", "8012")
     os.environ.setdefault("API_RELOAD", "false")
+    _load_environment(project_root)
 
     host = os.environ["API_HOST"]
     port = int(os.environ["API_PORT"])

@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-03-12T02:13:05.774492-04:00",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "parked_seats": [],
+  "seats": [
+    {
+      "seat": "red",
+      "title": "Red Owl",
+      "role": "Inquiry & Research",
+      "mission_pillar": "To uncover foundational truths and ask the right questions.",
+      "guiding_question": "What do we need to know, and where should we look to find it?",
+      "status": "active"
+    },
+    {
+      "seat": "orange",
+      "title": "Orange Orangutan",
+      "role": "Strategy & Planning",
+      "mission_pillar": "To transform knowledge into structured, strategic action.",
+      "guiding_question": "How do we move from idea to execution in the most effective way?",
+      "status": "active"
+    },
+    {
+      "seat": "yellow",
+      "title": "Yellow Honeybee",
+      "role": "Creation & Innovation",
+      "mission_pillar": "To foster creativity and bring new ideas to life.",
+      "guiding_question": "What new solutions or innovations can we bring into reality?",
+      "status": "active"
+    },
+    {
+      "seat": "green",
+      "title": "Green Tortoise",
+      "role": "Resource Management & Sustainability",
+      "mission_pillar": "To ensure longevity, balance, and efficient use of resources.",
+      "guiding_question": "How can we make the best use of the resources we have?",
+      "status": "active"
+    },
+    {
+      "seat": "blue",
+      "title": "Blue Dolphin",
+      "role": "Communication & Influence",
+      "mission_pillar": "To amplify truth, awareness, and global impact through communication.",
+      "guiding_question": "How can we share this solution effectively with the world?",
+      "status": "active"
+    },
+    {
+      "seat": "purple",
+      "title": "Purple Elephant",
+      "role": "Reflection & Ethics",
+      "mission_pillar": "To ensure wisdom, ethics, and emotional intelligence guide all decisions.",
+      "guiding_question": "Are we considering the full impact of our actions on humanity and beyond?",
+      "status": "active"
+    }
+  ]
+}

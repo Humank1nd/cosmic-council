@@ -166,7 +166,7 @@ def get_database_connection() -> DatabaseConnection:
     
     if _connection is None:
         config = get_config()
-        database_url = config.get('database_url', 'sqlite:///cosmic_council.db')
+        database_url = config.get('database_url', 'sqlite:///data/dream_caesar.db')
         db_config = {
             'pool_size': config.get('database_pool_size', 10),
             'max_overflow': config.get('database_max_overflow', 20),

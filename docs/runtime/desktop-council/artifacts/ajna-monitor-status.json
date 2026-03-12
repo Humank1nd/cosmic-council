@@ -1,0 +1,228 @@
+{
+  "timestamp": "2026-03-12T02:11:40.480998-04:00",
+  "ajna": true,
+  "active_canon_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\active-canon.json",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\ajna\\ajna-20260312-021140.png",
+  "screenshot_success": true,
+  "windows_success": true,
+  "window_count": 22,
+  "seat_states": {
+    "center": {
+      "seat": "center",
+      "display_title": "Dream Caesar",
+      "expected_titles": [
+        "\ud83c\udf0f Dream Caesar",
+        "Dream Caesar",
+        "Center"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83c\udf0f Dream Caesar  ",
+        "normalized_title": "\ud83c\udf0f Dream Caesar",
+        "left": 668,
+        "top": 352,
+        "width": 579,
+        "height": 350,
+        "is_active": true,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83c\udf0f Dream Caesar  "
+      ],
+      "is_active": true,
+      "is_minimized": false
+    },
+    "red": {
+      "seat": "red",
+      "display_title": "Red Owl",
+      "expected_titles": [
+        "\ud83e\udd89 Red Owl",
+        "Red Owl",
+        "Red"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83e\udd89 Red Owl ",
+        "normalized_title": "\ud83e\udd89 Red Owl",
+        "left": 962,
+        "top": 18,
+        "width": 642,
+        "height": 331,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83e\udd89 Red Owl "
+      ],
+      "is_active": false,
+      "is_minimized": false
+    },
+    "orange": {
+      "seat": "orange",
+      "display_title": "Orange Orangutan",
+      "expected_titles": [
+        "\ud83e\udda7 Orange Orangutan",
+        "Orange Orangutan",
+        "Orange"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83e\udda7 Orange Orangutan",
+        "normalized_title": "\ud83e\udda7 Orange Orangutan",
+        "left": 1241,
+        "top": 347,
+        "width": 579,
+        "height": 350,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83e\udda7 Orange Orangutan"
+      ],
+      "is_active": false,
+      "is_minimized": false
+    },
+    "yellow": {
+      "seat": "yellow",
+      "display_title": "Yellow Honeybee",
+      "expected_titles": [
+        "\ud83d\udc1d Yellow Honeybee",
+        "Yellow Honeybee",
+        "Yellow"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83d\udc1d Yellow Honeybee ",
+        "normalized_title": "\ud83d\udc1d Yellow Honeybee",
+        "left": 966,
+        "top": 701,
+        "width": 633,
+        "height": 331,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83d\udc1d Yellow Honeybee "
+      ],
+      "is_active": false,
+      "is_minimized": false
+    },
+    "green": {
+      "seat": "green",
+      "display_title": "Green Tortoise",
+      "expected_titles": [
+        "\ud83d\udc22 Green Tortoise",
+        "Green Tortoise",
+        "Green"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83d\udc22 Green Tortoise",
+        "normalized_title": "\ud83d\udc22 Green Tortoise",
+        "left": 287,
+        "top": 701,
+        "width": 678,
+        "height": 331,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83d\udc22 Green Tortoise"
+      ],
+      "is_active": false,
+      "is_minimized": false
+    },
+    "blue": {
+      "seat": "blue",
+      "display_title": "Blue Dolphin",
+      "expected_titles": [
+        "\ud83d\udc2c Blue Dolphin",
+        "Blue Dolphin",
+        "Blue"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83d\udc2c Blue Dolphin",
+        "normalized_title": "\ud83d\udc2c Blue Dolphin",
+        "left": 148,
+        "top": 350,
+        "width": 525,
+        "height": 354,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83d\udc2c Blue Dolphin"
+      ],
+      "is_active": false,
+      "is_minimized": false
+    },
+    "purple": {
+      "seat": "purple",
+      "display_title": "Purple Elephant",
+      "expected_titles": [
+        "\ud83d\udc18 Purple Elephant",
+        "Purple Elephant",
+        "Purple"
+      ],
+      "present": true,
+      "ambiguous": false,
+      "match_count": 1,
+      "selected_window": {
+        "title": "\ud83d\udc18 Purple Elephant ",
+        "normalized_title": "\ud83d\udc18 Purple Elephant",
+        "left": 274,
+        "top": 22,
+        "width": 678,
+        "height": 331,
+        "is_active": false,
+        "is_minimized": false,
+        "is_maximized": false
+      },
+      "matching_titles": [
+        "\ud83d\udc18 Purple Elephant "
+      ],
+      "is_active": false,
+      "is_minimized": false
+    }
+  },
+  "missing_active_seats": [],
+  "ambiguous_seats": [],
+  "vision_analysis_enabled": true,
+  "vision_error": "Vision analysis skipped because no API key is configured.",
+  "vision_raw": null,
+  "vision": {
+    "overall_state": "unknown",
+    "summary": "No structured vision analysis available.",
+    "blockers": [],
+    "seat_observations": {},
+    "recommendations": []
+  },
+  "summary": "desktop looks routable"
+}

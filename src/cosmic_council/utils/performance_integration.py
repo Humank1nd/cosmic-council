@@ -79,7 +79,7 @@ class PerformanceIntegrationConfig:
     cache_ttl: int = 3600
     
     # Database settings
-    database_url: str = "postgresql://user:password@localhost:5432/cosmic_council"
+    database_url: str = "postgresql://user:password@localhost:5432/dream_caesar"
     max_db_connections: int = 20
     
     # API settings

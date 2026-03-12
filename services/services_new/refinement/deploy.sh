@@ -116,7 +116,7 @@ wait_for_services() {
     
     # Wait for database
     print_status "Waiting for database..."
-    until docker-compose exec -T postgres pg_isready -U cosmic_council -d cosmic_council_db; do
+    until docker-compose exec -T postgres pg_isready -U dream_caesar -d dream_caesar_db; do
         sleep 2
     done
     print_success "Database is ready"

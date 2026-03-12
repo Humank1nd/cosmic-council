@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-03-11T22:55:20.098643-04:00",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "processed": [],
+  "processed_count": 0,
+  "state_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-225509\\active-canon-terminal-worker-state.json",
+  "running": true
+}

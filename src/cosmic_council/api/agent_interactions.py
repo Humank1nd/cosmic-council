@@ -36,6 +36,7 @@ from ..agents.working_enhanced_agents import (
     AnalysisDepth
 )
 from ..agents.hierarchical_enterprise import TaskContext
+from ..integrations.llm_providers import OpenAIProvider, AnthropicProvider, OllamaProvider, LocalModelProvider
 
 logger = logging.getLogger(__name__)
 security = HTTPBearer(auto_error=False)
@@ -176,6 +177,148 @@ def _validate_webhook_url(url: str) -> str:
     if not _allow_internal_webhooks() and _is_private_host(parsed.hostname):
         raise HTTPException(status_code=400, detail="Webhook URL hostname is not allowed")
     return url
+
+
+def _unique_urls(urls: List[str]) -> List[str]:
+    seen: set[str] = set()
+    ordered: List[str] = []
+    for url in urls:
+        normalized = url.rstrip("/")
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        ordered.append(normalized)
+    return ordered
+
+
+def _probe_json(url: str) -> Optional[Dict[str, Any]]:
+    try:
+        response = httpx.get(url, timeout=2.0)
+        response.raise_for_status()
+        return response.json()
+    except Exception:
+        return None
+
+
+def _preferred_model(candidates: List[str], available_models: List[str], fallback: Optional[str] = None) -> Optional[str]:
+    for candidate in candidates:
+        if candidate and candidate in available_models:
+            return candidate
+    if fallback:
+        return fallback
+    return available_models[0] if available_models else None
+
+
+def _build_llm_provider() -> Optional[Any]:
+    if os.getenv("OPENAI_API_KEY"):
+        try:
+            provider = OpenAIProvider()
+            logger.info("Initialized OpenAI LLM provider for agent interactions")
+            return provider
+        except Exception as exc:
+            logger.warning(f"Failed to initialize OpenAI provider: {exc}")
+
+    if os.getenv("ANTHROPIC_API_KEY"):
+        try:
+            provider = AnthropicProvider()
+            logger.info("Initialized Anthropic LLM provider for agent interactions")
+            return provider
+        except Exception as exc:
+            logger.warning(f"Failed to initialize Anthropic provider: {exc}")
+
+    preferred_models = [
+        os.getenv("LLM_MODEL", ""),
+        os.getenv("LOCAL_MODEL", ""),
+        os.getenv("OLLAMA_MODEL", ""),
+    ]
+
+    local_candidates = _unique_urls(
+        [
+            os.getenv("LOCAL_BASE_URL", ""),
+            os.getenv("LM_STUDIO_BASE_URL", ""),
+            os.getenv("OLLAMA_BASE_URL", ""),
+            os.getenv("OLLAMA_HOST", ""),
+            "http://127.0.0.1:1234",
+            "http://localhost:1234",
+        ]
+    )
+    for base_url in local_candidates:
+        models_payload = _probe_json(f"{base_url}/v1/models")
+        if not models_payload:
+            continue
+
+        available_models = [model.get("id", "") for model in models_payload.get("data", []) if model.get("id")]
+        selected_model = _preferred_model(preferred_models, available_models)
+        try:
+            provider = LocalModelProvider(
+                {
+                    "base_url": base_url,
+                    "api_format": "openai",
+                    "model": selected_model or "local-model",
+                }
+            )
+            logger.info(
+                "Initialized local OpenAI-compatible provider for agent interactions",
+                extra={"base_url": base_url, "model": selected_model},
+            )
+            return provider
+        except Exception as exc:
+            logger.warning(f"Failed to initialize local OpenAI-compatible provider at {base_url}: {exc}")
+
+    ollama_candidates = _unique_urls(
+        [
+            os.getenv("OLLAMA_BASE_URL", ""),
+            os.getenv("OLLAMA_HOST", ""),
+            "http://127.0.0.1:11434",
+            "http://localhost:11434",
+        ]
+    )
+    for base_url in ollama_candidates:
+        tags_payload = _probe_json(f"{base_url}/api/tags")
+        if not tags_payload:
+            continue
+
+        available_models = [model.get("name", "") for model in tags_payload.get("models", []) if model.get("name")]
+        selected_model = _preferred_model(preferred_models, available_models)
+        try:
+            provider = OllamaProvider(
+                {
+                    "base_url": base_url,
+                    "model": selected_model or "llama2",
+                }
+            )
+            logger.info(
+                "Initialized Ollama provider for agent interactions",
+                extra={"base_url": base_url, "model": selected_model},
+            )
+            return provider
+        except Exception as exc:
+            logger.warning(f"Failed to initialize Ollama provider at {base_url}: {exc}")
+
+    logger.warning("No LLM provider available for agent interactions; agents will run in basic mode")
+    return None
+
+
+def _synthesize_sequence_results(agent_results: Dict[str, "AgentProcessResponse"]) -> Dict[str, Any]:
+    insights_synthesis = {
+        f"{agent_name}_insights": result.insights
+        for agent_name, result in agent_results.items()
+    }
+
+    recommendations: List[str] = []
+    next_cycle_actions: List[str] = []
+    for result in agent_results.values():
+        recommendations.extend(result.recommendations)
+        next_cycle_actions.extend(result.next_actions)
+
+    deduped_recommendations = list(dict.fromkeys(recommendations))
+    deduped_next_actions = list(dict.fromkeys(next_cycle_actions))
+
+    return {
+        "insights_synthesis": insights_synthesis,
+        "recommendations_synthesis": deduped_recommendations,
+        "next_cycle_actions": deduped_next_actions,
+    }
 
 
 async def dispatch_webhook(url: str, payload: Dict[str, Any]) -> None:
@@ -432,6 +575,77 @@ def get_analysis_depth(depth_str: str) -> AnalysisDepth:
     return depth_map.get(depth_str.lower() if depth_str else '', AnalysisDepth.COMPREHENSIVE)
 
 
+def _apply_requested_analysis_depth(agent: Any, analysis_depth: AnalysisDepth):
+    """
+    Apply request-scoped depth settings to agents that expose richer internal config.
+
+    Some recovered agents do not implement `set_analysis_depth`, so their deeper RCA
+    engines need direct configuration to honor API-level depth requests.
+    """
+    restores: List[Any] = []
+
+    if hasattr(agent, "set_analysis_depth"):
+        current_depth = getattr(agent, "analysis_depth", None)
+        agent.set_analysis_depth(analysis_depth)
+
+        def _restore_standard_depth() -> None:
+            if current_depth is not None:
+                agent.set_analysis_depth(current_depth)
+
+        restores.append(_restore_standard_depth)
+
+    rca_engine = getattr(agent, "rca_engine", None)
+    rca_config = getattr(rca_engine, "config", None)
+    if rca_config is not None:
+        try:
+            from ..agents.red_owl.models import AnalysisDepth as RedOwlDepth
+        except Exception:
+            RedOwlDepth = None
+
+        if RedOwlDepth is not None:
+            snapshot = {
+                "min_depth": getattr(rca_config, "min_depth", None),
+                "max_depth": getattr(rca_config, "max_depth", None),
+                "max_recursions": getattr(rca_config, "max_recursions", None),
+                "llm_max_tokens": getattr(rca_config, "llm_max_tokens", None),
+            }
+
+            if analysis_depth == AnalysisDepth.SURFACE:
+                rca_config.min_depth = RedOwlDepth.SURFACE
+                rca_config.max_depth = RedOwlDepth.SURFACE
+                rca_config.max_recursions = 0
+                rca_config.llm_max_tokens = min(snapshot["llm_max_tokens"] or 128, 96)
+            elif analysis_depth == AnalysisDepth.MODERATE:
+                rca_config.min_depth = RedOwlDepth.CAUSAL
+                rca_config.max_depth = RedOwlDepth.CAUSAL
+                rca_config.max_recursions = 0
+                rca_config.llm_max_tokens = min(snapshot["llm_max_tokens"] or 128, 128)
+            elif analysis_depth == AnalysisDepth.COMPREHENSIVE:
+                rca_config.min_depth = RedOwlDepth.CAUSAL
+                rca_config.max_depth = RedOwlDepth.SYNTHESIS
+                rca_config.max_recursions = 1
+            elif analysis_depth == AnalysisDepth.DEEP:
+                rca_config.min_depth = RedOwlDepth.CAUSAL
+                rca_config.max_depth = RedOwlDepth.SYNTHESIS
+                rca_config.max_recursions = 2
+
+            def _restore_rca_config() -> None:
+                for key, value in snapshot.items():
+                    if value is not None:
+                        setattr(rca_config, key, value)
+
+            restores.append(_restore_rca_config)
+
+    def _restore_all() -> None:
+        for restore in reversed(restores):
+            try:
+                restore()
+            except Exception:
+                logger.warning("Failed to restore request-scoped analysis depth")
+
+    return _restore_all
+
+
 def _build_totem_personality(enterprise_type: EnterpriseType) -> TotemPersonality:
     """Build a totem personality from visual identity for adapted agents."""
     visual_identity = CosmicCouncilIdentity.get_enterprise_identity(enterprise_type)
@@ -578,6 +792,20 @@ async def _process_agent_with_fallback(
     if hasattr(agent, "process_task"):
         return await _run_task_agent_as_enterprise_result(enterprise_type, agent, problem, context)
     raise AttributeError("Agent does not support process_problem_enhanced or process_task")
+
+
+async def _process_agent_with_requested_depth(
+    enterprise_type: EnterpriseType,
+    agent: Any,
+    problem: ProblemStatement,
+    context: Dict[str, Any],
+    analysis_depth: AnalysisDepth,
+) -> Any:
+    restore_analysis_depth = _apply_requested_analysis_depth(agent, analysis_depth)
+    try:
+        return await _process_agent_with_fallback(enterprise_type, agent, problem, context)
+    finally:
+        restore_analysis_depth()
 
 
 # ============================================================================
@@ -814,9 +1042,7 @@ async def process_with_agent(
         # Get analysis depth
         analysis_depth = get_analysis_depth(request.analysis_depth)
         
-        # Set analysis depth if agent supports it
-        if hasattr(agent, 'set_analysis_depth'):
-            agent.set_analysis_depth(analysis_depth)
+        restore_analysis_depth = _apply_requested_analysis_depth(agent, analysis_depth)
         
         # Process problem
         try:
@@ -836,6 +1062,8 @@ async def process_with_agent(
                 status_code=500,
                 detail=f"Error processing problem with agent {enterprise}: {str(e)}"
             )
+        finally:
+            restore_analysis_depth()
         processing_time = (datetime.now(timezone.utc) - started_at).total_seconds()
         
         # Handle different result types (EnhancedResult vs EnhancedEnterpriseResult)
@@ -938,6 +1166,7 @@ async def process_agent_sequence(
             constraints=request.problem.constraints,
             success_criteria=request.problem.success_criteria
         )
+        analysis_depth = get_analysis_depth(request.problem.analysis_depth)
         
         agent_results = {}
         context = request.problem.context.copy()
@@ -949,7 +1178,15 @@ async def process_agent_sequence(
             for agent_name in request.agent_sequence:
                 agent = get_agent(agent_name)
                 enterprise_type = EnterpriseType(agent_name)
-                tasks.append(_process_agent_with_fallback(enterprise_type, agent, problem, context))
+                tasks.append(
+                    _process_agent_with_requested_depth(
+                        enterprise_type,
+                        agent,
+                        problem,
+                        context,
+                        analysis_depth,
+                    )
+                )
             
             results = await asyncio.gather(*tasks)
             for agent_name, result in zip(request.agent_sequence, results):
@@ -996,7 +1233,13 @@ async def process_agent_sequence(
             for agent_name in request.agent_sequence:
                 agent = get_agent(agent_name)
                 enterprise_type = EnterpriseType(agent_name)
-                result = await _process_agent_with_fallback(enterprise_type, agent, problem, context)
+                result = await _process_agent_with_requested_depth(
+                    enterprise_type,
+                    agent,
+                    problem,
+                    context,
+                    analysis_depth,
+                )
                 
                 # Handle different result types (EnhancedResult vs EnhancedEnterpriseResult)
                 if hasattr(result, 'specialized_analysis'):
@@ -1043,18 +1286,9 @@ async def process_agent_sequence(
         
         # Synthesize results if requested
         synthesis = None
-        if request.synthesize and council:
+        if request.synthesize:
             try:
-                cycle_result = EnhancedCycleResult(
-                    cycle_id=sequence_id,
-                    problem=problem,
-                    status="completed",
-                    enterprise_results={
-                        EnterpriseType(agent_name): result 
-                        for agent_name, result in agent_results.items()
-                    }
-                )
-                synthesis = await council._synthesize_results(cycle_result)
+                synthesis = _synthesize_sequence_results(agent_results)
             except Exception as e:
                 logger.warning(f"Failed to synthesize results: {str(e)}")
         
@@ -1270,9 +1504,18 @@ def initialize_agents(council_instance: Optional[CosmicCouncilHexagon] = None):
     # Clear cache when agents are reinitialized
     _agent_list_cache = None
     
-    # Initialize available agents with comprehensive analysis depth
-    agents[EnterpriseType.RED_OWL] = WorkingEnhancedRedOwlAgent(AnalysisDepth.COMPREHENSIVE)
-    agents[EnterpriseType.ORANGE_ORANGUTAN] = WorkingEnhancedOrangeOrangutanAgent(AnalysisDepth.COMPREHENSIVE)
+    llm_provider = _build_llm_provider()
+
+    # Prefer the richer RCA/planning agents when an LLM provider is available.
+    if llm_provider is not None:
+        from ..agents.red_owl.agent import create_red_owl_rca_agent
+        from ..agents.orange_orangutan.agent import create_orange_orangutan_agent
+
+        agents[EnterpriseType.RED_OWL] = create_red_owl_rca_agent(llm_provider=llm_provider)
+        agents[EnterpriseType.ORANGE_ORANGUTAN] = create_orange_orangutan_agent(llm_provider=llm_provider)
+    else:
+        agents[EnterpriseType.RED_OWL] = WorkingEnhancedRedOwlAgent(AnalysisDepth.COMPREHENSIVE)
+        agents[EnterpriseType.ORANGE_ORANGUTAN] = WorkingEnhancedOrangeOrangutanAgent(AnalysisDepth.COMPREHENSIVE)
 
     # Initialize recovered task-style agents (adapted at runtime via process_task fallback).
     from ..core.core import EnhancedEnterpriseAgent
@@ -1293,7 +1536,7 @@ def initialize_agents(council_instance: Optional[CosmicCouncilHexagon] = None):
 
     for enterprise_type, (label, factory) in recovered_initializers.items():
         try:
-            agents[enterprise_type] = factory()
+            agents[enterprise_type] = factory(llm_provider=llm_provider)
             logger.info(f"Loaded recovered {label} agent")
         except Exception as exc:
             agents[enterprise_type] = EnhancedEnterpriseAgent(enterprise_type)

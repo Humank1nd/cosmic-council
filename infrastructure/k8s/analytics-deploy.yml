@@ -26,9 +26,9 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: cosmic_council
+              value: dream_caesar
             - name: DB_USER
-              value: cosmic_council
+              value: dream_caesar
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:

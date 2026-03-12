@@ -1,0 +1,171 @@
+# Dream Caesar CRONUS Configuration
+# Curiosity · Routing · Origin · Numbers · User · Support
+# The hands of the Cosmic Council
+
+[general]
+name = "Dream Caesar CRONUS"
+version = "0.2.0"
+debug = false
+
+# CRONUS Identity — each letter IS a totem
+[cronus.identity]
+C = { letter = "C", meaning = "Curiosity", totem = "red", spirit = "Red Owl", chakra = "Muladhara", role = "Research — WHY" }
+R = { letter = "R", meaning = "Routing", totem = "orange", spirit = "Orange Orangutan", chakra = "Svadisthana", role = "Orchestration — HOW" }
+O = { letter = "O", meaning = "Origin", totem = "yellow", spirit = "Yellow Honeybee", chakra = "Manipura", role = "Creation — WHAT" }
+N = { letter = "N", meaning = "Numbers", totem = "green", spirit = "Green Tortoise", chakra = "Anahata", role = "Resources — BALANCE" }
+U = { letter = "U", meaning = "User", totem = "blue", spirit = "Blue Dolphin", chakra = "Vishuddha", role = "Communication — OUTPUT" }
+S = { letter = "S", meaning = "Support", totem = "purple", spirit = "Purple Elephant", chakra = "Ajna", role = "Empathy — REFLECTION" }
+
+[cronus.pipeline]
+# Forward pass order: C → R → O → N → U → S
+forward = ["red", "orange", "yellow", "green", "blue"]
+# Feedback evaluator
+feedback = "purple"
+# Max deliberation cycles before forced output
+max_cycles = 3
+
+[llm]
+# Primary model for agent reasoning - LM Studio local
+model = "qwen/qwen3.5-9b"
+base_url = "http://localhost:1234/v1"
+api_key = "lm-studio"
+# Overrides: CRONUS_LLM_BASE_URL, CRONUS_LLM_MODEL, CRONUS_LLM_API_KEY
+
+[llm.vision]
+# Vision model for browser/image tasks
+model = "gpt-4o"
+base_url = "https://api.openai.com/v1"
+
+[llm.groq]
+# Groq - Ultra-fast inference (use for speed-critical tasks)
+# Set CRONUS_LLM_PROVIDER=groq to enable
+model = "llama-3.3-70b-versatile"
+base_url = "https://api.groq.com/openai/v1"
+# api_key from GROQ_API_KEY env var
+
+[llm.fallback]
+# Fallback to Claude for certain tasks
+model = "claude-3-5-sonnet-20241022"
+base_url = "https://api.anthropic.com/v1"
+
+# Agent configurations — the 6 letters of CRONUS
+[agents.curiosity]
+# C — Red Owl (Muladhara) — Curiosity
+totem = "red"
+letter = "C"
+name = "Curiosity"
+spirit = "Red Owl"
+capabilities = ["web-browsing", "data-extraction", "knowledge-synthesis"]
+default_tools = ["browser", "search"]
+description = "Asks WHY. Gathers information, researches, extracts and synthesizes knowledge."
+
+[agents.routing]
+# R — Orange Orangutan (Svadisthana) — Routing
+totem = "orange"
+letter = "R"
+name = "Routing"
+spirit = "Orange Orangutan"
+capabilities = ["multi-agent-flow", "task-orchestration", "delegation"]
+default_tools = ["flow_manager"]
+description = "Plans HOW. Orchestrates workflows, delegates tasks, builds strategy."
+
+[agents.origin]
+# O — Yellow Honeybee (Manipura) — Origin
+totem = "yellow"
+letter = "O"
+name = "Origin"
+spirit = "Yellow Honeybee"
+capabilities = ["code-execution", "mcp-tools", "file-operations", "builds"]
+default_tools = ["mcp", "file_manager"]
+description = "Creates WHAT. Builds, codes, executes, and materializes solutions."
+
+[agents.numbers]
+# N — Green Tortoise (Anahata) — Numbers
+totem = "green"
+letter = "N"
+name = "Numbers"
+spirit = "Green Tortoise"
+capabilities = ["scheduling", "resource-allocation", "sustainability"]
+default_tools = ["scheduler", "resource_tracker"]
+description = "Measures BALANCE. Evaluates timing, resources, costs, and sustainability."
+
+[agents.user]
+# U — Blue Dolphin (Vishuddha) — User
+totem = "blue"
+letter = "U"
+name = "User"
+spirit = "Blue Dolphin"
+capabilities = ["messaging", "notifications", "content-distribution"]
+default_tools = ["messenger", "broadcaster"]
+description = "Delivers OUTPUT. Crafts clear, audience-aware communication."
+
+[agents.support]
+# S — Purple Elephant (Ajna) — Support
+totem = "purple"
+letter = "S"
+name = "Support"
+spirit = "Purple Elephant"
+capabilities = ["sentiment-analysis", "feedback", "memory", "reflection"]
+default_tools = ["memory_store", "sentiment_analyzer"]
+description = "Provides REFLECTION. Evaluates outcomes, processes feedback, remembers."
+
+# Browser automation settings
+[browser]
+headless = true
+timeout_ms = 30000
+max_pages = 5
+
+# MCP (Model Context Protocol) settings
+[mcp]
+enabled = true
+server_port = 8001
+tools_dir = "./app/tools"
+
+# A2A (Agent-to-Agent) protocol settings
+[a2a]
+enabled = true
+protocol_version = "1.0"
+max_delegation_depth = 3
+
+# API settings
+[api]
+host = "0.0.0.0"
+port = 8010
+cors_origins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:8012"]
+
+# Dream Caesar Integration
+[dream_caesar]
+enabled = true
+api_url = "http://localhost:8012"
+# Map CRONUS totems to Dream Caesar enterprises
+totem_mapping = { red = "red_owl", orange = "orange_orangutan", yellow = "yellow_honeybee", green = "green_tortoise", blue = "blue_dolphin", purple = "purple_elephant" }
+# Sync cycles back to Dream Caesar
+sync_cycles = true
+# Forward problems to Dream Caesar for hexagonal processing
+forward_problems = true
+
+# ============================================================================
+# COSMIC COUNCIL - 108-Cycle Fractal Deliberation System
+# ============================================================================
+# The LOST Numbers: 4 + 8 + 15 + 16 + 23 + 42 = 108
+# 108 = Universal Love, Eternity, Awakening
+
+[council]
+enabled = true
+default_mode = "simplified"  # simplified (6 calls), full_108 (108 calls), adaptive
+default_depth = "nano"       # macro, micro, nano, pico, femto, atto, zepto, yocto, ronto, quecto
+
+# Enterprise cycle order (ROYGBV) - each enterprise maps to LOST number + chakra
+[council.enterprises]
+red_owl = { number = 4, chakra = "muladhara", role = "Research & Inquiry" }
+orange_orangutan = { number = 8, chakra = "svadisthana", role = "Strategy & Planning" }
+yellow_honeybee = { number = 15, chakra = "manipura", role = "Creation & Innovation" }
+green_tortoise = { number = 16, chakra = "anahata", role = "Resource Management" }
+blue_dolphin = { number = 23, chakra = "vishuddha", role = "Communication & Influence" }
+purple_elephant = { number = 42, chakra = "ajna", role = "Reflection & Ethics" }
+
+# Fractal depth settings
+[council.fractal]
+max_depth = 9  # MACRO -> QUECTO
+narrowing_factor = 3  # Knowledge narrows by 1/3 at each depth level
+sentry_confidence_threshold = 0.7  # Minimum confidence for sentry agents to pass

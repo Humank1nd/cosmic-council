@@ -69,12 +69,12 @@ class UnifiedDatabaseManager:
         # Get individual components
         db_host = os.getenv('DB_HOST', 'localhost')
         db_port = os.getenv('DB_PORT', '5432')
-        db_name = os.getenv('DB_NAME', 'cosmic_council')
-        db_user = os.getenv('DB_USER', 'cosmic_council')
-        db_password = os.getenv('DB_PASSWORD', 'cosmic_council')
+        db_name = os.getenv('DB_NAME', 'dream_caesar')
+        db_user = os.getenv('DB_USER', 'dream_caesar')
+        db_password = os.getenv('DB_PASSWORD', 'dream_caesar')
         
         # Use SQLite for development (no external database required)
-        return "sqlite+aiosqlite:///./cosmic_council.db"
+        return "sqlite+aiosqlite:///./data/dream_caesar.db"
     
     def _initialize_engines(self):
         """Initialize database engines"""

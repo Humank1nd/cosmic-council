@@ -24,7 +24,7 @@ class Config:
     api_workers: int = 1
     
     # Database settings
-    database_url: str = "sqlite:///cosmic_council.db"
+    database_url: str = "sqlite:///data/dream_caesar.db"
     database_pool_size: int = 10
     database_max_overflow: int = 20
     
@@ -80,7 +80,7 @@ class Config:
             api_workers=int(os.getenv("API_WORKERS", "1")),
             
             # Database settings
-            database_url=os.getenv("DATABASE_URL", "sqlite:///cosmic_council.db"),
+            database_url=os.getenv("DATABASE_URL", "sqlite:///data/dream_caesar.db"),
             database_pool_size=int(os.getenv("DATABASE_POOL_SIZE", "10")),
             database_max_overflow=int(os.getenv("DATABASE_MAX_OVERFLOW", "20")),
             

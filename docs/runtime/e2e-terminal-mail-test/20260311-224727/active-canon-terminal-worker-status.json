@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-03-11T22:53:19.112077-04:00",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "processed": [
+    {
+      "seat": "red",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\red\\20260311-224737-e2e-seed-purple.md",
+      "recipient": "orange",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\handoffs\\20260311-224839-dc-red-terminal-work-to-orange.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\orange\\20260311-224839-active-canon-terminal-work-red.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 61771.52609825134
+    },
+    {
+      "seat": "orange",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\orange\\20260311-224839-active-canon-terminal-work-red.md",
+      "recipient": "yellow",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\handoffs\\20260311-224941-dc-orange-terminal-work-to-yellow.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\yellow\\20260311-224941-active-canon-terminal-work-orange.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 62258.34774971008
+    },
+    {
+      "seat": "yellow",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\yellow\\20260311-224941-active-canon-terminal-work-orange.md",
+      "recipient": "green",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\handoffs\\20260311-225041-dc-yellow-terminal-work-to-green.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\green\\20260311-225041-active-canon-terminal-work-yellow.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 59567.06190109253
+    },
+    {
+      "seat": "green",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\green\\20260311-225041-active-canon-terminal-work-yellow.md",
+      "recipient": "blue",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\handoffs\\20260311-225159-dc-green-terminal-work-to-blue.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\blue\\20260311-225159-active-canon-terminal-work-green.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 78475.39162635803
+    },
+    {
+      "seat": "blue",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\blue\\20260311-225159-active-canon-terminal-work-green.md",
+      "recipient": "purple",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\handoffs\\20260311-225319-dc-blue-terminal-work-to-purple.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\mail\\purple\\20260311-225319-active-canon-terminal-work-blue.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 79288.22636604309
+    }
+  ],
+  "processed_count": 5,
+  "state_path": "D:\\dream-caesar\\docs\\runtime\\e2e-terminal-mail-test\\20260311-224727\\active-canon-terminal-worker-state.json",
+  "running": true
+}

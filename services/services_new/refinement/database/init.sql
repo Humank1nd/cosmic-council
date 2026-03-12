@@ -2,10 +2,10 @@
 -- This script initializes the database with the required schema
 
 -- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS cosmic_council_db;
+CREATE DATABASE IF NOT EXISTS dream_caesar_db;
 
 -- Use the database
-\c cosmic_council_db;
+\c dream_caesar_db;
 
 -- Create extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -369,11 +369,11 @@ VALUES (
     ) ON CONFLICT (username) DO NOTHING;
 
 -- Grant permissions
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO dream_caesar;
 
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO dream_caesar;
 
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO dream_caesar;
 
 -- Create a view for problem genealogy
 CREATE OR REPLACE VIEW problem_genealogy AS

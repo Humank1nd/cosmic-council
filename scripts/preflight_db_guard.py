@@ -15,8 +15,8 @@ from datetime import datetime
 from pathlib import Path
 
 
-CANONICAL_DB = Path(r"D:\dream-caesar\cosmic_council.db")
-LEGACY_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
+CANONICAL_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
+LEGACY_DB = Path(r"D:\dream-caesar\cosmic_council.db")
 RECOVERY_ROOT = Path(r"D:\dream-caesar\recovery")
 
 CRITICAL_TABLES = [

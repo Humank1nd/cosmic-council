@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-03-12T02:13:05.773497-04:00",
+  "note_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021305-dc-active-queue-mail-reassert.md",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "submit_mode": "both",
+  "delivery_mode": "internal-mail",
+  "active_canon_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\active-canon.json",
+  "alignment_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\canon-seat-alignment.json",
+  "active_terminal_worker_status_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\active-canon-terminal-worker-status.json",
+  "seed_suppressed": true,
+  "seed_suppression_reason": "active terminal worker owns the live active-canon loop",
+  "deliveries": [
+    {
+      "transport": "internal_mail",
+      "success": true,
+      "skipped": true,
+      "reason": "active terminal worker owns the live active-canon loop"
+    }
+  ]
+}

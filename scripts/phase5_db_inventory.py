@@ -27,7 +27,7 @@ class DbTarget:
 
 
 DB_TARGETS = [
-    DbTarget("cosmic_council.db", "Main council DB", required=True),
+    DbTarget("cosmic_council.db", "Legacy council DB", required=False),
     DbTarget("perpetual_thinking.db", "Perpetual thinking DB", required=True),
     DbTarget("data/dream_caesar.db", "Primary Dream Caesar DB", required=True),
     DbTarget("data/strategy_store.db", "Strategy store DB", required=True),

@@ -188,7 +188,7 @@ class MasterOrchestrationSystem:
             }
         else:
             # Enhanced mode requires real configuration
-            database_url = "postgresql+asyncpg://user:password@localhost/cosmic_council"
+            database_url = "postgresql+asyncpg://user:password@localhost/dream_caesar"
             openai_api_key = "your-openai-api-key"
             n8n_webhook_url = "https://your-n8n-instance.com/webhook/workflow"
             orchestration_config = {
@@ -819,7 +819,7 @@ async def main():
     """Example usage of the enhanced master orchestration system"""
     
     orchestration_system = EnhancedMasterOrchestrationSystem(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         openai_api_key="your-openai-api-key",
         n8n_webhook_url="https://your-n8n-instance.com/webhook/workflow",
         orchestration_config={

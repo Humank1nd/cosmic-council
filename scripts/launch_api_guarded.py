@@ -19,7 +19,7 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CANONICAL_DB = (PROJECT_ROOT / "cosmic_council.db").resolve()
+CANONICAL_DB = (PROJECT_ROOT / "data" / "dream_caesar.db").resolve()
 PRECHECK_SCRIPT = PROJECT_ROOT / "scripts" / "preflight_db_guard.py"
 
 
@@ -93,7 +93,7 @@ def main() -> int:
     parser.add_argument(
         "--allow-db-mismatch",
         action="store_true",
-        help="Allow DATABASE_URL to point to a DB other than cosmic_council.db",
+        help="Allow DATABASE_URL to point to a DB other than data/dream_caesar.db",
     )
     parser.add_argument(
         "--smoke",

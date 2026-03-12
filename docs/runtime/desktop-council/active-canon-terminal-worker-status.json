@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-03-12T02:10:12.078723-04:00",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "processed": [
+    {
+      "seat": "red",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\red\\20260312-015532-active-canon-terminal-work-purple.md",
+      "recipient": "orange",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-020047-dc-red-terminal-work-to-orange.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\orange\\20260312-020047-active-canon-terminal-work-red.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 194441.99347496033
+    },
+    {
+      "seat": "orange",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\orange\\20260312-020047-active-canon-terminal-work-red.md",
+      "recipient": "yellow",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-020406-dc-orange-terminal-work-to-yellow.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\yellow\\20260312-020406-active-canon-terminal-work-orange.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 199137.35842704773
+    },
+    {
+      "seat": "yellow",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\yellow\\20260312-020406-active-canon-terminal-work-orange.md",
+      "recipient": "green",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-020647-dc-yellow-terminal-work-to-green.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\green\\20260312-020647-active-canon-terminal-work-yellow.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 161349.36141967773
+    },
+    {
+      "seat": "green",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\green\\20260312-020647-active-canon-terminal-work-yellow.md",
+      "recipient": "blue",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-020947-dc-green-terminal-work-to-blue.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\blue\\20260312-020947-active-canon-terminal-work-green.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 179519.48308944702
+    },
+    {
+      "seat": "blue",
+      "source_mail": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\blue\\20260312-020947-active-canon-terminal-work-green.md",
+      "recipient": "purple",
+      "handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021012-dc-blue-terminal-work-to-purple.md",
+      "forwarded_mail_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\purple\\20260312-021012-active-canon-terminal-work-blue.md",
+      "provider": "openai-compatible",
+      "model": "qwen/qwen3.5-9b",
+      "steps": [
+        "openai_chat_completion"
+      ],
+      "error": null,
+      "elapsed_ms": 24541.53347015381
+    }
+  ],
+  "processed_count": 5,
+  "state_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\active-canon-terminal-worker-state.json",
+  "running": true
+}

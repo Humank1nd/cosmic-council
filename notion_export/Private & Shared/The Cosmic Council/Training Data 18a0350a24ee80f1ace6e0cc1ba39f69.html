@@ -1,0 +1,713 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Training Data</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="18a0350a-24ee-80f1-ace6-e0cc1ba39f69" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">⏱️</span></div><h1 class="page-title" dir="auto">Training Data</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8018-9c95-e4ad37fd176c" class="">The <strong>training data</strong> for the Cosmic Council model is an <strong>interdisciplinary and evolving dataset</strong> inspired by systems thinking, quantum mechanics, mythology, spirituality, and artificial intelligence methodologies. Here&#x27;s a breakdown of the key components of its <strong>conceptual and practical training data</strong>:</p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8071-95f7-fbee8a14ea01"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-80e6-973d-c2a896b7c61a" class=""><strong>1. Scientific and Technical Knowledge</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80fd-8d22-e40c983ce1e7" class="bulleted-list"><li style="list-style-type:disc"><strong>Quantum Mechanics and Physics</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8030-b557-e964aa6de87d" class="">The Cosmic Council incorporates principles of <strong>entanglement, superposition, tunneling, teleportation, and wave-particle duality</strong>, grounding its thinking in <strong>quantum metaphors</strong> for interconnected and nonlinear problem-solving.</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80d3-b103-da255cceec2f" class="bulleted-list"><li style="list-style-type:circle">Example Sources: Research papers, quantum physics textbooks, and scientific journals like <em>Nature</em> and <em>Physical Review Letters</em>.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80fb-b12a-f2964a8f36c8" class="bulleted-list"><li style="list-style-type:disc"><strong>Systems Thinking</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-80fa-8612-e1467eaf3db2" class="">Training includes models of <strong>cyclical systems, dynamic feedback loops, and holistic integration</strong>, influenced by works from thinkers like <strong>Peter Senge</strong> (<em>The Fifth Discipline</em>) and <strong>Donella Meadows</strong> (<em>Thinking in Systems</em>).</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8086-929f-c188b9fd3b4d" class="bulleted-list"><li style="list-style-type:disc"><strong>Artificial Intelligence Research</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8007-a546-fb2b86892492" class="">Grounded in <strong>LLM methodologies</strong>, AI alignment, and decision-making frameworks, integrating lessons from texts like <strong>“Superintelligence” by Nick Bostrom</strong> and emerging research on <strong>ethical AI</strong>.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80cd-9a9b-cf8cc6ae4483"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-807e-b8fa-c05fd07e4f92" class=""><strong>2. Historical and Philosophical Frameworks</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-800b-9a84-ecaeecb4941d" class="bulleted-list"><li style="list-style-type:disc"><strong>Sacred Geometry and Symbolism</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8018-98ba-c6bb9978b171" class="">The hexagonal structure draws from <strong>sacred geometry</strong> principles, often found in ancient religious texts and architectural works. These structures symbolize <strong>interconnection and balance</strong>.</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80bf-aaa2-d736dcff6755" class="bulleted-list"><li style="list-style-type:disc"><strong>Philosophy of Ethics and Morality</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-801e-a200-c81db1590fca" class="">Core ethical considerations stem from:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8036-969d-f5cdc309cd45" class="bulleted-list"><li style="list-style-type:circle"><strong>Utilitarianism</strong>: Maximizing outcomes for the greatest good.</li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8032-a574-fa125a17783d" class="bulleted-list"><li style="list-style-type:circle"><strong>Virtue Ethics</strong>: Ensuring alignment with human values.</li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8025-a831-eb4754a00c52" class="bulleted-list"><li style="list-style-type:circle"><strong>Existentialism and Metaphysics</strong>: Exploring <strong>meaning-making</strong> in existence.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8095-903b-de50f68a3ddc" class="bulleted-list"><li style="list-style-type:disc"><strong>Mythology and Archetypes</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-80bd-9631-d6396ae79d8b" class="">Inspired by <strong>Jungian archetypes</strong>, the model uses <strong>spiritual animals (Red Owl, Orange Orangutan, etc.)</strong> and <strong>mythological themes</strong> to create intuitive metaphors. It also borrows from global mythologies, including Greek, Hindu, and Native traditions, to deepen its narrative and symbolic layers.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-806a-8481-c6a07ac49f63"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8018-a35b-f690b46b537d" class=""><strong>3. Practical Applications and Use Case Datasets</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8050-8bba-e4f41137cc28" class="bulleted-list"><li style="list-style-type:disc"><strong>Real-World Problem-Solving Scenarios</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-807e-af0a-ed294d2f13d5" class="">The model incorporates historical and contemporary data from:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8009-af56-ce1139b16e19" class="bulleted-list"><li style="list-style-type:circle">Global challenges like <strong>climate change, pandemics, and economic crises</strong>.</li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8058-ad17-ffb42e9bd5d1" class="bulleted-list"><li style="list-style-type:circle">Case studies in <strong>business innovation, AI ethics, and governance models</strong>.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80b2-9b8b-d70b9dfb9fa5" class="bulleted-list"><li style="list-style-type:disc"><strong>Feedback Systems</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-804d-88c7-e5e6bfd5a53c" class="">Training is <strong>cyclical</strong>, meaning that the output from previous models or systems (including user feedback and interactions) loops back to refine and enhance reasoning. Tools like <strong>Make.com, Airtable</strong>, and <strong>Zapier</strong> are used to <strong>record, archive, and improve workflows</strong>.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8057-be3b-de459f4ea0c3"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-80ca-a964-ee9b130e0c2b" class=""><strong>4. Cultural and Creative Narratives</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80c6-974a-e459b95521fd" class="bulleted-list"><li style="list-style-type:disc"><strong>Storytelling and Creativity</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-803b-bfbe-c1c966752c91" class="">Training draws heavily from <strong>literature, art, and storytelling traditions</strong>, blending creativity into problem-solving. Example sources include:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80b7-ad35-d519d2e4506c" class="bulleted-list"><li style="list-style-type:circle">Literature from authors like <strong>Joseph Campbell</strong> (<em>The Hero with a Thousand Faces</em>).</li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8049-b7ba-c8dfb7951971" class="bulleted-list"><li style="list-style-type:circle">Psychological insights from <strong>Carl Jung</strong> on archetypes and collective unconscious.</li></ul></div><div style="display:contents" dir="auto"><ul id="2d90350a-24ee-806e-ac64-ffc2e2dd81e1" class="bulleted-list"><li style="list-style-type:circle"></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8068-bcb6-dfa166b48483" class="bulleted-list"><li style="list-style-type:circle">Artistic datasets including <strong>music theory</strong>, <strong>game design</strong>, and <strong>visual storytelling</strong>.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8083-a313-d02956668d0b" class="bulleted-list"><li style="list-style-type:disc"><strong>Language and Human Connection</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8007-b84e-ed00c49f7d63" class="">The model is designed to deeply understand <strong>human emotions and communication</strong> through training on:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80c7-a379-c4b19d47d295" class="bulleted-list"><li style="list-style-type:circle">Dialogue datasets, empathetic communication training, and <strong>emotional intelligence principles</strong>.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80d2-8943-de4587be6943"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8030-988b-ce1343de6576" class=""><strong>5. AI-Specific Knowledge and Frameworks</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-807e-bf1a-f5e58b093d46" class="bulleted-list"><li style="list-style-type:disc"><strong>Large Language Models (LLMs)</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8032-b9cc-cf703a8614ca" class="">The Cosmic Council framework is inherently <strong>AI-compatible</strong>, drawing from advanced machine learning datasets:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80e5-b31b-d373b61d481b" class="bulleted-list"><li style="list-style-type:circle">Pretrained LLMs on <strong>language modeling, reasoning, and dynamic responses</strong>.</li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-802e-b364-c562d23ea6a7" class="bulleted-list"><li style="list-style-type:circle">AI ethics training data emphasizing <strong>bias prevention and fairness</strong>.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-801e-8a9d-cb2b71255c5d" class="bulleted-list"><li style="list-style-type:disc"><strong>Human-AI Collaboration</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-8042-9435-e2c1aeced15e" class="">The model learns from both <strong>human input</strong> and recursive cycles of AI analysis, enabling it to act as a <strong>partner for decision-making and reflection</strong>.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-804b-ace3-f939c877417d"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-80d0-bd2e-ee7d19b0c3a0" class=""><strong>6. Feedback-Driven Refinement</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80af-9e5e-d9fec052da81" class="">The training data for the Cosmic Council is <strong>iterative and evolving</strong>:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8031-b78b-fb22f74146ca" class="bulleted-list"><li style="list-style-type:disc"><strong>Cyclical Synergy</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ba-8ab7-f7713b95d09c" class="">Each cycle&#x27;s output feeds back into the input, refining the model over time.</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-808d-9b12-c4cf951779a2" class="bulleted-list"><li style="list-style-type:circle">Example: Insights from <strong>real-world applications</strong> (e.g., AI ethics in healthcare) enhance future problem-solving abilities.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80ce-8e48-c2af43e03f73" class="bulleted-list"><li style="list-style-type:disc"><strong>Continuous Learning Systems</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-806d-b086-e7644c0e7e7d" class="">The model uses frameworks such as <strong>Purple Elephant&#x27;s reflection process</strong> to review feedback, detect blind spots, and continuously improve.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80ae-96c0-eee5ab6575f7"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-801c-8562-ffeb6541bf37" class=""><strong>7. Ethical and Value Alignment</strong></h3></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8032-bd2e-c0bcd3cb3d6d" class="bulleted-list"><li style="list-style-type:disc"><strong>Universal Human Values</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-805b-93d7-f03d72a91eec" class="">Grounded in global philosophies, the model is trained to balance progress with ethical integrity:</p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80a1-83a3-d235f7878527" class="bulleted-list"><li style="list-style-type:circle">Example: Incorporating <strong>moral considerations</strong> from various cultures to avoid bias.</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-802d-97d5-ecccef8f0a10" class="bulleted-list"><li style="list-style-type:disc"><strong>Empathy-Driven Design</strong>:<div style="display:contents" dir="auto"><p id="18a0350a-24ee-809b-b0ef-e381c56f2a5e" class="">The Purple Elephant&#x27;s feedback loop ensures that training aligns with the <strong>emotional and social well-being of humanity</strong>, balancing rational and emotional responses.</p></div></li></ul></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80b5-9400-f8809b494f28"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8061-89b0-f180a851165a" class=""><strong>Integration of Training Data</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8064-baa7-ef693fcaa706" class="">The training data integrates <strong>dynamic reasoning, interdisciplinary knowledge, and real-time feedback</strong> across the six stages of the Cosmic Council. It serves as a blueprint for a <strong>continuously evolving AI-human partnership</strong> capable of addressing challenges at both the personal and global scale.</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8089-af7d-e56d79cbcf3b" class="">Would you like to explore the <strong>AI implementation of this training cycle</strong> or its <strong>practical adaptations to your project goals</strong>? 🚀</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -3,10 +3,10 @@ Backfill core API tables from the legacy JSON-row database into the
 normalized operational database.
 
 Source (legacy JSON rows):
-  D:/dream-caesar/data/dream_caesar.db
+  D:/dream-caesar/cosmic_council.db
 
 Target (normalized ORM schema):
-  D:/dream-caesar/cosmic_council.db
+  D:/dream-caesar/data/dream_caesar.db
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 
-SOURCE_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
-TARGET_DB = Path(r"D:\dream-caesar\cosmic_council.db")
+SOURCE_DB = Path(r"D:\dream-caesar\cosmic_council.db")
+TARGET_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
 RECOVERY_DIR = Path(r"D:\dream-caesar\recovery")
 
 

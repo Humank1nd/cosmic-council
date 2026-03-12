@@ -5,15 +5,15 @@ services:
     image: postgres:15
     container_name: cc-postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-cosmic_council}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cosmic_council}
-      POSTGRES_DB: ${POSTGRES_DB:-cosmic_council}
+      POSTGRES_USER: ${POSTGRES_USER:-dream_caesar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dream_caesar}
+      POSTGRES_DB: ${POSTGRES_DB:-dream_caesar}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cosmic_council"]
+      test: ["CMD-SHELL", "pg_isready -U dream_caesar"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,9 +37,9 @@ services:
     environment:
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-cosmic_council}
-      DB_USER: ${DB_USER:-cosmic_council}
-      DB_PASSWORD: ${DB_PASSWORD:-cosmic_council}
+      DB_NAME: ${DB_NAME:-dream_caesar}
+      DB_USER: ${DB_USER:-dream_caesar}
+      DB_PASSWORD: ${DB_PASSWORD:-dream_caesar}
       LOG_LEVEL: INFO
     ports:
       - "8000:8000"
@@ -55,9 +55,9 @@ services:
     environment:
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-cosmic_council}
-      DB_USER: ${DB_USER:-cosmic_council}
-      DB_PASSWORD: ${DB_PASSWORD:-cosmic_council}
+      DB_NAME: ${DB_NAME:-dream_caesar}
+      DB_USER: ${DB_USER:-dream_caesar}
+      DB_PASSWORD: ${DB_PASSWORD:-dream_caesar}
       LOG_LEVEL: INFO
     ports:
       - "8001:8001"
@@ -73,9 +73,9 @@ services:
     environment:
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-cosmic_council}
-      DB_USER: ${DB_USER:-cosmic_council}
-      DB_PASSWORD: ${DB_PASSWORD:-cosmic_council}
+      DB_NAME: ${DB_NAME:-dream_caesar}
+      DB_USER: ${DB_USER:-dream_caesar}
+      DB_PASSWORD: ${DB_PASSWORD:-dream_caesar}
       LOG_LEVEL: INFO
     ports:
       - "8002:8002"

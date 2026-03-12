@@ -13,7 +13,8 @@ from pathlib import Path
 class ProductionConfig:
     """Production configuration settings"""
     
-    # Datastore (Firestore)
+    # Datastore (local-first with optional Firebase integration)
+    database_url: Optional[str] = None
     firestore_project_id: Optional[str] = None
     firestore_emulator_host: Optional[str] = None
     firebase_client_email: Optional[str] = None
@@ -63,6 +64,7 @@ class ProductionConfig:
     def from_env(cls) -> 'ProductionConfig':
         """Load configuration from environment variables"""
         return cls(
+            database_url=os.getenv("DATABASE_URL") or os.getenv("DREAM_CAESAR_DATABASE_URL"),
             firestore_project_id=os.getenv("FIREBASE_PROJECT_ID"),
             firestore_emulator_host=os.getenv("FIRESTORE_EMULATOR_HOST"),
             firebase_client_email=os.getenv("FIREBASE_CLIENT_EMAIL"),
@@ -127,15 +129,15 @@ class ProductionConfig:
             raise ValueError("JWT_SECRET_KEY must be changed in production")
         
         if self.environment == "production":
-            if not self.firestore_project_id:
-                raise ValueError("FIREBASE_PROJECT_ID is required in production")
+            if not self.database_url and not self.firestore_project_id:
+                raise ValueError("DATABASE_URL or FIREBASE_PROJECT_ID is required in production")
             has_credentials = any([
                 self.firebase_service_account_json,
                 self.firebase_service_account_path,
                 self.google_application_credentials,
                 (self.firebase_client_email and self.firebase_private_key),
             ])
-            if not has_credentials:
+            if self.firestore_project_id and not has_credentials:
                 raise ValueError("Firestore credentials are required in production")
         
         if self.api_port < 1 or self.api_port > 65535:
@@ -147,6 +149,7 @@ class ProductionConfig:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return {
+            "database_url": self.database_url,
             "firestore_project_id": self.firestore_project_id,
             "firestore_emulator_host": self.firestore_emulator_host,
             "firebase_client_email": self.firebase_client_email,

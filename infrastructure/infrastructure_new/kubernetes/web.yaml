@@ -25,7 +25,7 @@ spec:
         - containerPort: 8001
         env:
         - name: DATABASE_URL
-          value: "postgresql://cosmic_council:$(DATABASE_PASSWORD)@postgres-service:5432/cosmic_council"
+          value: "postgresql://dream_caesar:$(DATABASE_PASSWORD)@postgres-service:5432/dream_caesar"
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:

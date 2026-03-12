@@ -60,11 +60,13 @@ from sqlalchemy.orm import Session, selectinload
 
 # Configure comprehensive logging
 from ..utils.logging_config import setup_logging, get_logger, log_request, log_response, log_performance, log_error, log_audit
+from ..utils.local_paths import API_LOG_FILE, PERPETUAL_DB, ensure_local_storage_roots
 
 # Setup logging with file rotation
+ensure_local_storage_roots()
 setup_logging(
     log_level="INFO",
-    log_file="logs/cosmic_council.log",
+    log_file=str(API_LOG_FILE),
     use_json=False,  # Use structured format for readability
     max_bytes=10 * 1024 * 1024,  # 10MB
     backup_count=5
@@ -1291,7 +1293,9 @@ async def lifespan(app: FastAPI):
         # Initialize perpetual thinking system
         try:
             # Initialize database service for perpetual system
-            perpetual_db_service = PerpetualDatabaseService("sqlite+aiosqlite:///perpetual_thinking.db")
+            perpetual_db_service = PerpetualDatabaseService(
+                f"sqlite+aiosqlite:///{PERPETUAL_DB.as_posix()}"
+            )
             await perpetual_db_service.create_tables()
             logger.info("Persistent perpetual thinking database prepared")
 

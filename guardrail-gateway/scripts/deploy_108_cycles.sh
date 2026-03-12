@@ -5,8 +5,8 @@
 set -e
 
 # Configuration
-DB_NAME="cosmic_council"
-DB_USER="cosmic_council"
+DB_NAME="dream_caesar"
+DB_USER="dream_caesar"
 DB_HOST="localhost"
 DB_PORT="5432"
 GATEWAY_URL="http://localhost:8000"

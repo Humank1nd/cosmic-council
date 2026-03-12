@@ -479,7 +479,7 @@ async def main():
     """Example usage of the enforcement system"""
     
     enforcement_system = CosmicCouncilEnforcementSystem(
-        database_url="postgresql://localhost/cosmic_council",
+        database_url="postgresql://localhost/dream_caesar",
         n8n_webhook_url="https://your-n8n-instance.com/webhook/enforcement",
         slack_webhook_url="https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
     )

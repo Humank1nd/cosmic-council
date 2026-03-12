@@ -152,6 +152,12 @@ class OllamaProvider(BaseLLMProvider):
         super().__init__(config)
         self.provider_type = LLMProviderType.OLLAMA
         self.base_url = config.get("base_url", "http://localhost:11434") if config else "http://localhost:11434"
+        self.default_model = (
+            (config or {}).get("model")
+            or os.getenv("OLLAMA_MODEL")
+            or os.getenv("LLM_MODEL")
+            or "llama2"
+        )
         try:
             import httpx
             self.client = httpx.AsyncClient(base_url=self.base_url, timeout=300.0)
@@ -204,7 +210,7 @@ class OllamaProvider(BaseLLMProvider):
         return ["llama2", "mistral", "codellama", "phi"]
     
     def get_default_model(self) -> str:
-        return "llama2"
+        return self.default_model
     
     async def health_check(self) -> bool:
         """Check if Ollama is running"""
@@ -226,6 +232,17 @@ class LocalModelProvider(BaseLLMProvider):
         self.provider_type = LLMProviderType.LOCAL
         self.base_url = config.get("base_url", "http://localhost:8000") if config else "http://localhost:8000"
         self.api_format = config.get("api_format", "openai")  # "openai" or "custom"
+        self.default_model = (
+            (config or {}).get("model")
+            or os.getenv("LOCAL_MODEL")
+            or os.getenv("LLM_MODEL")
+            or "local-model"
+        )
+        self.max_completion_tokens = int(
+            (config or {}).get("max_tokens")
+            or os.getenv("LOCAL_MODEL_MAX_TOKENS")
+            or "512"
+        )
         try:
             import httpx
             self.client = httpx.AsyncClient(base_url=self.base_url, timeout=300.0)
@@ -245,6 +262,8 @@ class LocalModelProvider(BaseLLMProvider):
             ]
             
             model = request.model or self.get_default_model()
+            max_tokens = request.max_tokens or self.max_completion_tokens
+            max_tokens = min(max_tokens, self.max_completion_tokens)
             
             response = await self.client.post(
                 "/v1/chat/completions",
@@ -252,17 +271,32 @@ class LocalModelProvider(BaseLLMProvider):
                     "model": model,
                     "messages": messages,
                     "temperature": request.temperature,
-                    "max_tokens": request.max_tokens
+                    "max_tokens": max_tokens
                 }
             )
             response.raise_for_status()
             data = response.json()
+            choice = data["choices"][0]
+            message = choice.get("message", {})
+            content = message.get("content")
+            if isinstance(content, list):
+                content = "".join(
+                    part.get("text", "")
+                    for part in content
+                    if isinstance(part, dict)
+                )
+            if not content:
+                content = message.get("reasoning_content", "")
             
             return LLMResponse(
-                content=data["choices"][0]["message"]["content"],
+                content=content,
                 model=data["model"],
                 usage=data.get("usage"),
-                metadata={"provider": "local", "api_format": self.api_format}
+                metadata={
+                    "provider": "local",
+                    "api_format": self.api_format,
+                    "finish_reason": choice.get("finish_reason"),
+                }
             )
         else:
             # Custom API format
@@ -281,7 +315,7 @@ class LocalModelProvider(BaseLLMProvider):
         return ["local-model"]
     
     def get_default_model(self) -> str:
-        return "local-model"
+        return self.default_model
     
     async def health_check(self) -> bool:
         """Check if local model server is running"""

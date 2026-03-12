@@ -21,8 +21,8 @@ from pathlib import Path
 from typing import Iterable, List, Set, Tuple
 
 
-DEFAULT_CANONICAL = Path(r"D:\dream-caesar\cosmic_council.db")
-DEFAULT_LEGACY = Path(r"D:\dream-caesar\data\dream_caesar.db")
+DEFAULT_CANONICAL = Path(r"D:\dream-caesar\data\dream_caesar.db")
+DEFAULT_LEGACY = Path(r"D:\dream-caesar\cosmic_council.db")
 
 CRITICAL_TABLES = [
     "problems",
@@ -80,12 +80,12 @@ def main() -> int:
     parser.add_argument(
         "--canonical",
         default=str(DEFAULT_CANONICAL),
-        help="Path to canonical DB (default: D:/dream-caesar/cosmic_council.db)",
+        help="Path to canonical DB (default: D:/dream-caesar/data/dream_caesar.db)",
     )
     parser.add_argument(
         "--legacy",
         default=str(DEFAULT_LEGACY),
-        help="Path to legacy DB for row-count comparison (default: D:/dream-caesar/data/dream_caesar.db)",
+        help="Path to legacy DB for row-count comparison (default: D:/dream-caesar/cosmic_council.db)",
     )
     parser.add_argument(
         "--skip-legacy-compare",

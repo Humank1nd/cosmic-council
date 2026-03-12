@@ -2,9 +2,9 @@
 Phase 2: Merge non-core tables into the operational DB.
 
 Copies all tables that exist in:
-  D:/dream-caesar/data/dream_caesar.db
-but not in:
   D:/dream-caesar/cosmic_council.db
+but not in:
+  D:/dream-caesar/data/dream_caesar.db
 
 Also copies related indexes, triggers, and views.
 Creates timestamped backups before making changes.
@@ -20,8 +20,8 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 
-SOURCE_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
-TARGET_DB = Path(r"D:\dream-caesar\cosmic_council.db")
+SOURCE_DB = Path(r"D:\dream-caesar\cosmic_council.db")
+TARGET_DB = Path(r"D:\dream-caesar\data\dream_caesar.db")
 RECOVERY_DIR = Path(r"D:\dream-caesar\recovery")
 
 

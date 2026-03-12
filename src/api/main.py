@@ -7,6 +7,7 @@ Historically tests imported `src.api.main:app`; current implementation lives in
 
 from cosmic_council_api import app
 from src.cosmic_council.core import api as _core_api
+from src.cosmic_council.utils.local_paths import PERPETUAL_DB, ensure_local_storage_roots
 
 # Test fixtures often construct TestClient without entering lifespan context.
 # Ensure perpetual handles are available for those legacy tests.
@@ -18,7 +19,10 @@ if _core_api.PERPETUAL_SYSTEM_AVAILABLE and _core_api.perpetual_ai_engine is Non
 if _core_api.PERPETUAL_SYSTEM_AVAILABLE and _core_api.perpetual_db_service is None:
     from perpetual_database_service import PerpetualDatabaseService
 
-    _core_api.perpetual_db_service = PerpetualDatabaseService("sqlite:///:memory:")
+    ensure_local_storage_roots()
+    _core_api.perpetual_db_service = PerpetualDatabaseService(
+        f"sqlite:///{PERPETUAL_DB.as_posix()}"
+    )
 
 
 class _CompatOrchestrationSystem:

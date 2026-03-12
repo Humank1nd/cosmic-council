@@ -705,7 +705,7 @@ async def demo_database_optimization():
     )
     
     # Note: This would use actual database URL in production
-    database_url = "postgresql://user:password@localhost:5432/cosmic_council"
+    database_url = "postgresql://user:password@localhost:5432/dream_caesar"
     
     try:
         # Create optimized database manager

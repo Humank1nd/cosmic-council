@@ -672,7 +672,7 @@ async def main():
     """Example usage of the enhanced agent performance tracking system"""
     
     tracker = EnhancedAgentPerformanceTracker(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         performance_config={
             'metric_retention_days': 90,
             'alert_thresholds': {
