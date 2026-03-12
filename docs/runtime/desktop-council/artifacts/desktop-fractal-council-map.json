@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-03-11T13:08:19.186699-04:00",
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\desktop-fractal-council-latest.png",
+  "screenshot_success": true,
+  "layout": {
+    "center_codex": {
+      "title": "\ud83c\udf0f Dream Caesar  ",
+      "normalized_title": "\ud83c\udf0f Dream Caesar",
+      "left": 677,
+      "top": 351,
+      "width": 579,
+      "height": 350,
+      "is_active": true,
+      "is_minimized": false,
+      "is_maximized": false
+    },
+    "codex": [
+      {
+        "title": "\ud83c\udf0f Dream Caesar  ",
+        "normalized_title": "\ud83c\udf0f Dream Caesar",
+        "left": 677,
+        "top": 351,
+        "width": 579,
+        "height": 350,
+        "is_active": true,
+        "is_minimized": false,
+        "is_maximized": false
+      }
+    ],
+    "gemini": [],
+    "claude": []
+  },
+  "notes": [
+    "This file is an observed layout artifact, not a permanent seat assignment.",
+    "Re-run after the human rearranges the windows around the hexaclock."
+  ]
+}

@@ -18,20 +18,24 @@ class BaseModel(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
-    metadata = Column(JSON, default=dict)
+    # Keep column name "metadata" for schema compatibility while avoiding
+    # collision with SQLAlchemy's declarative metadata attribute.
+    extra_data = Column("metadata", JSON, key="extra_data", default=dict)
     
     def to_dict(self) -> dict:
         """Convert model to dictionary"""
-        return {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
-        }
+        data = {}
+        for column in self.__table__.columns:
+            key = "metadata" if column.key == "extra_data" and column.name == "metadata" else column.name
+            data[key] = getattr(self, column.key)
+        return data
     
     def update_from_dict(self, data: dict) -> None:
         """Update model from dictionary"""
         for key, value in data.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
+            attr = "extra_data" if key == "metadata" else key
+            if hasattr(self, attr):
+                setattr(self, attr, value)
         self.updated_at = datetime.now(timezone.utc)
     
     def __repr__(self) -> str:

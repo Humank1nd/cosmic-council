@@ -1,5 +1,5 @@
 """
-Case Study Generator for Cosmic Council
+Case Study Generator for Agent Orchestrator
 Generates custom case studies based on user inputs and templates
 """
 
@@ -386,7 +386,7 @@ class CaseStudyGenerator:
 # Demo function
 def demo_case_study_generator():
     """Demonstrate the case study generator"""
-    print("🌌 Cosmic Council Case Study Generator")
+    print("🌌 Agent Orchestrator Case Study Generator")
     print("=" * 60)
     
     # Create generator

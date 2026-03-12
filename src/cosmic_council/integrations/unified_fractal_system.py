@@ -1,5 +1,5 @@
 """
-Unified 108-Cycle Fractal System for Cosmic Council
+Unified 108-Cycle Fractal System for Agent Orchestrator
 Combines basic, enhanced, and quantum fractal systems with full 108-stage implementation.
 
 This is the primary and only fractal system file - all other fractal system files

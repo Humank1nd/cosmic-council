@@ -14,7 +14,7 @@ class ProductionConfig:
     """Production configuration settings"""
     
     # Database
-    database_url: str = "postgresql://user:password@localhost:5432/cosmic_council"
+    database_url: str = "postgresql://user:password@localhost:5432/dream_caesar"
     database_pool_size: int = 10
     database_pool_overflow: int = 20
     

@@ -1,5 +1,5 @@
 """
-Unified Recursive AI System for Cosmic Council
+Unified Recursive AI System for Agent Orchestrator
 Combines basic and enhanced recursive AI consciousness systems.
 
 This is the primary and only recursive AI system file - all other recursive AI files
@@ -53,7 +53,7 @@ class RecursiveMode(Enum):
     ADAPTIVE = "adaptive"                # Automatically adapts based on available resources
 
 class AgentType(Enum):
-    """The six Cosmic Council agents in ROYGBV order"""
+    """The six Agent Orchestrator agents in ROYGBV order"""
     RED_OWL = "red_owl"           # Research & Inquiry
     ORANGE_ORANGUTAN = "orange_orangutan"  # Planning & Logistics
     YELLOW_HONEYBEE = "yellow_honeybee"    # Development & Creativity

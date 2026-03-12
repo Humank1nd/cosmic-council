@@ -1,5 +1,5 @@
 """
-Hexagon Web Server for Cosmic Council Visualization
+Hexagon Web Server for Agent Orchestrator Visualization
 Serves the interactive hexagon visualization with real-time updates
 """
 
@@ -18,7 +18,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-# Import Cosmic Council components
+# Import Agent Orchestrator components
 from src.core.types import (
     CosmicCouncil, ProblemStatement, ProblemComplexity, 
     EnterpriseType, CycleStatus
@@ -50,7 +50,7 @@ class HexagonWebServer:
     """Web server for the hexagon visualization"""
     
     def __init__(self):
-        self.app = FastAPI(title="Cosmic Council Hexagon Visualization", version="1.0.0")
+        self.app = FastAPI(title="Agent Orchestrator Hexagon Visualization", version="1.0.0")
         self.council = CosmicCouncil()
         self.visualization_state = VisualizationState()
         self.connected_clients: List[WebSocket] = []
@@ -326,7 +326,7 @@ class HexagonWebServer:
             
             # Cycle completed
             await self._broadcast_update("cycle_completed", {
-                "message": "Cosmic Council cycle completed successfully!"
+                "message": "Agent Orchestrator cycle completed successfully!"
             })
             
         except Exception as e:
@@ -340,7 +340,7 @@ class HexagonWebServer:
     
     def run(self, host: str = "127.0.0.1", port: int = 8000):
         """Run the web server"""
-        logger.info(f"Starting Cosmic Council Hexagon Web Server on {host}:{port}")
+        logger.info(f"Starting Agent Orchestrator Hexagon Web Server on {host}:{port}")
         uvicorn.run(self.app, host=host, port=port)
 
 # Sample problems for testing
@@ -378,7 +378,7 @@ def main():
     """Main function to run the server"""
     server = HexagonWebServer()
     
-    print("🌌 Cosmic Council Hexagon Web Server")
+    print("🌌 Agent Orchestrator Hexagon Web Server")
     print("=" * 50)
     print("Starting server...")
     print("Open your browser and go to: http://127.0.0.1:8000")

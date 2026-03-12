@@ -1,5 +1,5 @@
 """
-Unified Database Manager for Cosmic Council System
+Unified Database Manager for Agent Orchestrator System
 Consolidates database connection, operations, setup, and management functionality.
 
 This is the primary and only database management file - all other database management files

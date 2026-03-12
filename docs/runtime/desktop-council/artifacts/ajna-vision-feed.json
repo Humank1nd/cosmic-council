@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-03-12T02:11:40.480998-04:00",
+  "summary": "desktop looks routable",
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\ajna\\ajna-20260312-021140.png",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "missing_active_seats": [],
+  "ambiguous_seats": [],
+  "overall_state": "unknown",
+  "recommendations": []
+}

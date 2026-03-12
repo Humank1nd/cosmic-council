@@ -78,7 +78,7 @@ function Deploy-K8s {
     catch {
         Write-Host "🔐 Creating secrets..." -ForegroundColor Yellow
         kubectl create secret generic cc-secrets `
-            --from-literal=db_password=cosmic_council `
+            --from-literal=db_password=dream_caesar `
             --from-literal=api_key=your_api_key `
             --from-literal=jwt_secret=your_jwt_secret
     }

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-03-12T02:11:39.958350-04:00",
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\ajna\\ajna-20260312-021140.png",
+  "note": "Dream Caesar heartbeat: keep desktop agents alive, check mail, relay next-seat-only, and never stop. Latest handoff: 20260312-021135-dc-active-queue-mail-reassert.md (4s old). Ajna: desktop looks routable.",
+  "latest_handoff_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021135-dc-active-queue-mail-reassert.md",
+  "ajna_summary": "desktop looks routable",
+  "ajna_missing_active_seats": []
+}

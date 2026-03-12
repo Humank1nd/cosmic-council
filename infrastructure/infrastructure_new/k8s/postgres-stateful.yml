@@ -36,9 +36,9 @@ spec:
               name: postgres
           env:
             - name: POSTGRES_DB
-              value: cosmic_council
+              value: dream_caesar
             - name: POSTGRES_USER
-              value: cosmic_council
+              value: dream_caesar
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

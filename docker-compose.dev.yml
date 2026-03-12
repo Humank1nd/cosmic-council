@@ -6,19 +6,19 @@ services:
     image: postgres:13
     container_name: cosmic-council-postgres-dev
     environment:
-      POSTGRES_DB: ${DEV_POSTGRES_DB:-cosmic_council_dev}
-      POSTGRES_USER: ${DEV_POSTGRES_USER:-cosmic_council}
-      POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD:-cosmic_council_dev_password}
+      POSTGRES_DB: ${DEV_POSTGRES_DB:-dream_caesar_dev}
+      POSTGRES_USER: ${DEV_POSTGRES_USER:-dream_caesar}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD:-dream_caesar_dev_password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./infrastructure/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5433:5432"
     networks:
       - cosmic-council-dev-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cosmic_council -d cosmic_council_dev"]
+      test: ["CMD-SHELL", "pg_isready -U dream_caesar -d dream_caesar_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,13 +28,13 @@ services:
     image: postgres:13
     container_name: cosmic-council-postgres-perpetual-dev
     environment:
-      POSTGRES_DB: ${DEV_POSTGRES_PERPETUAL_DB:-cosmic_council_perpetual_dev}
-      POSTGRES_USER: ${DEV_POSTGRES_PERPETUAL_USER:-cosmic_council}
-      POSTGRES_PASSWORD: ${DEV_POSTGRES_PERPETUAL_PASSWORD:-cosmic_council_dev_password}
+      POSTGRES_DB: ${DEV_POSTGRES_PERPETUAL_DB:-dream_caesar_perpetual_dev}
+      POSTGRES_USER: ${DEV_POSTGRES_PERPETUAL_USER:-dream_caesar}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_PERPETUAL_PASSWORD:-dream_caesar_dev_password}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_perpetual_dev_data:/var/lib/postgresql/data
-      - ./docker/postgres/init_perpetual.sql:/docker-entrypoint-initdb.d/init_perpetual.sql
+      - ./infrastructure/docker/postgres/init_perpetual.sql:/docker-entrypoint-initdb.d/init_perpetual.sql
     ports:
       - "5435:5432"
     networks:
@@ -43,7 +43,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U cosmic_council -d cosmic_council_perpetual_dev",
+          "pg_isready -U dream_caesar -d dream_caesar_perpetual_dev",
         ]
       interval: 10s
       timeout: 5s
@@ -74,7 +74,7 @@ services:
       target: development
     container_name: cosmic-council-api-dev
     environment:
-      - DATABASE_URL=${DEV_DATABASE_URL:-postgresql://${DEV_POSTGRES_USER:-cosmic_council}:${DEV_POSTGRES_PASSWORD:-cosmic_council_dev_password}@postgres-dev:5432/${DEV_POSTGRES_DB:-cosmic_council_dev}}
+      - DATABASE_URL=${DEV_DATABASE_URL:-postgresql://${DEV_POSTGRES_USER:-dream_caesar}:${DEV_POSTGRES_PASSWORD:-dream_caesar_dev_password}@postgres-dev:5432/${DEV_POSTGRES_DB:-dream_caesar_dev}}
       - REDIS_URL=${DEV_REDIS_URL:-redis://redis-dev:6379/0}
       - ENVIRONMENT=development
       - LOG_LEVEL=DEBUG
@@ -83,7 +83,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       # Perpetual Thinking System Configuration (Development)
-      - PERPETUAL_DATABASE_URL=${DEV_PERPETUAL_DATABASE_URL:-postgresql://${DEV_POSTGRES_PERPETUAL_USER:-cosmic_council}:${DEV_POSTGRES_PERPETUAL_PASSWORD:-cosmic_council_dev_password}@postgres-perpetual-dev:5432/${DEV_POSTGRES_PERPETUAL_DB:-cosmic_council_perpetual_dev}}
+      - PERPETUAL_DATABASE_URL=${DEV_PERPETUAL_DATABASE_URL:-postgresql://${DEV_POSTGRES_PERPETUAL_USER:-dream_caesar}:${DEV_POSTGRES_PERPETUAL_PASSWORD:-dream_caesar_dev_password}@postgres-perpetual-dev:5432/${DEV_POSTGRES_PERPETUAL_DB:-dream_caesar_perpetual_dev}}
       - PERPETUAL_AI_ENABLED=true
       - PERPETUAL_AI_PROVIDER=mock
       - PERPETUAL_AI_MODEL=gpt-4
@@ -130,7 +130,7 @@ services:
       target: development
     container_name: cosmic-council-web-dev
     environment:
-      - DATABASE_URL=postgresql://cosmic_council:cosmic_council_dev_password@postgres-dev:5432/cosmic_council_dev
+      - DATABASE_URL=postgresql://dream_caesar:dream_caesar_dev_password@postgres-dev:5432/dream_caesar_dev
       - REDIS_URL=redis://redis-dev:6379/0
       - API_URL=http://api-dev:8000
       - ENVIRONMENT=development
@@ -155,7 +155,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./infrastructure/docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
       - ./static:/var/www/static
     depends_on:
       - api-dev
@@ -170,7 +170,7 @@ services:
     ports:
       - "9091:9090"
     volumes:
-      - ./docker/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml
+      - ./infrastructure/docker/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml
       - prometheus_dev_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -193,8 +193,8 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_dev_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning
-      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./infrastructure/docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./infrastructure/monitoring/grafana-dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus-dev
     networks:

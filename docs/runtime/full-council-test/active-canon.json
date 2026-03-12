@@ -1,0 +1,39 @@
+{
+  "objective": "Isolated full-council internal-mail ring test aligned to the Cosmic Council canon.",
+  "canonical_task_file": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\plans\\20260311-1305-alignment-plan.md",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "parked_seats": [],
+  "required_paths": [
+    "scripts/internal_mail.py",
+    "scripts/mail_routing.py",
+    "scripts/desktop_council_watchdog.py",
+    "scripts/desktop_handoff_runner.py",
+    "scripts/desktop_fractal_council_probe.py",
+    "src/cronus/app/tools/desktop.py"
+  ],
+  "required_keywords": [
+    "dream caesar",
+    "desktop",
+    "active-canon",
+    "mail",
+    "watchdog",
+    "dispatch",
+    "runtime discovery",
+    "observability"
+  ],
+  "drift_hints": [
+    "D:/Jokebook",
+    "center-to-",
+    "to-center",
+    "Jokebook",
+    "apps/mobile",
+    "apps/web"
+  ]
+}

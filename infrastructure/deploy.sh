@@ -48,7 +48,7 @@ deploy_k8s() {
     if ! kubectl get secret cc-secrets > /dev/null 2>&1; then
         echo "🔐 Creating secrets..."
         kubectl create secret generic cc-secrets \
-            --from-literal=db_password=cosmic_council \
+            --from-literal=db_password=dream_caesar \
             --from-literal=api_key=your_api_key \
             --from-literal=jwt_secret=your_jwt_secret
     fi

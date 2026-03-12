@@ -76,7 +76,7 @@ def configure_structured_logging(config: Dict[str, Any]) -> None:
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "DEBUG",
                 "formatter": "json",
-                "filename": config.get("log_file", "cosmic_council.log"),
+                "filename": config.get("log_file", "logs/dream_caesar.log"),
                 "maxBytes": config.get("max_bytes", 10485760),  # 10MB
                 "backupCount": config.get("backup_count", 5)
             }

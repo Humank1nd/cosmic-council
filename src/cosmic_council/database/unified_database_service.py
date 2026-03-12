@@ -40,6 +40,16 @@ from ..core.models import (
 
 logger = logging.getLogger(__name__)
 
+
+def _coerce_uuid_if_possible(value: Any) -> Any:
+    """Accept UUID objects or UUID-like strings for UUID-typed model columns."""
+    if isinstance(value, uuid.UUID):
+        return value
+    try:
+        return uuid.UUID(str(value))
+    except Exception:
+        return value
+
 class UnifiedDatabaseService:
     """Unified database service for the entire Cosmic Council system"""
     
@@ -111,6 +121,7 @@ class UnifiedDatabaseService:
                         'id': str(problem.id),
                         'title': problem.title,
                         'description': problem.description,
+                        'domain': problem.domain,
                         'complexity': problem.complexity,
                         'status': problem.status,
                         'created_at': problem.created_at,
@@ -138,9 +149,10 @@ class UnifiedDatabaseService:
     async def get_solution(self, solution_id: str) -> Optional[Dict[str, Any]]:
         """Get a solution by ID"""
         try:
+            lookup_id = _coerce_uuid_if_possible(solution_id)
             async with self.async_session() as session:
                 result = await session.execute(
-                    select(Solution).where(Solution.id == solution_id)
+                    select(Solution).where(Solution.id == lookup_id)
                 )
                 solution = result.scalar_one_or_none()
                 if solution:
@@ -231,10 +243,11 @@ class UnifiedDatabaseService:
     async def update_perpetual_session(self, session_id: str, update_data: Dict[str, Any]) -> bool:
         """Update a perpetual thinking session"""
         try:
+            lookup_id = _coerce_uuid_if_possible(session_id)
             async with self.async_session() as session:
                 result = await session.execute(
                     update(PerpetualThinkingSession)
-                    .where(PerpetualThinkingSession.id == session_id)
+                    .where(PerpetualThinkingSession.id == lookup_id)
                     .values(**update_data)
                 )
                 await session.commit()
@@ -321,10 +334,11 @@ class UnifiedDatabaseService:
     async def update_perpetual_cycle(self, cycle_id: str, update_data: Dict[str, Any]) -> bool:
         """Update a perpetual cycle"""
         try:
+            lookup_id = _coerce_uuid_if_possible(cycle_id)
             async with self.async_session() as session:
                 result = await session.execute(
                     update(PerpetualCycle)
-                    .where(PerpetualCycle.id == cycle_id)
+                    .where(PerpetualCycle.id == lookup_id)
                     .values(**update_data)
                 )
                 await session.commit()

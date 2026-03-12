@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-03-11T14:03:50.383527-04:00",
+  "note_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\handoffs\\20260311-140350-dc-active-queue-mail-reassert.md",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "submit_mode": "both",
+  "delivery_mode": "internal-mail",
+  "active_canon_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\active-canon.json",
+  "deliveries": [
+    {
+      "transport": "internal_mail",
+      "sender": "red",
+      "recipient": "orange",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\orange\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-red.md"
+    },
+    {
+      "transport": "internal_mail",
+      "sender": "orange",
+      "recipient": "yellow",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\yellow\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-orange.md"
+    },
+    {
+      "transport": "internal_mail",
+      "sender": "yellow",
+      "recipient": "green",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\green\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-yellow.md"
+    },
+    {
+      "transport": "internal_mail",
+      "sender": "green",
+      "recipient": "blue",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\blue\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-green.md"
+    },
+    {
+      "transport": "internal_mail",
+      "sender": "blue",
+      "recipient": "purple",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\purple\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-blue.md"
+    },
+    {
+      "transport": "internal_mail",
+      "sender": "purple",
+      "recipient": "red",
+      "thread": "DC-ACTIVE-CANON",
+      "success": true,
+      "mail_path": "D:\\dream-caesar\\docs\\runtime\\full-council-test\\mail\\red\\20260311-140350-next-seat-live-terminal-relay-exact-paths-keepalive-purple.md"
+    }
+  ]
+}

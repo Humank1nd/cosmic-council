@@ -1,5 +1,5 @@
 """
-Unified Master Orchestration System for Cosmic Council
+Unified Master Orchestration System for Agent Orchestrator
 Integrates the master orchestration system with the detailed ROYGBV workflow engine
 and provides backward compatibility for basic orchestration functionality.
 
@@ -188,7 +188,7 @@ class MasterOrchestrationSystem:
             }
         else:
             # Enhanced mode requires real configuration
-            database_url = "postgresql+asyncpg://user:password@localhost/cosmic_council"
+            database_url = "postgresql+asyncpg://user:password@localhost/dream_caesar"
             openai_api_key = "your-openai-api-key"
             n8n_webhook_url = "https://your-n8n-instance.com/webhook/workflow"
             orchestration_config = {
@@ -316,7 +316,7 @@ class MasterOrchestrationSystem:
 class EnhancedMasterOrchestrationSystem:
     """
     Enhanced Master Orchestration System
-    Orchestrates all components of the Cosmic Council system
+    Orchestrates all components of the Agent Orchestrator system
     """
     
     def __init__(self, 
@@ -819,7 +819,7 @@ async def main():
     """Example usage of the enhanced master orchestration system"""
     
     orchestration_system = EnhancedMasterOrchestrationSystem(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         openai_api_key="your-openai-api-key",
         n8n_webhook_url="https://your-n8n-instance.com/webhook/workflow",
         orchestration_config={

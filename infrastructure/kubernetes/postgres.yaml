@@ -71,9 +71,9 @@ spec:
             command:
             - pg_isready
             - -U
-            - cosmic_council
+            - dream_caesar
             - -d
-            - cosmic_council
+            - dream_caesar
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
@@ -83,9 +83,9 @@ spec:
             command:
             - pg_isready
             - -U
-            - cosmic_council
+            - dream_caesar
             - -d
-            - cosmic_council
+            - dream_caesar
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 5
@@ -236,7 +236,7 @@ data:
     GROUP BY status;
     
     -- Grant permissions
-    GRANT ALL PRIVILEGES ON DATABASE cosmic_council TO cosmic_council;
-    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cosmic_council;
-    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cosmic_council;
-    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO cosmic_council;
+    GRANT ALL PRIVILEGES ON DATABASE dream_caesar TO dream_caesar;
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO dream_caesar;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO dream_caesar;
+    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO dream_caesar;

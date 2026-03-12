@@ -19,7 +19,7 @@ class InteractiveCaseStudyInterface:
     
     async def start_interactive_session(self):
         """Start an interactive case study session"""
-        print("🌌 Cosmic Council Case Study Interface")
+        print("🌌 Agent Orchestrator Case Study Interface")
         print("=" * 60)
         print("Welcome to the interactive case study system!")
         print("You can browse templates, generate custom case studies, or create your own.")
@@ -38,7 +38,7 @@ class InteractiveCaseStudyInterface:
             choice = input("\nEnter your choice (0-6): ").strip()
             
             if choice == "0":
-                print("Thank you for using the Cosmic Council Case Study Interface! 🌌")
+                print("Thank you for using the Agent Orchestrator Case Study Interface! 🌌")
                 break
             elif choice == "1":
                 await self._browse_templates()
@@ -218,11 +218,11 @@ class InteractiveCaseStudyInterface:
         """Use a template as-is"""
         print(f"\n✅ Using template: {template.title}")
         print("This template is ready to use for your problem-solving workflow.")
-        print("You can now proceed with the Cosmic Council workflow using this case study.")
+        print("You can now proceed with the Agent Orchestrator workflow using this case study.")
         print()
         
         # Here you would integrate with the workflow system
-        print("🚀 Ready to start the Cosmic Council workflow with this case study!")
+        print("🚀 Ready to start the Agent Orchestrator workflow with this case study!")
         input("Press Enter to continue...")
     
     async def _customize_template(self, template: CaseStudyTemplate):
@@ -533,11 +533,11 @@ class InteractiveCaseStudyInterface:
         """Use a generated case study"""
         print(f"\n✅ Using case study: {case_study.title}")
         print("This case study is ready to use for your problem-solving workflow.")
-        print("You can now proceed with the Cosmic Council workflow using this case study.")
+        print("You can now proceed with the Agent Orchestrator workflow using this case study.")
         print()
         
         # Here you would integrate with the workflow system
-        print("🚀 Ready to start the Cosmic Council workflow with this case study!")
+        print("🚀 Ready to start the Agent Orchestrator workflow with this case study!")
         input("Press Enter to continue...")
     
     async def _export_specific_case_study(self, case_study: GeneratedCaseStudy):

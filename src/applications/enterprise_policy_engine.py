@@ -1,5 +1,5 @@
 """
-Enterprise Policy Engine for Cosmic Council
+Enterprise Policy Engine for Agent Orchestrator
 Advanced policy engine for enterprise decision-making and resource allocation
 """
 
@@ -30,7 +30,7 @@ class PolicyType(Enum):
     SUSTAINABILITY = "sustainability"
 
 class EnterpriseType(Enum):
-    """Six Cosmic Council Enterprises"""
+    """Six Agent Orchestrator Enterprises"""
     RED_OWL = "red_owl"
     ORANGE_ORANGUTAN = "orange_orangutan"
     YELLOW_HONEYBEE = "yellow_honeybee"

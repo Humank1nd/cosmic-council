@@ -1,5 +1,5 @@
 """
-Enhanced Agent Performance Tracking System for Cosmic Council
+Enhanced Agent Performance Tracking System for Agent Orchestrator
 Tracks and optimizes the performance of the 6-agent ROYGBV system
 """
 
@@ -31,7 +31,7 @@ from ..core.models import (
 logger = logging.getLogger(__name__)
 
 class AgentType(Enum):
-    """The six Cosmic Council agents in ROYGBV order"""
+    """The six Agent Orchestrator agents in ROYGBV order"""
     RED_OWL = "red_owl"           # Research & Inquiry
     ORANGE_ORANGUTAN = "orange_orangutan"  # Planning & Logistics
     YELLOW_HONEYBEE = "yellow_honeybee"    # Development & Creativity
@@ -672,7 +672,7 @@ async def main():
     """Example usage of the enhanced agent performance tracking system"""
     
     tracker = EnhancedAgentPerformanceTracker(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         performance_config={
             'metric_retention_days': 90,
             'alert_thresholds': {

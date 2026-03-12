@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-03-12T02:12:26.116128-04:00",
+  "queue_state": "moving",
+  "queue_reasons": [],
+  "canon_validity": {
+    "valid": true,
+    "reason": null,
+    "missing_paths": []
+  },
+  "latest_handoff": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021135-dc-active-queue-mail-reassert.md",
+  "latest_handoff_metadata": {
+    "task_id": "DC-ACTIVE-QUEUE",
+    "from_seat": null,
+    "to_seat": null,
+    "is_dream_caesar": true,
+    "filename_seat": null
+  },
+  "handoff_age_seconds": 50,
+  "handoff_stalled": false,
+  "latest_active_handoff": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021012-dc-blue-terminal-work-to-purple.md",
+  "latest_active_handoff_metadata": {
+    "task_id": "DC-ACTIVE-CANON-WORK",
+    "from_seat": "blue",
+    "to_seat": "purple",
+    "is_dream_caesar": true,
+    "filename_seat": "blue"
+  },
+  "active_handoff_age_seconds": 134,
+  "active_handoff_stalled": false,
+  "latest_mail_log_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\mail-log.jsonl",
+  "latest_mail_record": {
+    "timestamp": "2026-03-12T02:10:12.052643-04:00",
+    "from": "blue",
+    "to": "purple",
+    "subject": "active-canon-terminal-work-blue",
+    "thread": "DC-ACTIVE-CANON",
+    "priority": "high",
+    "path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\purple\\20260312-021012-active-canon-terminal-work-blue.md",
+    "attachments": [
+      "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021012-dc-blue-terminal-work-to-purple.md",
+      "D:\\dream-caesar\\docs\\runtime\\desktop-council\\mail\\blue\\20260312-020947-active-canon-terminal-work-green.md"
+    ]
+  },
+  "mail_age_seconds": 134,
+  "mail_stalled": false,
+  "stalled": false,
+  "stall_after_seconds": 420,
+  "poke_cooldown_seconds": 300,
+  "active_canon_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\active-canon.json",
+  "active_seats": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple"
+  ],
+  "drift": {
+    "detected": false,
+    "reason": null,
+    "skipped": true,
+    "note_type": "dream-caesar-operations",
+    "required_path_hits": [],
+    "required_keyword_hits": [],
+    "drift_hint_hits": []
+  },
+  "poked_count": 0,
+  "poked": [],
+  "observe_only": true
+}

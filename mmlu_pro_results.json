@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-03-10T16:33:03.013526",
+  "benchmark": "MMLU-Pro",
+  "samples_per_category": 2,
+  "total_questions": 28,
+  "total_correct": 11,
+  "overall_accuracy": 39.285714285714285,
+  "results_by_category": {
+    "biology": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "green"
+    },
+    "business": {
+      "correct": 2,
+      "total": 2,
+      "accuracy": 100.0,
+      "totem": "yellow"
+    },
+    "chemistry": {
+      "correct": 1,
+      "total": 2,
+      "accuracy": 50.0,
+      "totem": "green"
+    },
+    "computer science": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "orange"
+    },
+    "economics": {
+      "correct": 1,
+      "total": 2,
+      "accuracy": 50.0,
+      "totem": "yellow"
+    },
+    "engineering": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "orange"
+    },
+    "health": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "green"
+    },
+    "history": {
+      "correct": 1,
+      "total": 2,
+      "accuracy": 50.0,
+      "totem": "blue"
+    },
+    "law": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "purple"
+    },
+    "math": {
+      "correct": 0,
+      "total": 2,
+      "accuracy": 0.0,
+      "totem": "red"
+    },
+    "other": {
+      "correct": 2,
+      "total": 2,
+      "accuracy": 100.0,
+      "totem": "purple"
+    },
+    "philosophy": {
+      "correct": 1,
+      "total": 2,
+      "accuracy": 50.0,
+      "totem": "purple"
+    },
+    "physics": {
+      "correct": 2,
+      "total": 2,
+      "accuracy": 100.0,
+      "totem": "red"
+    },
+    "psychology": {
+      "correct": 1,
+      "total": 2,
+      "accuracy": 50.0,
+      "totem": "blue"
+    }
+  }
+}

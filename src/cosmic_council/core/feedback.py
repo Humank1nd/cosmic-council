@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced Feedback Loop System for Cosmic Council Framework
+Enhanced Feedback Loop System for Agent Orchestrator Framework
 Sophisticated feedback mechanisms for continuous improvement
 """
 

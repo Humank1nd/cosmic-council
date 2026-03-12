@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Philosophical Exploration for Cosmic Council Framework
+Philosophical Exploration for Agent Orchestrator Framework
 Reflective and spiritual inquiries about existence, purpose, and interconnectedness
 """
 

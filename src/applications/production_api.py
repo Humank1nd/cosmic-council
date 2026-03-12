@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Production-Ready API for Cosmic Council Framework
+Production-Ready API for Agent Orchestrator Framework
 """
 
 import asyncio
@@ -16,7 +16,10 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import uvicorn
 
-from production_config import get_config
+try:
+    from production_config import get_config
+except ModuleNotFoundError:
+    from config.production_config import get_config
 from error_handling import handle_error, ErrorContext, ErrorSeverity, ErrorCategory
 from health_monitoring import get_health_monitor, run_health_checks, get_system_health, record_request
 from src.core.services import CosmicCouncil, ProblemStatement, ProblemComplexity
@@ -41,7 +44,7 @@ security = HTTPBearer()
 async def lifespan(app: FastAPI):
     """Application lifespan management"""
     # Startup
-    logger.info("Starting Cosmic Council API...")
+    logger.info("Starting Agent Orchestrator API...")
     
     # Initialize health monitoring
     await health_monitor.run_health_checks()
@@ -58,12 +61,12 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
-    logger.info("Shutting down Cosmic Council API...")
+    logger.info("Shutting down Agent Orchestrator API...")
 
 # Create FastAPI app
 app = FastAPI(
-    title="Cosmic Council Framework API",
-    description="Production-ready API for the Cosmic Council problem-solving framework",
+    title="Agent Orchestrator Framework API",
+    description="Production-ready API for the Agent Orchestrator problem-solving framework",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -189,7 +192,7 @@ async def get_metrics():
         handle_error(e, ErrorContext(component="api", operation="get_metrics"))
         raise HTTPException(status_code=500, detail="Failed to get metrics")
 
-# Cosmic Council endpoints
+# Agent Orchestrator endpoints
 @app.get("/api/v1/rules")
 async def get_rules(token: str = Depends(verify_token)):
     return {
@@ -203,7 +206,7 @@ async def structured_interaction(
     payload: Dict[str, Any],
     token: str = Depends(verify_token)
 ):
-    """Process problem using structured 9-step Cosmic Council interaction"""
+    """Process problem using structured 9-step Agent Orchestrator interaction"""
     try:
         problem = payload.get("problem", "")
         context = payload.get("context", {})
@@ -267,7 +270,7 @@ async def solve_problem(
     problem_data: Dict[str, Any],
     token: str = Depends(verify_token)
 ):
-    """Solve a problem using the Cosmic Council framework"""
+    """Solve a problem using the Agent Orchestrator framework"""
     try:
         # Validate problem data
         required_fields = ["title", "description", "complexity", "domain", "stakeholders", "constraints", "success_criteria"]
@@ -354,7 +357,7 @@ async def get_status(token: str = Depends(verify_token)):
         return {
             "status": "success",
             "system": {
-                "name": "Cosmic Council Framework",
+                "name": "Agent Orchestrator Framework",
                 "version": "1.0.0",
                 "environment": config.environment,
                 "uptime_seconds": (datetime.now(timezone.utc) - health_monitor.start_time).total_seconds(),
@@ -397,7 +400,7 @@ async def get_config_info(token: str = Depends(verify_token)):
 async def get_usage(token: str = Depends(verify_token)):
     """Return a concise usage guide for the 8-step workflow"""
     guide = {
-        "title": "Using the Cosmic Council GPT Framework",
+        "title": "Using the Agent Orchestrator GPT Framework",
         "steps": [
             {
                 "step": 1,
@@ -660,7 +663,7 @@ async def api_manual_examples(token: str = Depends(verify_token)):
 async def root():
     """Root endpoint"""
     return {
-        "message": "Cosmic Council Framework API",
+        "message": "Agent Orchestrator Framework API",
         "version": "1.0.0",
         "status": "running",
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -695,7 +698,7 @@ def run_server():
         # Setup logging
         config.setup_logging()
         
-        logger.info(f"Starting Cosmic Council API on {config.api_host}:{config.api_port}")
+        logger.info(f"Starting Agent Orchestrator API on {config.api_host}:{config.api_port}")
         
         # Run server
         uvicorn.run(

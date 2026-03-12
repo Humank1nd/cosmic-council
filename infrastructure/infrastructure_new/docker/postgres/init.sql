@@ -194,13 +194,13 @@ $$ language 'plpgsql';
 -- SELECT cron.schedule('cleanup-old-records', '0 2 * * *', 'SELECT cleanup_old_records();');
 
 -- Grant permissions
-GRANT ALL PRIVILEGES ON DATABASE cosmic_council TO cosmic_council;
+GRANT ALL PRIVILEGES ON DATABASE dream_caesar TO dream_caesar;
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO dream_caesar;
 
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO dream_caesar;
 
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO cosmic_council;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO dream_caesar;
 
 -- Insert initial data
 INSERT INTO

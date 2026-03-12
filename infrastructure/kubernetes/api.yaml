@@ -25,7 +25,7 @@ spec:
         - containerPort: 8000
         env:
         - name: DATABASE_URL
-          value: "postgresql://cosmic_council:$(DATABASE_PASSWORD)@postgres-service:5432/cosmic_council"
+          value: "postgresql://dream_caesar:$(DATABASE_PASSWORD)@postgres-service:5432/dream_caesar"
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -55,7 +55,7 @@ spec:
               key: ANTHROPIC_API_KEY
         # Perpetual Thinking System Configuration
         - name: PERPETUAL_DATABASE_URL
-          value: "postgresql://cosmic_council:$(DATABASE_PASSWORD)@postgres-perpetual-service:5432/cosmic_council_perpetual"
+          value: "postgresql://dream_caesar:$(DATABASE_PASSWORD)@postgres-perpetual-service:5432/dream_caesar_perpetual"
         - name: PERPETUAL_AI_ENABLED
           value: "true"
         - name: PERPETUAL_AI_PROVIDER

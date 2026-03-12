@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Core Types and Enums for Cosmic Council Framework
+Core Types and Enums for Agent Orchestrator Framework
 Centralized definitions to avoid duplication
 """
 
@@ -10,7 +10,7 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
 class EnterpriseType(Enum):
-    """The six enterprise types in the Cosmic Council"""
+    """The six enterprise types in the Agent Orchestrator"""
     RED_OWL = "red_owl"
     ORANGE_ORANGUTAN = "orange_orangutan"
     YELLOW_HONEYBEE = "yellow_honeybee"
@@ -18,12 +18,52 @@ class EnterpriseType(Enum):
     BLUE_DOLPHIN = "blue_dolphin"
     PURPLE_ELEPHANT = "purple_elephant"
 
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.value == other
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return hash(self.value)
+
 class ProblemComplexity(Enum):
     """Problem complexity levels"""
     SIMPLE = "simple"
     MODERATE = "moderate"
     COMPLEX = "complex"
-    EXTREME = "extreme"
+    SYSTEMIC = "systemic"
+
+    def __lt__(self, other):
+        if not isinstance(other, ProblemComplexity):
+            return NotImplemented
+        order = [ProblemComplexity.SIMPLE, ProblemComplexity.MODERATE,
+                 ProblemComplexity.COMPLEX, ProblemComplexity.SYSTEMIC]
+        return order.index(self) < order.index(other)
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.value == other
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return hash(self.value)
+
+class ProblemDomain(Enum):
+    """Specific domains for Agent Orchestrator problem statements."""
+    SCIENCE_AI = "science_ai"
+    GOVERNANCE = "governance"
+    BUSINESS = "business"
+    CREATIVITY = "creativity"
+    PERSONAL_GROWTH = "personal_growth"
+    GENERAL = "general"
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.value == other
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return hash(self.value)
 
 class CycleStatus(Enum):
     """Cycle processing status"""
@@ -59,29 +99,49 @@ class HealthStatus(Enum):
 
 @dataclass
 class ProblemStatement:
-    """Problem statement for the Cosmic Council to solve"""
+    """Problem statement for the Agent Orchestrator to solve"""
+    title: str
+    description: str
+    complexity: ProblemComplexity
+    domain: str | ProblemDomain
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    title: str = ""
-    description: str = ""
-    complexity: ProblemComplexity = ProblemComplexity.MODERATE
-    domain: str = ""
     stakeholders: List[str] = field(default_factory=list)
     constraints: Dict[str, Any] = field(default_factory=dict)
     success_criteria: List[str] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    def __post_init__(self):
+        if not self.title:
+            raise ValueError("title cannot be empty")
+        if isinstance(self.domain, ProblemDomain):
+            self.domain = self.domain.value
+        if not self.domain:
+            raise ValueError("domain cannot be empty")
+
+    def __str__(self) -> str:
+        return f"ProblemStatement(title={self.title!r}, description={self.description!r}, complexity={self.complexity.value})"
+
 @dataclass
 class EnterpriseResult:
     """Result from an enterprise's processing"""
-    enterprise: EnterpriseType
+    enterprise_type: EnterpriseType
     status: str = "pending"
-    insights: Dict[str, Any] = field(default_factory=dict)
-    recommendations: List[str] = field(default_factory=list)
-    next_actions: List[str] = field(default_factory=list)
     confidence: float = 0.0
+    insights: List[str] = field(default_factory=list)
+    recommendations: List[str] = field(default_factory=list)
     processing_time: float = 0.0
+    next_actions: List[str] = field(default_factory=list)
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def __post_init__(self):
+        if not 0.0 <= self.confidence <= 1.0:
+            raise ValueError("confidence must be between 0.0 and 1.0")
+
+    @property
+    def enterprise(self) -> EnterpriseType:
+        """Backward compatibility alias for enterprise_type"""
+        return self.enterprise_type
 
 @dataclass
 class CycleResult:

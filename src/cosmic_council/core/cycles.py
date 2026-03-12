@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🌀 Cosmic Council Cycles - Fractal Orchestration
+🌀 Agent Orchestrator Cycles - Fractal Orchestration
 108-cycle fractal system for deeper recursion and infinite evolution
 """
 
@@ -69,7 +69,7 @@ class FractalCycleResult:
 
 class CosmicCouncilCycles:
     """
-    🌀 Cosmic Council Cycles - Fractal Orchestration
+    🌀 Agent Orchestrator Cycles - Fractal Orchestration
     
     Implements the 108-cycle fractal system for deeper recursion.
     When the linear hexagon needs deeper processing, this system
@@ -79,7 +79,7 @@ class CosmicCouncilCycles:
     
     def __init__(self, hexagon: CosmicCouncilHexagon):
         self.hexagon = hexagon
-        self.name = "Cosmic Council Cycles"
+        self.name = "Agent Orchestrator Cycles"
         
         # Cycle configuration
         self.max_fractal_depth = 108  # Sacred number
@@ -89,7 +89,7 @@ class CosmicCouncilCycles:
         # Cycle history
         self.fractal_cycle_history: List[FractalCycleResult] = []
         
-        logger.info("🌀 Cosmic Council Cycles initialized - Fractal orchestration active")
+        logger.info("🌀 Agent Orchestrator Cycles initialized - Fractal orchestration active")
     
     async def process_problem_fractal(self, 
                                     problem: ProblemStatement,
@@ -484,7 +484,7 @@ class CosmicCouncilCycles:
 async def demo_cycles():
     """Demo the fractal cycle processing"""
     
-    print("🌀 Cosmic Council Cycles Demo")
+    print("🌀 Agent Orchestrator Cycles Demo")
     print("=" * 50)
     
     # Initialize hexagon and cycles

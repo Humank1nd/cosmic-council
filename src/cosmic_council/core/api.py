@@ -60,11 +60,13 @@ from sqlalchemy.orm import Session, selectinload
 
 # Configure comprehensive logging
 from ..utils.logging_config import setup_logging, get_logger, log_request, log_response, log_performance, log_error, log_audit
+from ..utils.local_paths import API_LOG_FILE, PERPETUAL_DB, ensure_local_storage_roots
 
 # Setup logging with file rotation
+ensure_local_storage_roots()
 setup_logging(
     log_level="INFO",
-    log_file="logs/cosmic_council.log",
+    log_file=str(API_LOG_FILE),
     use_json=False,  # Use structured format for readability
     max_bytes=10 * 1024 * 1024,  # 10MB
     backup_count=5
@@ -270,18 +272,40 @@ class AuditLogRepository:
                   user_id: str, old_values: Optional[Dict] = None, 
                   new_values: Optional[Dict] = None):
         """Log an audit action"""
+        def _coerce_uuid(value: Any) -> Optional[uuid.UUID]:
+            if isinstance(value, uuid.UUID):
+                return value
+            if value in (None, "", "anonymous"):
+                return None
+            try:
+                return uuid.UUID(str(value))
+            except Exception:
+                return None
+
+        def _json_safe(value: Any) -> Any:
+            try:
+                return json.loads(json.dumps(value, default=str))
+            except Exception:
+                return {"repr": repr(value)}
+
         try:
             db_manager = get_database_manager()
             with db_manager.get_session() as session:
+                parsed_user_id = _coerce_uuid(user_id)
+                parsed_resource_id = _coerce_uuid(resource_id)
                 audit_log = AuditLogModel(
                     id=uuid.uuid4(),
                     action=action,
                     resource_type=resource_type,
-                    resource_id=str(resource_id),
-                    user_id=user_id,
-                    old_values=old_values or {},
-                    new_values=new_values or {},
-                    timestamp=datetime.now(timezone.utc)
+                    resource_id=parsed_resource_id,
+                    user_id=parsed_user_id,
+                    details={
+                        "old_values": _json_safe(old_values or {}),
+                        "new_values": _json_safe(new_values or {}),
+                        "raw_resource_id": str(resource_id) if resource_id is not None else None,
+                        "raw_user_id": str(user_id) if user_id is not None else None,
+                    },
+                    created_at=datetime.now(timezone.utc),
                 )
                 session.add(audit_log)
                 session.commit()
@@ -1269,7 +1293,9 @@ async def lifespan(app: FastAPI):
         # Initialize perpetual thinking system
         try:
             # Initialize database service for perpetual system
-            perpetual_db_service = PerpetualDatabaseService("sqlite+aiosqlite:///perpetual_thinking.db")
+            perpetual_db_service = PerpetualDatabaseService(
+                f"sqlite+aiosqlite:///{PERPETUAL_DB.as_posix()}"
+            )
             await perpetual_db_service.create_tables()
             logger.info("Persistent perpetual thinking database prepared")
 
@@ -1303,7 +1329,7 @@ async def lifespan(app: FastAPI):
             perpetual_108_cycle_integration = None
         
         logger.info("AI integration and enhanced workflow initialized")
-        logger.info("Cosmic Council API Server started successfully")
+        logger.info("Agent Orchestrator API Server started successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize API server: {str(e)}")
@@ -1678,7 +1704,12 @@ def _normalize_session_payload(payload: Optional[Dict[str, Any]]) -> Optional[Di
 def _get_session_value(session: Any, key: str, default: Any = None) -> Any:
     if isinstance(session, dict):
         return session.get(key, default)
-    return getattr(session, key, default)
+    value = getattr(session, key, default)
+    # Test doubles (unittest.mock.Mock) can fabricate arbitrary attributes,
+    # which then fail JSON serialization. Treat those fabricated values as missing.
+    if value is not None and value.__class__.__module__ == "unittest.mock":
+        return default
+    return value
 
 @app.get("/", response_model=ResponseModel)
 async def root():
@@ -3341,7 +3372,7 @@ try:
         CycleType,
         AIEnhancementLevel
     )
-    from ..database.unified_database_service import DatabaseService, PerpetualDatabaseService
+    from ..database.unified_database_service import PerpetualDatabaseService
     from ..integrations.perpetual_guardrail_integration import (
         PolicyEngine,
         PerpetualGuardrailIntegration,
@@ -3456,7 +3487,14 @@ async def create_perpetual_session(
     try:
         # Convert AI enhancement level string to enum
         try:
-            ai_enhancement_level = AIEnhancementLevel(request.ai_enhancement_level)
+            legacy_level_map = {
+                "assisted": "basic",
+                "autonomous": "advanced",
+            }
+            normalized_level = legacy_level_map.get(
+                request.ai_enhancement_level, request.ai_enhancement_level
+            )
+            ai_enhancement_level = AIEnhancementLevel(normalized_level)
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid AI enhancement level: {request.ai_enhancement_level}")
         
@@ -3538,6 +3576,8 @@ async def create_perpetual_session(
             }
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Failed to create AI-enhanced perpetual session: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create AI-enhanced perpetual session: {str(e)}")
@@ -4455,11 +4495,15 @@ async def websocket_endpoint(websocket: WebSocket):
 # Main execution
 def main():
     """Main function to start the API server"""
+    host = os.environ.get("API_HOST", "127.0.0.1")
+    port = int(os.environ.get("API_PORT", "8012"))
+    reload_enabled = os.environ.get("API_RELOAD", "false").lower() == "true"
+
     uvicorn.run(
         "src.cosmic_council.core.api:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
+        host=host,
+        port=port,
+        reload=reload_enabled,
         log_level="info"
     )
 

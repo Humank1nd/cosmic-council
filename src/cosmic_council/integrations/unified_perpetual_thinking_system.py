@@ -1,5 +1,5 @@
 """
-Unified Perpetual Thinking System for Cosmic Council
+Unified Perpetual Thinking System for Agent Orchestrator
 Combines basic, quantum, and AI-enhanced perpetual thinking engines.
 
 This is the primary and only perpetual thinking system file - all other perpetual thinking files

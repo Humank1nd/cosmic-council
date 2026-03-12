@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Health Monitoring and Metrics System for Cosmic Council Framework
+Health Monitoring and Metrics System for Agent Orchestrator Framework
 """
 
 import asyncio

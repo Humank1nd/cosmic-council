@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Machine Learning Performance Optimizer
+Agent Orchestrator Framework - Machine Learning Performance Optimizer
 
 This module provides AI-driven performance optimization using machine learning
 techniques to predict and optimize system performance:
@@ -14,7 +14,7 @@ techniques to predict and optimize system performance:
 - Performance pattern recognition
 - Smart caching strategies
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -724,7 +724,7 @@ class MLPerformanceOptimizer:
 
 async def demo_ml_performance_optimization():
     """Demonstrate ML-based performance optimization"""
-    print("🤖 Cosmic Council Framework - ML Performance Optimization Demo")
+    print("🤖 Agent Orchestrator Framework - ML Performance Optimization Demo")
     print("=" * 70)
     
     # Create ML performance configuration

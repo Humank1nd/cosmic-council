@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Performance Optimization System
+Agent Orchestrator Framework - Performance Optimization System
 
 This module provides comprehensive performance optimization for handling multiple
 concurrent problem-solving cycles, including:
@@ -16,7 +16,7 @@ concurrent problem-solving cycles, including:
 - API response caching
 - Real-time performance analytics
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -621,7 +621,7 @@ class PerformanceOptimizer:
 
 async def demo_performance_optimization():
     """Demonstrate performance optimization capabilities"""
-    print("🚀 Cosmic Council Framework - Performance Optimization Demo")
+    print("🚀 Agent Orchestrator Framework - Performance Optimization Demo")
     print("=" * 70)
     
     # Create performance optimizer

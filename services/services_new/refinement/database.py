@@ -685,7 +685,7 @@ if __name__ == "__main__":
         print("=== Database Integration Test ===")
         
         # Initialize database (you'll need to set up PostgreSQL first)
-        db_url = "postgresql+asyncpg://user:password@localhost/cosmic_council"
+        db_url = "postgresql+asyncpg://user:password@localhost/dream_caesar"
         db_manager = initialize_database(db_url)
         
         try:

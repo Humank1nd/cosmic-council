@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agent Orchestrator - LLM Wrapper</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --accent: #22d3ee;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+        }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #0b1021 0%, #111827 50%, #0b1021 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .wrapper {
+            width: min(1080px, 100%);
+            background: var(--panel);
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
+            padding: 24px 28px;
+        }
+        h1 {
+            margin: 0 0 8px;
+            font-size: 26px;
+            letter-spacing: 0.5px;
+        }
+        p.subtitle {
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--muted);
+            letter-spacing: 0.2px;
+        }
+        select, input, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid #1f2937;
+            background: #0b1221;
+            color: var(--text);
+            padding: 12px;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+        }
+        textarea {
+            min-height: 160px;
+            resize: vertical;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 4px;
+        }
+        button {
+            background: var(--accent);
+            color: #0b1021;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.08s ease, box-shadow 0.12s ease;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(34, 211, 238, 0.25);
+        }
+        .status {
+            min-height: 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        pre {
+            background: #0b1221;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 14px;
+            color: #d1d5db;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 140px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: rgba(34, 211, 238, 0.12);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--accent);
+            margin-left: 8px;
+        }
+        @media (max-width: 720px) {
+            .wrapper { padding: 18px; }
+            button { width: 100%; justify-content: center; }
+            .actions { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>LLM Wrapper <span class="pill">Pick model → paste key → run</span></h1>
+        <p class="subtitle">Lightweight proxy to any supported model. Keys are only sent with this request and are not stored.</p>
+
+        <div class="grid">
+            <div>
+                <label for="modelSelect">Model</label>
+                <select id="modelSelect"></select>
+            </div>
+            <div>
+                <label for="apiKey">API Key</label>
+                <input id="apiKey" type="password" autocomplete="off" placeholder="sk- or api key" />
+            </div>
+            <div>
+                <label for="temperature">Temperature (0-1)</label>
+                <input id="temperature" type="number" min="0" max="1" step="0.1" value="0.7" />
+            </div>
+        </div>
+
+        <label for="prompt">Prompt</label>
+        <textarea id="prompt" placeholder="Ask the selected model..."></textarea>
+
+        <div class="actions">
+            <button id="sendBtn">Send Prompt</button>
+            <div class="status" id="status">Ready.</div>
+        </div>
+
+        <label>Output</label>
+        <pre id="output"></pre>
+    </div>
+
+    <script>
+        const modelSelect = document.getElementById("modelSelect");
+        const apiKeyInput = document.getElementById("apiKey");
+        const promptInput = document.getElementById("prompt");
+        const temperatureInput = document.getElementById("temperature");
+        const statusEl = document.getElementById("status");
+        const outputEl = document.getElementById("output");
+        const sendBtn = document.getElementById("sendBtn");
+
+        async function loadModels() {
+            try {
+                const res = await fetch("/api/llm/models");
+                const data = await res.json();
+                modelSelect.innerHTML = "";
+                data.models.forEach((entry) => {
+                    const opt = document.createElement("option");
+                    opt.value = `${entry.provider}::${entry.model}`;
+                    opt.textContent = entry.label || `${entry.provider} - ${entry.model}`;
+                    modelSelect.appendChild(opt);
+                });
+                statusEl.textContent = "Models loaded.";
+            } catch (err) {
+                statusEl.textContent = "Failed to load models list.";
+                console.error(err);
+            }
+        }
+
+        async function sendPrompt() {
+            const selection = (modelSelect.value || "").split("::");
+            const provider = selection[0];
+            const model = selection[1];
+            const apiKey = apiKeyInput.value.trim();
+            const prompt = promptInput.value.trim();
+            const temperature = parseFloat(temperatureInput.value) || 0.7;
+
+            if (!provider || !model) {
+                statusEl.textContent = "Pick a model.";
+                return;
+            }
+            if (!apiKey) {
+                statusEl.textContent = "Enter an API key for the selected provider.";
+                return;
+            }
+            if (!prompt) {
+                statusEl.textContent = "Enter a prompt.";
+                return;
+            }
+
+            sendBtn.disabled = true;
+            statusEl.textContent = "Sending...";
+            outputEl.textContent = "";
+
+            try {
+                const res = await fetch("/api/llm/infer", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ provider, model, api_key: apiKey, prompt, temperature })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    statusEl.textContent = data.detail || "Request failed.";
+                    return;
+                }
+                statusEl.textContent = `${data.provider} · ${data.model}`;
+                outputEl.textContent = data.output || "";
+            } catch (err) {
+                statusEl.textContent = "Error contacting backend.";
+                console.error(err);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        sendBtn.addEventListener("click", sendPrompt);
+        loadModels();
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced AI Training Capabilities for Cosmic Council Framework
+Enhanced AI Training Capabilities for Agent Orchestrator Framework
 """
 
 import asyncio
@@ -42,7 +42,7 @@ class TrainingResult:
     timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 class EnhancedAITrainingSystem:
-    """Enhanced AI Training System for Cosmic Council"""
+    """Enhanced AI Training System for Agent Orchestrator"""
     
     def __init__(self):
         self.name = "Enhanced AI Training System"

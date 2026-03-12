@@ -1,5 +1,5 @@
 """
-Analytics Dashboard for Cosmic Council
+Analytics Dashboard for Agent Orchestrator
 Comprehensive analytics dashboard for tracking problem-solving effectiveness and cycle metrics
 """
 
@@ -135,7 +135,7 @@ class AnalyticsDashboard:
         """Initialize default dashboard configuration"""
         self.dashboard_configs = {
             "overview": {
-                "title": "Cosmic Council Overview",
+                "title": "Agent Orchestrator Overview",
                 "description": "High-level overview of system performance and effectiveness",
                 "widgets": [
                     "kpi_overview", "cycle_trends", "enterprise_performance", 

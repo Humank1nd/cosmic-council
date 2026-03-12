@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Performance Monitoring and Analytics
+Agent Orchestrator Framework - Performance Monitoring and Analytics
 
 This module provides comprehensive performance monitoring and analytics including:
 
@@ -15,7 +15,7 @@ This module provides comprehensive performance monitoring and analytics includin
 - Performance reporting and dashboards
 - Performance optimization recommendations
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -921,7 +921,7 @@ class PerformanceMonitor:
 
 async def demo_performance_monitoring():
     """Demonstrate performance monitoring capabilities"""
-    print("📊 Cosmic Council Framework - Performance Monitoring Demo")
+    print("📊 Agent Orchestrator Framework - Performance Monitoring Demo")
     print("=" * 70)
     
     try:

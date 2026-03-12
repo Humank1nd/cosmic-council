@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Production Configuration for Cosmic Council Framework
+Production Configuration for Agent Orchestrator Framework
 """
 
 import os
@@ -13,10 +13,15 @@ from pathlib import Path
 class ProductionConfig:
     """Production configuration settings"""
     
-    # Database
-    database_url: str = "postgresql://user:password@localhost:5432/cosmic_council"
-    database_pool_size: int = 10
-    database_pool_overflow: int = 20
+    # Datastore (local-first with optional Firebase integration)
+    database_url: Optional[str] = None
+    firestore_project_id: Optional[str] = None
+    firestore_emulator_host: Optional[str] = None
+    firebase_client_email: Optional[str] = None
+    firebase_private_key: Optional[str] = None
+    firebase_service_account_json: Optional[str] = None
+    firebase_service_account_path: Optional[str] = None
+    google_application_credentials: Optional[str] = None
     
     # API
     api_host: str = "0.0.0.0"
@@ -53,14 +58,20 @@ class ProductionConfig:
     # Environment
     debug: bool = False
     environment: str = "production"
+    knowledge_base_url: str = "http://localhost:8001"
     
     @classmethod
     def from_env(cls) -> 'ProductionConfig':
         """Load configuration from environment variables"""
         return cls(
-            database_url=os.getenv("DATABASE_URL", cls.database_url),
-            database_pool_size=int(os.getenv("DATABASE_POOL_SIZE", cls.database_pool_size)),
-            database_pool_overflow=int(os.getenv("DATABASE_POOL_OVERFLOW", cls.database_pool_overflow)),
+            database_url=os.getenv("DATABASE_URL") or os.getenv("DREAM_CAESAR_DATABASE_URL"),
+            firestore_project_id=os.getenv("FIREBASE_PROJECT_ID"),
+            firestore_emulator_host=os.getenv("FIRESTORE_EMULATOR_HOST"),
+            firebase_client_email=os.getenv("FIREBASE_CLIENT_EMAIL"),
+            firebase_private_key=os.getenv("FIREBASE_PRIVATE_KEY"),
+            firebase_service_account_json=os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON"),
+            firebase_service_account_path=os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH"),
+            google_application_credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
             
             api_host=os.getenv("API_HOST", cls.api_host),
             api_port=int(os.getenv("API_PORT", cls.api_port)),
@@ -89,7 +100,8 @@ class ProductionConfig:
             health_check_interval=int(os.getenv("HEALTH_CHECK_INTERVAL", cls.health_check_interval)),
             
             debug=os.getenv("DEBUG", "false").lower() == "true",
-            environment=os.getenv("ENVIRONMENT", cls.environment)
+            environment=os.getenv("ENVIRONMENT", cls.environment),
+            knowledge_base_url=os.getenv("KNOWLEDGE_BASE_URL", cls.knowledge_base_url)
         )
     
     def setup_logging(self) -> None:
@@ -116,8 +128,17 @@ class ProductionConfig:
         if self.jwt_secret_key == "change-this-jwt-secret":
             raise ValueError("JWT_SECRET_KEY must be changed in production")
         
-        if not self.database_url.startswith(("postgresql://", "sqlite://")):
-            raise ValueError("Invalid DATABASE_URL format")
+        if self.environment == "production":
+            if not self.database_url and not self.firestore_project_id:
+                raise ValueError("DATABASE_URL or FIREBASE_PROJECT_ID is required in production")
+            has_credentials = any([
+                self.firebase_service_account_json,
+                self.firebase_service_account_path,
+                self.google_application_credentials,
+                (self.firebase_client_email and self.firebase_private_key),
+            ])
+            if self.firestore_project_id and not has_credentials:
+                raise ValueError("Firestore credentials are required in production")
         
         if self.api_port < 1 or self.api_port > 65535:
             raise ValueError("API_PORT must be between 1 and 65535")
@@ -129,8 +150,13 @@ class ProductionConfig:
         """Convert to dictionary"""
         return {
             "database_url": self.database_url,
-            "database_pool_size": self.database_pool_size,
-            "database_pool_overflow": self.database_pool_overflow,
+            "firestore_project_id": self.firestore_project_id,
+            "firestore_emulator_host": self.firestore_emulator_host,
+            "firebase_client_email": self.firebase_client_email,
+            "firebase_private_key": "***" if self.firebase_private_key else None,
+            "firebase_service_account_json": "***" if self.firebase_service_account_json else None,
+            "firebase_service_account_path": self.firebase_service_account_path,
+            "google_application_credentials": self.google_application_credentials,
             "api_host": self.api_host,
             "api_port": self.api_port,
             "api_workers": self.api_workers,
@@ -152,7 +178,8 @@ class ProductionConfig:
             "metrics_port": self.metrics_port,
             "health_check_interval": self.health_check_interval,
             "debug": self.debug,
-            "environment": self.environment
+            "environment": self.environment,
+            "knowledge_base_url": self.knowledge_base_url
         }
 
 # Global configuration instance

@@ -1,5 +1,5 @@
 """
-Enhanced Governance Enforcement Integration for Cosmic Council
+Enhanced Governance Enforcement Integration for Agent Orchestrator
 Integrates the enhanced enforcement system with agent performance tracking
 """
 
@@ -852,7 +852,7 @@ async def main():
     """Example usage of the enhanced governance enforcement integration"""
     
     integration = EnhancedGovernanceEnforcementIntegration(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         openai_api_key="your-openai-api-key",
         session_factory=None,  # Would be your actual session factory
         integration_config={

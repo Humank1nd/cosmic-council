@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - API Performance Optimization
+Agent Orchestrator Framework - API Performance Optimization
 
 This module provides comprehensive API performance optimization including:
 
@@ -15,7 +15,7 @@ This module provides comprehensive API performance optimization including:
 - Memory usage optimization
 - Concurrent request handling
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -516,9 +516,9 @@ class OptimizedFastAPI:
     def __init__(self, config: APIPerformanceConfig):
         self.config = config
         self.app = FastAPI(
-            title="Cosmic Council API",
+            title="Agent Orchestrator API",
             version="1.0.0",
-            description="High-performance API for the Cosmic Council Framework"
+            description="High-performance API for the Agent Orchestrator Framework"
         )
         
         # Initialize components
@@ -647,7 +647,7 @@ def cache_api_response(ttl: int = 3600):
 
 async def demo_api_performance_optimization():
     """Demonstrate API performance optimization capabilities"""
-    print("🚀 Cosmic Council Framework - API Performance Optimization Demo")
+    print("🚀 Agent Orchestrator Framework - API Performance Optimization Demo")
     print("=" * 70)
     
     # Create API performance configuration

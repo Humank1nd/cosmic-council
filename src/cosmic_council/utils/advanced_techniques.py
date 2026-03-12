@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Framework - Advanced Techniques
+Agent Orchestrator Framework - Advanced Techniques
 
 This module implements advanced problem-solving techniques for complex challenges:
 
@@ -11,7 +11,7 @@ This module implements advanced problem-solving techniques for complex challenge
 - Advanced AI-assisted decision making
 - Cross-domain solution synthesis
 
-Author: Cosmic Council Development Team
+Author: Agent Orchestrator Development Team
 Version: 1.0.0
 """
 
@@ -605,7 +605,7 @@ class GlobalChallengesCoordinator:
 # --- Tool Integration System ---
 
 class ToolIntegrator:
-    """Integrates Cosmic Council framework with other problem-solving methodologies"""
+    """Integrates Agent Orchestrator framework with other problem-solving methodologies"""
     
     def __init__(self, config: AdvancedTechniquesConfig):
         self.config = config
@@ -615,7 +615,7 @@ class ToolIntegrator:
     def integrate_with_swot(self, hexagon_analysis: Dict[str, Any], 
                            context: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate with SWOT analysis"""
-        logger.info("Integrating Cosmic Council with SWOT analysis")
+        logger.info("Integrating Agent Orchestrator with SWOT analysis")
         
         # Generate SWOT analysis
         swot_analysis = self._generate_swot_analysis(context)
@@ -637,7 +637,7 @@ class ToolIntegrator:
     def integrate_with_design_thinking(self, hexagon_analysis: Dict[str, Any], 
                                      user_needs: List[str]) -> Dict[str, Any]:
         """Integrate with Design Thinking methodology"""
-        logger.info("Integrating Cosmic Council with Design Thinking")
+        logger.info("Integrating Agent Orchestrator with Design Thinking")
         
         # Design Thinking phases
         design_thinking_phases = self._apply_design_thinking_phases(user_needs)
@@ -661,7 +661,7 @@ class ToolIntegrator:
     def integrate_with_agile(self, hexagon_analysis: Dict[str, Any], 
                            project_requirements: Dict[str, Any]) -> Dict[str, Any]:
         """Integrate with Agile methodologies"""
-        logger.info("Integrating Cosmic Council with Agile methodologies")
+        logger.info("Integrating Agent Orchestrator with Agile methodologies")
         
         # Agile framework application
         agile_framework = self._apply_agile_framework(project_requirements)
@@ -845,7 +845,7 @@ class AdvancedTechniquesManager:
 
 async def demo_advanced_techniques():
     """Demonstrate advanced techniques capabilities"""
-    print("🔬 Cosmic Council Framework - Advanced Techniques Demo")
+    print("🔬 Agent Orchestrator Framework - Advanced Techniques Demo")
     print("=" * 70)
     
     # Create advanced techniques configuration

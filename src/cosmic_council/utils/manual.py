@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cosmic Council Instruction Manual
+Agent Orchestrator Instruction Manual
 Implements the six-step problem-solving process with key principles and examples.
 """
 
@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 def get_manual() -> Dict[str, Any]:
     return {
         "title": "Instruction Manual for Solving Personal, Interpersonal, or Global Problems",
-        "framework": "Cosmic Council",
+        "framework": "Agent Orchestrator",
         "steps": [
             {
                 "step": 1,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Structured Interaction Framework for Cosmic Council
+Structured Interaction Framework for Agent Orchestrator
 Implements the 9-step cyclical reasoning process
 """
 
@@ -33,7 +33,7 @@ class StructuredResponse:
     timestamp: str
 
 class StructuredInteractionEngine:
-    """Engine for structured Cosmic Council interactions"""
+    """Engine for structured Agent Orchestrator interactions"""
     
     def __init__(self):
         self.totems = {
@@ -48,7 +48,7 @@ class StructuredInteractionEngine:
     def create_standardized_prompt(self, problem: str, context: Optional[Dict[str, Any]] = None) -> str:
         """Step 1: Create standardized prompt framework"""
         prompt = f"""
-Cosmic Council, I request your guidance on: {problem}
+Agent Orchestrator, I request your guidance on: {problem}
 
 Each totem should respond from its unique perspective:
 - 🔴🦉 Red Owl: Research & Inquiry - Define the problem, gather knowledge, propose starting questions
@@ -149,7 +149,7 @@ The process shows strong foundation but benefits from continued refinement.
     def generate_conclusion(self, problem: str, totem_responses: List[TotemResponse]) -> str:
         """Generate holistic conclusion with feedback and recommendations"""
         conclusion = f"""
-Cosmic Council Conclusion for '{problem}':
+Agent Orchestrator Conclusion for '{problem}':
 
 The Council has provided comprehensive guidance through our six totems. Key insights include:
 - Research foundation established by Red Owl

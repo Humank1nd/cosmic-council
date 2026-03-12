@@ -1,5 +1,5 @@
 """
-Case Study Templates for Cosmic Council Problem-Solving
+Case Study Templates for Agent Orchestrator Problem-Solving
 Comprehensive templates for business, personal, and global scenarios
 """
 
@@ -1036,7 +1036,7 @@ class CaseStudyTemplateLibrary:
 # Demo function
 def demo_case_study_templates():
     """Demonstrate the case study template library"""
-    print("🌌 Cosmic Council Case Study Templates")
+    print("🌌 Agent Orchestrator Case Study Templates")
     print("=" * 60)
     
     # Create template library

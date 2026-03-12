@@ -41,9 +41,9 @@ jobs:
         env:
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_NAME: cosmic_council
-          DB_USER: cosmic_council
-          DB_PASSWORD: cosmic_council
+          DB_NAME: dream_caesar
+          DB_USER: dream_caesar
+          DB_PASSWORD: dream_caesar
         run: |
           pytest -q
 

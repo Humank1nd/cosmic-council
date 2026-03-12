@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-03-12T02:11:39.958350-04:00",
+  "note": "Dream Caesar heartbeat: keep desktop agents alive, check mail, relay next-seat-only, and never stop. Latest handoff: 20260312-021135-dc-active-queue-mail-reassert.md (4s old). Ajna: desktop looks routable.",
+  "event_returncode": null,
+  "event_stdout": "",
+  "event_stderr": "skipped: emit_event disabled",
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\ajna\\ajna-20260312-021140.png",
+  "screenshot_success": true,
+  "latest_handoff": {
+    "path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\handoffs\\20260312-021135-dc-active-queue-mail-reassert.md",
+    "name": "20260312-021135-dc-active-queue-mail-reassert.md",
+    "modified_ts": 1773295895.7314253,
+    "modified_iso": "2026-03-12T02:11:35.731425-04:00",
+    "size_bytes": 1972
+  },
+  "handoff_age_seconds": 4,
+  "stall_after_seconds": 420,
+  "stalled": false,
+  "ajna": {
+    "returncode": 0,
+    "stderr": "",
+    "summary": "desktop looks routable",
+    "missing_active_seats": [],
+    "ambiguous_seats": [],
+    "overall_state": "unknown",
+    "status_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\ajna-monitor-status.json"
+  }
+}

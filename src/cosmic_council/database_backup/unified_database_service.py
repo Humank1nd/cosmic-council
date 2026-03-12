@@ -1,5 +1,5 @@
 """
-Unified Database Service for Cosmic Council System
+Unified Database Service for Agent Orchestrator System
 Handles all database operations for the entire system including perpetual thinking, ROYGBV workflow, and core functionality.
 
 This is the primary and only database service file - all other database service files
@@ -41,7 +41,7 @@ from ..core.models import (
 logger = logging.getLogger(__name__)
 
 class UnifiedDatabaseService:
-    """Unified database service for the entire Cosmic Council system"""
+    """Unified database service for the entire Agent Orchestrator system"""
     
     def __init__(self, database_url: str):
         """Initialize the unified database service"""

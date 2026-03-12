@@ -12,7 +12,7 @@ services:
       - "9090:9090" # Metrics
     environment:
       # Database configuration
-      - DATABASE_URL=postgresql://cosmic_council:cosmic_password@postgres:5432/cosmic_council_db
+      - DATABASE_URL=postgresql://dream_caesar:dream_caesar_password@postgres:5432/dream_caesar_db
       - REDIS_URL=redis://redis:6379/0
 
       # Security configuration
@@ -67,9 +67,9 @@ services:
     image: postgres:15-alpine
     container_name: cosmic-council-postgres
     environment:
-      - POSTGRES_DB=cosmic_council_db
-      - POSTGRES_USER=cosmic_council
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cosmic_password}
+      - POSTGRES_DB=dream_caesar_db
+      - POSTGRES_USER=dream_caesar
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dream_caesar_password}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     ports:
       - "5432:5432"
@@ -78,7 +78,7 @@ services:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cosmic_council -d cosmic_council_db"]
+      test: ["CMD-SHELL", "pg_isready -U dream_caesar -d dream_caesar_db"]
       interval: 10s
       timeout: 5s
       retries: 5

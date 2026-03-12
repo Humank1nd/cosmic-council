@@ -1,0 +1,28 @@
+# Dream Caesar Cronus - Python Dependencies
+# The execution engine for the Cosmic Council
+
+# Core Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# HTTP Client
+httpx>=0.26.0
+
+# Configuration
+python-dotenv>=1.0.0
+toml>=0.10.2
+
+# LLM Providers
+openai>=1.10.0
+anthropic>=0.18.0
+
+# Browser Automation (optional - install with: pip install playwright && playwright install)
+playwright>=1.41.0
+
+# Development Dependencies (install with: pip install -r requirements.txt -r requirements-dev.txt)
+# pytest>=7.4.0
+# pytest-asyncio>=0.23.0
+# black>=24.1.0
+# ruff>=0.2.0
+# mypy>=1.8.0

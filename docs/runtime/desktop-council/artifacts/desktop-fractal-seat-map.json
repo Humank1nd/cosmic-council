@@ -1,0 +1,143 @@
+{
+  "timestamp": "2026-03-11T13:08:19.186699-04:00",
+  "screenshot_path": "D:\\dream-caesar\\docs\\runtime\\desktop-council\\artifacts\\desktop-fractal-council-latest.png",
+  "seats": {
+    "center": {
+      "title": "\ud83c\udf0f Dream Caesar  ",
+      "bounds": {
+        "left": 677,
+        "top": 351,
+        "width": 579,
+        "height": 350
+      },
+      "selector": {
+        "title_contains": "Dream Caesar",
+        "exact_title": "\ud83c\udf0f Dream Caesar",
+        "target_left": 677,
+        "target_top": 351
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "red": {
+      "title": "\ud83e\udd89 Red Owl ",
+      "bounds": {
+        "left": 962,
+        "top": 18,
+        "width": 642,
+        "height": 331
+      },
+      "selector": {
+        "title_contains": "Red Owl",
+        "exact_title": "\ud83e\udd89 Red Owl",
+        "target_left": 962,
+        "target_top": 18
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "orange": {
+      "title": "\ud83e\udda7 Orange Orangutan",
+      "bounds": {
+        "left": 1241,
+        "top": 347,
+        "width": 579,
+        "height": 350
+      },
+      "selector": {
+        "title_contains": "Orange Orangutan",
+        "exact_title": "\ud83e\udda7 Orange Orangutan",
+        "target_left": 1241,
+        "target_top": 347
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "yellow": {
+      "title": "\ud83d\udc1d Yellow Honeybee ",
+      "bounds": {
+        "left": 966,
+        "top": 701,
+        "width": 633,
+        "height": 331
+      },
+      "selector": {
+        "title_contains": "Yellow Honeybee",
+        "exact_title": "\ud83d\udc1d Yellow Honeybee",
+        "target_left": 966,
+        "target_top": 701
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "green": {
+      "title": "\ud83d\udc22 Green Tortoise",
+      "bounds": {
+        "left": 287,
+        "top": 701,
+        "width": 678,
+        "height": 331
+      },
+      "selector": {
+        "title_contains": "Green Tortoise",
+        "exact_title": "\ud83d\udc22 Green Tortoise",
+        "target_left": 287,
+        "target_top": 701
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "blue": {
+      "title": "\ud83d\udc2c Blue Dolphin",
+      "bounds": {
+        "left": 148,
+        "top": 354,
+        "width": 525,
+        "height": 350
+      },
+      "selector": {
+        "title_contains": "Blue Dolphin",
+        "exact_title": "\ud83d\udc2c Blue Dolphin",
+        "target_left": 148,
+        "target_top": 354
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    },
+    "purple": {
+      "title": "\ud83d\udc18 Purple Elephant ",
+      "bounds": {
+        "left": 274,
+        "top": 22,
+        "width": 678,
+        "height": 331
+      },
+      "selector": {
+        "title_contains": "Purple Elephant",
+        "exact_title": "\ud83d\udc18 Purple Elephant",
+        "target_left": 274,
+        "target_top": 22
+      },
+      "handoff_defaults": {
+        "input_ratio_x": 0.5,
+        "input_offset_y": 42
+      }
+    }
+  },
+  "notes": [
+    "Selectors prefer canon-backed title_contains with normalized exact title and live top-left coordinates.",
+    "handoff_defaults are conservative defaults for CRONUS send_handoff."
+  ]
+}

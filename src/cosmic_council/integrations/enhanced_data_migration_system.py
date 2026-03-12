@@ -1,5 +1,5 @@
 """
-Enhanced Data Migration System for Cosmic Council
+Enhanced Data Migration System for Agent Orchestrator
 Migrates data from existing schema to the detailed 6-database ROYGBV structure
 """
 
@@ -50,7 +50,7 @@ class MigrationPlan:
 
 class EnhancedDataMigrationSystem:
     """
-    Enhanced data migration system for Cosmic Council
+    Enhanced data migration system for Agent Orchestrator
     Handles migration from existing schema to detailed ROYGBV structure
     """
     

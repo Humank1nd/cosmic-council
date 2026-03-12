@@ -1,5 +1,5 @@
 """
-Enhanced Perpetual Thinking Integration for Cosmic Council
+Enhanced Perpetual Thinking Integration for Agent Orchestrator
 Integrates the perpetual thinking engine with the workflow system for continuous learning
 """
 
@@ -649,7 +649,7 @@ async def main():
     """Example usage of the enhanced perpetual thinking integration"""
     
     integration = EnhancedPerpetualThinkingIntegration(
-        database_url="postgresql+asyncpg://user:password@localhost/cosmic_council",
+        database_url="postgresql+asyncpg://user:password@localhost/dream_caesar",
         openai_api_key="your-openai-api-key",
         session_factory=None,  # Would be your actual session factory
         integration_config={

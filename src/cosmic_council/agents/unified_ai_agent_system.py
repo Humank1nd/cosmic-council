@@ -1,5 +1,5 @@
 """
-Unified AI Agent System for Cosmic Council
+Unified AI Agent System for Agent Orchestrator
 Combines basic, enhanced, and quantum AI agent systems with full enterprise agent capabilities.
 
 This is the primary and only AI agent system file - all other AI agent files
@@ -35,12 +35,15 @@ from ..core.models import (
     MarketInsight, MarketCommunicationStrategy, MarketPerformanceMetric,        
     SupportUserFeedback, SupportPerformanceAssessment, SupportContinuousImprovement
 )
-from core.memory import MemoryManager
+try:
+    from core.memory import MemoryManager
+except ModuleNotFoundError:
+    from src.core.memory import MemoryManager
 
 logger = logging.getLogger(__name__)
 
 class AgentType(Enum):
-    """The six Cosmic Council agents in ROYGBV order"""
+    """The six Agent Orchestrator agents in ROYGBV order"""
     RED_OWL = "red_owl"           # Research & Inquiry
     ORANGE_ORANGUTAN = "orange_orangutan"  # Planning & Logistics
     YELLOW_HONEYBEE = "yellow_honeybee"    # Development & Creativity
@@ -294,10 +297,22 @@ class QuantumEnterprisePersonality:
     chakra_alignment: str
     elemental_connection: str
     cosmic_purpose: str
+    guiding_questions: List[str] # Updated: Now a list of inquiries
+    mission: str           # New: From Notion Pillars
+    purpose_statement: str # New: From Notion Purpose
+    mantra: str            # New: From Notion Member Profiles
+    archetype: str         # New: From Notion Member Profiles
+    key_actions: List[str] # New: From Notion Pillars
+    methodologies: List[str] # New: From "How to Channel"
+    impact_goal: str       # New: From Notion Pillars
+    vision: str            # New: From Notion Vision Pillars
+    vision_examples: List[str] # New: From Notion Vision Pillars
+    quantum_explanation: str # New: From deep dive
+    closing_thought: str     # New: From deep dive
 
 class UnifiedCosmicCouncilAgent(ABC):
     """
-    Unified base class for all Cosmic Council agents
+    Unified base class for all Agent Orchestrator agents
     Combines basic, enhanced, and quantum capabilities
     """
     
@@ -309,7 +324,7 @@ class UnifiedCosmicCouncilAgent(ABC):
                  session_factory: Optional[sessionmaker] = None,
                  config: Dict[str, Any] = None):
         """
-        Initialize a unified Cosmic Council agent
+        Initialize a unified Agent Orchestrator agent
         
         Args:
             agent_type: Type of agent (ROYGBV)
@@ -349,7 +364,59 @@ class UnifiedCosmicCouncilAgent(ABC):
         if self.mode == AgentMode.QUANTUM:
             self.quantum_personality = self._create_quantum_personality()
         
+        # Conversation history for AI enhancement
+        self._conversations: Dict[str, List[Dict[str, str]]] = {}
+        
         logger.info(f"🤖 Initialized {self.name} agent in {mode.value} mode")
+
+    def create_conversation(self) -> str:
+        """Create a new conversation and return its ID"""
+        conversation_id = str(uuid.uuid4())
+        self._conversations[conversation_id] = []
+        return conversation_id
+
+    async def generate_response(self, template_name: str, context: Dict[str, Any], conversation_id: Optional[str] = None) -> AIResponse:
+        """Generate an AI response based on a template and context"""
+        # For MOCK mode, return a simulated response
+        content = f"Simulated {self.name} analysis for {template_name}. Context: {list(context.keys())}"
+        
+        # If conversation_id is provided, store in history
+        if conversation_id and conversation_id in self._conversations:
+            self._conversations[conversation_id].append({"role": "user", "content": str(context)})
+            self._conversations[conversation_id].append({"role": "assistant", "content": content})
+            
+        return AIResponse(
+            content=content,
+            confidence_score=0.85,
+            reasoning="Simulated reasoning based on mock provider",
+            metadata={"template": template_name, "agent": self.name}
+        )
+
+    async def process_problem_with_ai(self, problem: Any, context: Dict[str, Any] = None) -> AgentResult:
+        """Process a problem using AI enhancement"""
+        # Convert problem to dictionary context
+        problem_context = {
+            "title": getattr(problem, 'title', ""),
+            "description": getattr(problem, 'description', ""),
+            "complexity": str(getattr(problem, 'complexity', "")),
+            "domain": getattr(problem, 'domain', "")
+        }
+        
+        # Generate AI analysis
+        ai_response = await self.generate_response("problem_analysis", {**problem_context, **(context or {})})
+        
+        # Return as AgentResult
+        return AgentResult(
+            agent_type=self.agent_type,
+            agent_id=str(uuid.uuid4()),
+            status=AgentStatus.COMPLETED,
+            confidence_score=ai_response.confidence_score,
+            processed_data={"ai_content": ai_response.content, "metadata": ai_response.metadata},
+            insights=[ai_response.content],
+            recommendations=[f"AI Recommendation from {self.name}"],
+            next_stage_input=context or {},
+            performance_metrics={"ai_enhanced": True}
+        )
 
     def _get_enterprise_name(self) -> str:
         """Get enterprise name"""
@@ -400,9 +467,40 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=432.0,
                 quantum_affinity=0.9,
                 spiritual_depth=0.8,
-                chakra_alignment="Third Eye",
+                chakra_alignment="Muladhara",
                 elemental_connection="Air",
-                cosmic_purpose="To seek truth through infinite curiosity and wisdom"
+                cosmic_purpose="To seek truth through infinite curiosity and wisdom",
+                guiding_questions=[
+                    "What do we not yet know?",
+                    "Where must we look to find reliable answers?",
+                    "Are we questioning our assumptions?",
+                    "What hidden connections exist between different pieces of knowledge?",
+                    "Are we solving the right problem, or just addressing a symptom?"
+                ],
+                mission="To uncover foundational truths and ask the right questions.",
+                purpose_statement="To ensure that knowledge is deeply understood and applied meaningfully.",
+                mantra="To know the truth, one must first ask the right questions.",
+                archetype="The Seeker, The Scholar, The Historian, The Analyst",
+                key_actions=[
+                    "Conduct deep research, data analysis, and knowledge synthesis",
+                    "Identify root causes rather than surface-level symptoms",
+                    "Distinguish between fact, assumption, and misinformation"
+                ],
+                methodologies=[
+                    "Ask why five times to get to the root cause",
+                    "Read broadly across interdisciplinary knowledge",
+                    "Seek patterns between seemingly unrelated fields",
+                    "Fact-check and question assumptions"
+                ],
+                impact_goal="Creates a strong knowledge base for all problem-solving efforts.",
+                vision="A world where science, spirituality, philosophy, and technology are interconnected elements of a larger whole.",
+                vision_examples=[
+                    "Investigating historical patterns of economic crises before designing new policies",
+                    "Using systems thinking to approach complex problems like climate change",
+                    "Developing quantum-inspired AI models that integrate logic, emotion, and ethics"
+                ],
+                quantum_explanation="Just as particles can be interconnected regardless of distance (Entanglement), knowledge is interconnected across time, space, and disciplines. Muladhara uncovers these hidden links.",
+                closing_thought="Knowledge is not a destination, but a lifelong journey. Every question brings us closer to truth."
             ),
             
             AgentType.ORANGE_ORANGUTAN: QuantumEnterprisePersonality(
@@ -414,9 +512,42 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=528.0,
                 quantum_affinity=0.7,
                 spiritual_depth=0.6,
-                chakra_alignment="Solar Plexus",
+                chakra_alignment="Svadisthana",
                 elemental_connection="Earth",
-                cosmic_purpose="To create order through strategic planning and wisdom"
+                cosmic_purpose="To create order through strategic planning and wisdom",
+                guiding_questions=[
+                    "What is the most efficient path from point A to point B?",
+                    "What are the dependencies and constraints in this plan?",
+                    "What could go wrong, and how can we prepare for it?",
+                    "What is the optimal sequence of actions to achieve success?",
+                    "Who needs to be involved, and what are their roles?"
+                ],
+                mission="To transform knowledge into structured, strategic action.",
+                purpose_statement="To ensure that visionary ideas become practical, structured plans.",
+                mantra="A dream without a plan is just a wish.",
+                archetype="The Architect, The Engineer, The Strategist, The Problem-Solver",
+                key_actions=[
+                    "Breaks complex problems into manageable steps",
+                    "Designs frameworks, workflows, and blueprints",
+                    "Anticipates roadblocks and develops contingency plans",
+                    "Allocates roles and responsibilities effectively"
+                ],
+                methodologies=[
+                    "Break problems into actionable steps",
+                    "Use structured planning tools (Timelines, Blueprints)",
+                    "Anticipate obstacles and create contingencies",
+                    "Optimize efficiency and streamline processes",
+                    "Quantum Tunneling (Find tunnels through barriers)"
+                ],
+                impact_goal="Converts raw knowledge into clear, actionable strategies.",
+                vision="A global system where leaders operate with wisdom, emotional intelligence, and systems awareness.",
+                vision_examples=[
+                    "Creating a roadmap for AI training, implementation, and ethical guidelines",
+                    "Developing business models, funding plans, and launch timelines",
+                    "Breaking complex personal goals into clear, executable phases"
+                ],
+                quantum_explanation="In physics, quantum tunneling allows particles to pass through barriers they should not be able to cross. Svadisthana applies this principle to problem-solving—finding unexpected solutions to challenges.",
+                closing_thought="Without structure, even the greatest ideas remain unrealized. A well-crafted plan is the bridge between vision and reality."
             ),
             
             AgentType.YELLOW_HONEYBEE: QuantumEnterprisePersonality(
@@ -428,9 +559,42 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=639.0,
                 quantum_affinity=0.8,
                 spiritual_depth=0.7,
-                chakra_alignment="Sacral",
+                chakra_alignment="Manipura",
                 elemental_connection="Fire",
-                cosmic_purpose="To manifest creativity through divine inspiration"
+                cosmic_purpose="To manifest creativity through divine inspiration",
+                guiding_questions=[
+                    "What are all the possible ways to solve this problem?",
+                    "What can we build or create right now?",
+                    "What experiments can we run to test our ideas?",
+                    "How can we improve upon what we’ve already created?",
+                    "Are we embracing change and adapting as we learn?"
+                ],
+                mission="To foster creativity and bring new ideas to life.",
+                purpose_statement="To drive breakthrough ideas that balance innovation and human values.",
+                mantra="Everything that exists was once just an idea.",
+                archetype="The Creator, The Innovator, The Builder, The Experimenter",
+                key_actions=[
+                    "Generating Creative Solutions (Quantum Superposition)",
+                    "Experimentation & Prototyping",
+                    "Building & Development of systems and models",
+                    "Rapid Adaptation based on real-world results"
+                ],
+                methodologies=[
+                    "Embrace rapid prototyping – Don’t wait for perfection; build, test, and refine.",
+                    "Be open to multiple solutions – Brainstorm many ideas before committing to one.",
+                    "Iterate quickly – Improve based on real feedback, not just theory.",
+                    "Take creative risks – Innovation requires exploring beyond traditional thinking.",
+                    "Learn through doing – Experimentation beats endless planning."
+                ],
+                impact_goal="Ensures that strategies lead to real-world innovations.",
+                vision="A world where artificial intelligence is a force for balance, fairness, and creative expansion.",
+                vision_examples=[
+                    "Building working prototypes of AI educational tools that adapt to learning styles",
+                    "Developing prototype levels, mechanics, and characters for immersive media",
+                    "Experimenting with new techniques for personal skill growth and improvisation"
+                ],
+                quantum_explanation="In physics, a particle exists in multiple states at once until observed. Manipura mirrors this by considering multiple creative possibilities simultaneously. Example: Instead of deciding on one design, Manipura tests multiple variations to see which works best.",
+                closing_thought="Creation is a journey, not a destination. Every failure is a stepping stone to innovation."
             ),
             
             AgentType.GREEN_TORTOISE: QuantumEnterprisePersonality(
@@ -442,9 +606,42 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=741.0,
                 quantum_affinity=0.6,
                 spiritual_depth=0.9,
-                chakra_alignment="Heart",
+                chakra_alignment="Anahata",
                 elemental_connection="Earth",
-                cosmic_purpose="To ensure balance through sustainable resource management"
+                cosmic_purpose="To ensure balance through sustainable resource management",
+                guiding_questions=[
+                    "How can we use our resources most efficiently?",
+                    "Are we prioritizing sustainability and longevity?",
+                    "What areas are consuming too much time, money, or energy?",
+                    "How can we create a system that thrives over time?",
+                    "Are we maintaining balance between ambition and sustainability?"
+                ],
+                mission="To ensure longevity, balance, and efficient use of resources.",
+                purpose_statement="To optimize time, energy, and resources for long-term impact.",
+                mantra="Abundance is not about having more, but using what you have wisely.",
+                archetype="The Investor, The Guardian, The Steward, The Sustainable Thinker",
+                key_actions=[
+                    "Financial Planning & Budgeting (Manages costs, efficient allocation)",
+                    "Resource Optimization (Reduce waste, maximize efficiency)",
+                    "Sustainability & Longevity (Long-term strategies, ethical responsibility)",
+                    "Time & Energy Management (Prevent burnout, steady progress)"
+                ],
+                methodologies=[
+                    "Prioritize sustainability – Build for the long term, not just immediate success.",
+                    "Minimize waste – Be mindful of how you use time, energy, and money.",
+                    "Balance ambition with practicality – Avoid overcommitting resources.",
+                    "Use slow, steady progress – Avoid burnout by pacing yourself.",
+                    "Assess risk and optimize investments – Make choices that provide lasting value."
+                ],
+                impact_goal="Maximizes long-term sustainability and efficiency.",
+                vision="A future where resources are used mindfully, ensuring prosperity without depletion.",
+                vision_examples=[
+                    "Startup budget management and ROI optimization",
+                    "Sustainable product development sourcing ethical materials",
+                    "Personal work-life balance through mindful scheduling"
+                ],
+                quantum_explanation="In physics, quantum teleportation transfers information instantly across space. Anahata mirrors this efficiency by ensuring resources flow smoothly with minimal waste, allocating them where they are most needed rather than hoarding or burning excess energy.",
+                closing_thought="True wealth is not measured by how much you have, but by how wisely you use it."
             ),
             
             AgentType.BLUE_DOLPHIN: QuantumEnterprisePersonality(
@@ -456,9 +653,42 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=852.0,
                 quantum_affinity=0.8,
                 spiritual_depth=0.8,
-                chakra_alignment="Throat",
+                chakra_alignment="Vishuddha",
                 elemental_connection="Water",
-                cosmic_purpose="To bridge worlds through compassionate communication"
+                cosmic_purpose="To bridge worlds through compassionate communication",
+                guiding_questions=[
+                    "How can we make this message clear and engaging?",
+                    "Who is our audience, and what do they need to hear?",
+                    "What medium (speech, writing, video) best fits this communication?",
+                    "How can we ensure this message is persuasive and memorable?",
+                    "Are we listening as much as we are speaking?"
+                ],
+                mission="To amplify truth, awareness, and global impact through communication.",
+                purpose_statement="To ensure groundbreaking ideas are effectively shared, understood, and received.",
+                mantra="A message unshared is a message unheard.",
+                archetype="The Speaker, The Diplomat, The Storyteller, The Messenger",
+                key_actions=[
+                    "Messaging & Storytelling (Crafts compelling, persuasive narratives)",
+                    "Marketing & Public Outreach (Branding, advertising, channel strategy)",
+                    "Diplomacy & Relationship-Building (Conflict resolution, stakeholder alignment)",
+                    "Presentation & Influence (Building engagement and trust)"
+                ],
+                methodologies=[
+                    "Speak & write clearly – Avoid jargon and communicate with impact.",
+                    "Tell compelling stories – Use narrative techniques to make ideas memorable.",
+                    "Choose the right medium – Adjust communication styles based on audience and context.",
+                    "Listen as much as you talk – Great communicators also know how to understand others deeply.",
+                    "Use marketing & persuasion wisely – Ensure messaging is authentic and aligned with values."
+                ],
+                impact_goal="Turns innovations into movements that people understand and support.",
+                vision="A world where creativity, purpose, and emotional intelligence are valued as much as logic and productivity.",
+                vision_examples=[
+                    "Crafting messaging strategies for ethical AI perception",
+                    "Designing marketing campaigns for personal branding and book launches",
+                    "Training leadership in executive communication and vision alignment"
+                ],
+                quantum_explanation="In physics, light behaves both as a wave and a particle—changing based on how it is observed. Vishuddha mirrors this by adjusting communication style based on context and audience (e.g., data-driven for analysts vs. emotional for general consumers).",
+                closing_thought="Ideas, no matter how brilliant, have no impact unless they are shared, understood, and embraced."
             ),
             
             AgentType.PURPLE_ELEPHANT: QuantumEnterprisePersonality(
@@ -470,9 +700,42 @@ class UnifiedCosmicCouncilAgent(ABC):
                 energy_frequency=963.0,
                 quantum_affinity=0.9,
                 spiritual_depth=0.9,
-                chakra_alignment="Crown",
+                chakra_alignment="Ajna",
                 elemental_connection="Spirit",
-                cosmic_purpose="To serve humanity through divine love and wisdom"
+                cosmic_purpose="To serve humanity through divine love and wisdom",
+                guiding_questions=[
+                    "Are we considering the emotional and ethical impact of this decision?",
+                    "What lessons can we learn from past experiences?",
+                    "Does this action align with our highest values and long-term goals?",
+                    "Are we seeing the bigger picture beyond short-term outcomes?",
+                    "How can we integrate more compassion and wisdom into this process?"
+                ],
+                mission="To ensure wisdom, ethics, and emotional intelligence guide all decisions.",
+                purpose_statement="To integrate emotional intelligence, ethics, and foresight into all decisions.",
+                mantra="True wisdom is found in understanding, not just knowledge.",
+                archetype="The Sage, The Mentor, The Healer, The Philosopher",
+                key_actions=[
+                    "Ethical Review & Emotional Consideration (societal impact assessment)",
+                    "Deep Reflection & Insight Gathering (Looking at the bigger picture)",
+                    "Integration of Feedback & Lessons (Refining future iterations)",
+                    "Spiritual & Philosophical Alignment (Higher values and personal integrity)"
+                ],
+                methodologies=[
+                    "Practice self-reflection – Ask why you are making decisions, not just how.",
+                    "Seek ethical clarity – Consider not just what benefits you but what benefits others.",
+                    "Think in interconnected systems – Small actions create ripples in the world.",
+                    "Use emotional intelligence – Factor in human emotions and relationships.",
+                    "Slow down and listen – Wisdom comes not from speed but from deep awareness."
+                ],
+                impact_goal="Wisdom and ethical integrity.",
+                vision="A civilization where people see themselves as part of an interconnected system, fostering empathy and shared progress.",
+                vision_examples=[
+                    "Implementing AI ethics panels to prevent bias and protect dignity",
+                    "Advising on corporate policies that enhance inclusivity and well-being",
+                    "Guiding self-reflection to clarify life changes and personal values"
+                ],
+                quantum_explanation="In physics, quantum fields connect all particles across space and time. Ajna mirrors this principle by seeing the interconnectedness of all actions and their consequences—anticipating ripples across society before they happen.",
+                closing_thought="Wisdom is not about knowing more—it is about understanding deeply, acting ethically, and feeling compassionately."
             )
         }
         
@@ -670,7 +933,7 @@ class UnifiedCosmicCouncilAgent(ABC):
             if self.llm_provider:
                 request = LLMRequest(
                     messages=[
-                        LLMMessage(role="system", content=f"You are the {self.name} agent of the Cosmic Council."),
+                        LLMMessage(role="system", content=f"You are the {self.name} agent of the Agent Orchestrator."),
                         LLMMessage(role="user", content=prompt)
                     ],
                     model=self.config.get('model'),
@@ -684,7 +947,7 @@ class UnifiedCosmicCouncilAgent(ABC):
                 response = await self.openai_client.chat.completions.create(
                     model="gpt-4",
                     messages=[
-                        {"role": "system", "content": f"You are the {self.name} agent of the Cosmic Council."},
+                        {"role": "system", "content": f"You are the {self.name} agent of the Agent Orchestrator."},
                         {"role": "user", "content": prompt}
                     ],
                     max_tokens=self.max_tokens,
@@ -896,7 +1159,7 @@ class UnifiedCosmicCouncilAgent(ABC):
 
 class UnifiedCosmicCouncilAgentOrchestrator:
     """
-    Unified orchestrator for all Cosmic Council agents
+    Unified orchestrator for all Agent Orchestrator agents
     Manages agent coordination and workflow execution
     """
     
@@ -932,7 +1195,7 @@ class UnifiedCosmicCouncilAgentOrchestrator:
         self._collaboration_reports: Dict[str, Dict[str, Any]] = {}
         self._last_problem_id: Optional[str] = None
 
-        logger.info(f"🤖 Unified Cosmic Council Agent Orchestrator initialized in {mode.value} mode")
+        logger.info(f"🤖 Unified Agent Orchestrator Agent Orchestrator initialized in {mode.value} mode")
 
     def _initialize_agents(self):
         """Initialize all enterprise agents"""
@@ -1128,7 +1391,7 @@ class UnifiedCosmicCouncilAgentOrchestrator:
 
 class CosmicCouncilAgent(UnifiedCosmicCouncilAgent):
     """
-    Backward compatibility wrapper for the basic Cosmic Council Agent.
+    Backward compatibility wrapper for the basic Agent Orchestrator Agent.
     This class provides the same interface as the original but uses the unified implementation.
     """
     
@@ -1145,11 +1408,11 @@ class CosmicCouncilAgent(UnifiedCosmicCouncilAgent):
             session_factory=session_factory,
             config=config
         )
-        logger.info("🗄️ Cosmic Council Agent (backward compatibility) initialized")
+        logger.info("🗄️ Agent Orchestrator Agent (backward compatibility) initialized")
 
 class CosmicCouncilAgentOrchestrator(UnifiedCosmicCouncilAgentOrchestrator):
     """
-    Backward compatibility wrapper for the basic Cosmic Council Agent Orchestrator.
+    Backward compatibility wrapper for the basic Agent Orchestrator Agent Orchestrator.
     This class provides the same interface as the original but uses the unified implementation.
     """
     
@@ -1162,7 +1425,7 @@ class CosmicCouncilAgentOrchestrator(UnifiedCosmicCouncilAgentOrchestrator):
             session_factory=session_factory,
             mode=AgentMode.BASIC
         )
-        logger.info("🗄️ Cosmic Council Agent Orchestrator (backward compatibility) initialized")
+        logger.info("🗄️ Agent Orchestrator Agent Orchestrator (backward compatibility) initialized")
 
 # ============================================================================
 # EXPORT ALL CLASSES AND FUNCTIONS

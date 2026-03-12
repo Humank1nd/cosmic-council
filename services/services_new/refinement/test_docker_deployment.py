@@ -454,7 +454,7 @@ class DockerDeploymentTester:
                 result = subprocess.run([
                     "docker-compose", "exec", "-T", "refinement-engine", 
                     "python", "-c", 
-                    "import psycopg2; conn = psycopg2.connect('postgresql://cosmic_council:cosmic_password@postgres:5432/cosmic_council_db'); print('Connected successfully'); conn.close()"
+                    "import psycopg2; conn = psycopg2.connect('postgresql://dream_caesar:dream_caesar_password@postgres:5432/dream_caesar_db'); print('Connected successfully'); conn.close()"
                 ], capture_output=True, text=True, timeout=30)
                 
                 if result.returncode == 0:

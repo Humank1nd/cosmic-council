@@ -30,6 +30,15 @@ from .unified_database_service import UnifiedDatabaseService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+def _health_is_ok(health_result: Optional[Dict[str, Any]]) -> bool:
+    """Accept both legacy `healthy=True` and current `status='healthy'` shapes."""
+    if not health_result:
+        return False
+    if health_result.get("healthy") is True:
+        return True
+    return health_result.get("status") == "healthy"
+
 class UnifiedDatabaseManager:
     """Unified database connection, session, and operations management"""
     
@@ -60,12 +69,12 @@ class UnifiedDatabaseManager:
         # Get individual components
         db_host = os.getenv('DB_HOST', 'localhost')
         db_port = os.getenv('DB_PORT', '5432')
-        db_name = os.getenv('DB_NAME', 'cosmic_council')
-        db_user = os.getenv('DB_USER', 'cosmic_council')
-        db_password = os.getenv('DB_PASSWORD', 'cosmic_council')
+        db_name = os.getenv('DB_NAME', 'dream_caesar')
+        db_user = os.getenv('DB_USER', 'dream_caesar')
+        db_password = os.getenv('DB_PASSWORD', 'dream_caesar')
         
         # Use SQLite for development (no external database required)
-        return "sqlite+aiosqlite:///./cosmic_council.db"
+        return "sqlite+aiosqlite:///./data/dream_caesar.db"
     
     def _initialize_engines(self):
         """Initialize database engines"""
@@ -91,19 +100,25 @@ class UnifiedDatabaseManager:
         if url.startswith("sqlite+aiosqlite:///"):
             raw_path = url[len("sqlite+aiosqlite:///"):]
         elif url.startswith("sqlite:///"):
-            raw_path = url[len("sqlite///"):]
+            raw_path = url[len("sqlite:///"):]
         else:
             # Fallback: take part after scheme
             raw_path = url.split("://")[-1]
 
-        db_path = Path(raw_path)
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-
-        # Create synchronous engine (use sqlite:/// path)
-        if url.startswith("sqlite+aiosqlite:///"):
-            sync_url = "sqlite:///" + raw_path
+        if raw_path == ":memory:":
+            sync_url = "sqlite:///:memory:"
+            async_url = "sqlite+aiosqlite:///:memory:"
         else:
-            sync_url = url
+            db_path = Path(raw_path)
+            if not db_path.is_absolute():
+                # Anchor relative SQLite paths to repo root to avoid cwd drift.
+                project_root = Path(__file__).resolve().parents[3]
+                db_path = (project_root / db_path).resolve()
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+            normalized_path = db_path.as_posix()
+            sync_url = f"sqlite:///{normalized_path}"
+            async_url = f"sqlite+aiosqlite:///{normalized_path}"
+
         self.engine = create_engine(
             sync_url,
             poolclass=StaticPool,
@@ -111,13 +126,6 @@ class UnifiedDatabaseManager:
             echo=self.config.get('echo', False)
         )
 
-        # Create async engine (use sqlite+aiosqlite:/// path)
-        if url.startswith("sqlite+aiosqlite:///"):
-            async_url = url
-        elif url.startswith("sqlite:///"):
-            async_url = url.replace("sqlite///", "sqlite+aiosqlite///")
-        else:
-            async_url = "sqlite+aiosqlite:///" + raw_path
         self.async_engine = create_async_engine(
             async_url,
             poolclass=StaticPool,
@@ -268,6 +276,7 @@ class UnifiedDatabaseManager:
                 table_count = result.scalar() or 0
             
             health_status.update({
+                'healthy': basic_connectivity and health_status.get('status') == 'healthy',
                 'basic_connectivity': basic_connectivity,
                 'table_count': table_count,
                 'database_url': self.database_url.split('@')[-1] if '@' in self.database_url else 'local',
@@ -343,7 +352,7 @@ class UnifiedDatabaseManager:
                 try:
                     asyncio.set_event_loop(loop)
                     health_result = loop.run_until_complete(self.unified_service.health_check())
-                    return health_result.get('healthy', False)
+                    return _health_is_ok(health_result)
                 finally:
                     loop.close()
 
@@ -408,7 +417,7 @@ class DatabaseManager:
         """Check if database connection is healthy"""
         try:
             health_result = self.health_check()
-            return health_result.get('healthy', False)
+            return _health_is_ok(health_result)
         except Exception:
             return False
     

@@ -1,0 +1,715 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title> The Chakras </title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="18a0350a-24ee-80cb-98e3-c22d666b6703" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">🌈</span></div><h1 class="page-title" dir="auto"><strong> The Chakras </strong></h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-807c-a762-e6c0c8b870f1" class=""><em><strong>Energy Centers of Intelligence &amp; Action</strong></em><strong><br/></strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8073-8730-c8afe91b1df5" class="">The <strong>Cosmic Council’s Six Chakras</strong> represent <strong>energy centers that align with each stage of intelligence, creativity, and refinement</strong>. Each chakra <strong>corresponds to a Totem, Quantum Principle, and Spirit Animal</strong>, forming a <strong>holistic system for continuous growth and evolution</strong>.</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80f8-b6cf-c0354ed5ccae" class="">Each chakra:</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80f1-9310-de2d1e43d65b" class="">✅ <strong>Represents a stage in the Council’s process (from research to reflection).</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80a1-8766-dbf3d3029f54" class="">✅ <strong>Aligns with specific energies that guide how decisions, creativity, and wisdom unfold.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80b4-a7e8-c5f3fefdc9c8" class="">✅ <strong>Creates a balanced flow, ensuring sustainability, adaptability, and ethical progress.</strong></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80f6-b56b-cb10426ec979"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-8060-9dd2-c3797b8a5205" class=""><strong>🔴 1. Muladhara (Root Chakra) – The Foundation of Knowledge</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-800b-ba16-e38d91174741" class="">📌 <strong>Color:</strong> <em>Red</em> 🔴</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8091-a0dc-f98ff586929b" class="">📌 <strong>Totem:</strong> <em>Red Owl – Inquiry &amp; Research</em> 🦉</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80c3-a1a0-f1ad34ce7d22" class="">📌 <strong>Quantum Principle:</strong> <strong>Quantum Entanglement ⚛️</strong> <em>(Everything is interconnected; knowledge is never isolated.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8087-95a7-e8ecf240e63e" class="">📌 <strong>Core Energy:</strong> <em>Grounding, Stability, Truth-Seeking</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-80f6-b599-eac16a307396" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80b5-a1e4-ff2d6a109b3f" class="">✅ <strong>Seeks foundational truth</strong>—asking the deepest, most important questions.</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-802f-8242-e16d02efe913" class="">✅ <strong>Ensures all ideas start with strong research and verified information.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8053-9af1-d6da3f1f9183" class="">✅ <strong>Connects past knowledge to present challenges</strong> (entanglement of wisdom).</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8093-b1c2-cd8052e5eecc" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-80a2-b55a-d73eeaa2d466" class="bulleted-list"><li style="list-style-type:disc">A scientist <strong>studying ancient ecological knowledge</strong> to create <strong>new sustainability solutions</strong>.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8056-a3ed-e6e64b83327e" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;True wisdom begins with seeking deeper understanding.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8096-87a5-f7745b55e55f"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-8013-bff4-cc8fb4890085" class=""><strong>🟠 2. Svadisthana (Sacral Chakra) – The Flow of Strategy &amp; Execution</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-800a-ab8a-ddd18c163e5e" class="">📌 <strong>Color:</strong> <em>Orange</em> 🟠</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8041-a5f9-d9c23b6cb706" class="">📌 <strong>Totem:</strong> <em>Orange Orangutan – Planning &amp; Logistics</em> 🦧</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-803c-bffb-d24954d0d891" class="">📌 <strong>Quantum Principle:</strong> <strong>Quantum Tunneling ⚛️</strong> <em>(Finding paths through barriers that seem impenetrable.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8013-8350-f90254a9ce2b" class="">📌 <strong>Core Energy:</strong> <em>Creativity, Structure, Adaptability</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-806a-9376-dd196f7e2f89" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-800c-928f-d2910c0b4853" class="">✅ <strong>Transforms research into structured, step-by-step plans.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-809e-a34d-efb4afa7daca" class="">✅ <strong>Finds alternative solutions to obstacles</strong> (tunneling through problems).</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8088-b38e-ca24931670b8" class="">✅ <strong>Balances creative flow with logical execution.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80a1-bb99-eb3ddf594004" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8047-b5e5-ea067a1a8e77" class="bulleted-list"><li style="list-style-type:disc">A startup <strong>creating a roadmap for sustainable AI development</strong> while navigating government regulations.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-804a-b059-f7fa4f00df98" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;A well-structured plan turns vision into reality.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8079-a138-ccccf19a1eea"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-80c8-9d0e-d9b6da1c81db" class=""><strong>🟡 3. Manipura (Solar Plexus Chakra) – The Fire of Innovation &amp; Creativity</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8023-97a5-d381d40ac92f" class="">📌 <strong>Color:</strong> <em>Yellow</em> 🟡</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8018-9d61-e9278ce72246" class="">📌 <strong>Totem:</strong> <em>Yellow Honeybee – Development &amp; Experimentation</em> 🐝</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80d8-b8ec-dce6c5227cad" class="">📌 <strong>Quantum Principle:</strong> <strong>Quantum Superposition ⚛️</strong> <em>(Holding multiple possibilities at once before selecting the best.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80df-a2f9-c27ed50e8944" class="">📌 <strong>Core Energy:</strong> <em>Power, Confidence, Creative Drive</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8001-a114-e51a0166dd5a" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80a5-8894-e1ae8756d371" class="">✅ <strong>Develops new ideas, prototypes, and breakthrough innovations.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-807a-aa05-ee235606085a" class="">✅ <strong>Explores multiple possibilities before choosing the best approach.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-801a-8383-dd9b89445136" class="">✅ <strong>Encourages experimentation, boldness, and risk-taking.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80aa-91fb-fae38ce62dc4" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-804a-93a9-df3df93e6c7c" class="bulleted-list"><li style="list-style-type:disc">A technology company <strong>testing multiple AI algorithms</strong> before launching an ethical automation tool.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8070-8eb6-fc562b062966" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;Everything that exists was once an idea—make yours a reality.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-80c0-aa06-f188d39911d3"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-806c-b5f5-c8277f7959ec" class=""><strong>🟢 4. Anahata (Heart Chakra) – The Balance of Resources &amp; Sustainability</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80e3-b796-ccd09b28b520" class="">📌 <strong>Color:</strong> <em>Green</em> 🟢</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80e0-85c3-cb02e8b1d17f" class="">📌 <strong>Totem:</strong> <em>Green Turtle – Resource Management &amp; Longevity</em> 🐢</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-808d-9eb6-c60eb63d6fad" class="">📌 <strong>Quantum Principle:</strong> <strong>Quantum Teleportation ⚛️</strong> <em>(Moving resources efficiently to where they are needed most.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8073-a8cd-cf82b4741277" class="">📌 <strong>Core Energy:</strong> <em>Balance, Sustainability, Conservation</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8063-aead-ff5b16406124" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8062-88ff-c0ddf9e08128" class="">✅ <strong>Ensures resources (money, time, energy) are allocated efficiently.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-807b-a228-e99e9ceab3d5" class="">✅ <strong>Creates sustainability-focused models for long-term success.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80cf-9a0a-d02e57b3b55e" class="">✅ <strong>Prevents waste and overexertion—optimizing impact.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80f4-9bd3-f9db7946df52" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8024-8a30-ce4ba5891858" class="bulleted-list"><li style="list-style-type:disc">A company <strong>using AI-powered resource management to reduce global food waste</strong>.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80df-9ed9-d91b4a68f3ad" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;The key to long-term success is mindful resource use.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8027-a79d-eb6bd9df2762"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-8035-9d6d-d886b71125f5" class=""><strong>🔵 5. Vishuddha (Throat Chakra) – The Power of Communication &amp; Influence</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ab-8116-c1d7863085f7" class="">📌 <strong>Color:</strong> <em>Blue</em> 🔵</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8058-8516-f1739b79db31" class="">📌 <strong>Totem:</strong> <em>Blue Dolphin – Messaging &amp; Outreach</em> 🐬</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8045-9dd1-cd5c9999e194" class="">📌 <strong>Quantum Principle:</strong> <strong>Wave-Particle Duality ⚛️</strong> <em>(How something is perceived depends on how it is observed.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80c7-ae66-eb355ae1770d" class="">📌 <strong>Core Energy:</strong> <em>Expression, Truth, Influence</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8053-87d4-dec71279eb19" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8062-bb29-e00e1f9d82b3" class="">✅ <strong>Crafts compelling narratives to ensure ideas resonate.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8070-8e4e-ddc824a1f725" class="">✅ <strong>Adjusts messaging styles for different audiences.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80a9-aa7a-c30cfb5e245f" class="">✅ <strong>Turns ideas into global movements through ethical communication.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ad-9b69-f1b16819503c" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-8088-9faf-f13572f004d0" class="bulleted-list"><li style="list-style-type:disc">A climate activist <strong>using digital storytelling to educate millions</strong> on global warming.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-805a-8a96-dc15cadfd167" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;A message unshared is a message unheard—speak with clarity and purpose.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8012-bfe3-ccba6dff184c"/></div><div style="display:contents" dir="auto"><h2 id="18a0350a-24ee-80a4-aa0e-d63ce4f0521b" class=""><strong>🟣 6. Ajna (Third Eye Chakra) – The Vision of Reflection &amp; Ethics</strong></h2></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-803e-a526-e10ada6fce01" class="">📌 <strong>Color:</strong> <em>Purple</em> 🟣</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-804d-a888-c10ceacac5cb" class="">📌 <strong>Totem:</strong> <em>Purple Elephant – Wisdom &amp; Long-Term Reflection</em> 🐘</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-806f-bb36-c1d0318a2057" class="">📌 <strong>Quantum Principle:</strong> <strong>Quantum Field Theory ⚛️</strong> <em>(Understanding how everything is interconnected.)</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8003-b782-f5afdc4dd748" class="">📌 <strong>Core Energy:</strong> <em>Wisdom, Ethics, Long-Term Vision</em></p></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-8092-afa6-c3c01cbbe125" class=""><strong>Function in the Cosmic Council:</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ef-baa1-fbc18c278cee" class="">✅ <strong>Ensures all actions align with deep wisdom, ethics, and sustainability.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ac-be64-c115fbe7229b" class="">✅ <strong>Balances logic and emotional intelligence in decision-making.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80d6-9839-c7e941057bfa" class="">✅ <strong>Considers the long-term impact of every choice.</strong></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8045-b87f-dccccca22104" class="">🔍 <strong>Example:</strong></p></div><div style="display:contents" dir="auto"><ul id="18a0350a-24ee-806a-8fc0-c970fc413bbd" class="bulleted-list"><li style="list-style-type:disc">A policymaker <strong>reviewing AI ethics guidelines to ensure fairness and social well-being</strong>.</li></ul></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8076-99c9-c8762fbdfee6" class="">🛠 <strong>Guiding Thought:</strong> <em>&quot;Wisdom is not just knowledge—it is understanding and applying it ethically.&quot;</em></p></div><div style="display:contents" dir="auto"><hr id="18a0350a-24ee-8084-b694-de2e7e12d684"/></div><div style="display:contents" dir="auto"><h3 id="18a0350a-24ee-80c1-8459-d472925126c8" class=""><strong>♾️ How the Chakras Work Together in the Cosmic Council</strong></h3></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80ab-9dee-dac6d2d2c57d" class="">Each chakra flows into the next, creating <strong>a continuous cycle of evolution, innovation, and refinement</strong>:</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8016-878f-e4410fa4bf4d" class="">1️⃣ <strong>🔴 Muladhara (Root) →</strong> <em>Seeks truth and gathers knowledge.</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8057-9b62-f7ab45f878f2" class="">2️⃣ <strong>🟠 Svadisthana (Sacral) →</strong> <em>Structures a strategic plan.</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-805c-85a6-c82199b81da3" class="">3️⃣ <strong>🟡 Manipura (Solar Plexus) →</strong> <em>Develops creative solutions.</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-8086-b082-dbcae416c5d2" class="">4️⃣ <strong>🟢 Anahata (Heart) →</strong> <em>Ensures sustainability and resource efficiency.</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-807d-9f95-ccac22b9e5ca" class="">5️⃣ <strong>🔵 Vishuddha (Throat) →</strong> <em>Communicates and shares the solution effectively.</em></p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-806e-8e6b-f39a046243b0" class="">6️⃣ <strong>🟣 Ajna (Third Eye) →</strong> <em>Reflects, ensures wisdom, and refines the process.</em></p></div><div style="display:contents" dir="ltr"><figure id="1a00350a-24ee-80a4-a367-de4ed7952ad8" class="link-to-page"><a href="The%20Chakras/Sahasrara%20(Crown)%201a00350a24ee80a4a367de4ed7952ad8.html">Sahasrara (Crown) </a></figure></div><div style="display:contents" dir="auto"><p id="1a00350a-24ee-80a1-95b5-d899861d613b" class="">
+</p></div><div style="display:contents" dir="auto"><p id="18a0350a-24ee-80d6-b4f4-ec206dd560c6" class="">♾️ <strong>Then the cycle begins again—continuously evolving.</strong></p></div><div style="display:contents" dir="auto"><p id="1a00350a-24ee-80ff-8fe1-cda59d1442a9" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

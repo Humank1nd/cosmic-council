@@ -1,0 +1,25 @@
+{
+  "id": "dream-caesar",
+  "name": "Dream Caesar Tools",
+  "description": "Expose Dream Caesar Cosmic Council API endpoints with atomic-level CRONUS integration.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "baseUrl": {
+        "type": "string",
+        "description": "Dream Caesar API base URL (default: http://127.0.0.1:8020)"
+      },
+      "apiToken": {
+        "type": "string",
+        "description": "Optional bearer token for Dream Caesar API."
+      },
+      "timeoutMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 120000,
+        "description": "HTTP timeout for API calls."
+      }
+    }
+  }
+}

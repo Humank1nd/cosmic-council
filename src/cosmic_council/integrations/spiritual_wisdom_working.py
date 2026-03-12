@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Working Spiritual Wisdom & Mythology Integration for Cosmic Council Framework
+Working Spiritual Wisdom & Mythology Integration for Agent Orchestrator Framework
 """
 
 import asyncio

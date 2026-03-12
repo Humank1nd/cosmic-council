@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-03-10T15:04:43.916605",
+  "model": "google/gemma-3-4b",
+  "rag_enhanced": true,
+  "results": {
+    "mathematics": {
+      "correct": 8,
+      "total": 8,
+      "accuracy": 100.0
+    },
+    "physics": {
+      "correct": 6,
+      "total": 6,
+      "accuracy": 100.0
+    },
+    "biology_medicine": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "computer_science": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "humanities_social": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "philosophy_ethics": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "chemistry": {
+      "correct": 6,
+      "total": 6,
+      "accuracy": 100.0
+    }
+  },
+  "overall": 100.0,
+  "total_correct": 48,
+  "total_questions": 48
+}

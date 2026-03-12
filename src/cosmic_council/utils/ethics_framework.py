@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive Ethics Framework for Cosmic Council Framework
+Comprehensive Ethics Framework for Agent Orchestrator Framework
 """
 
 import asyncio

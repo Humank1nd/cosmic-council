@@ -42,7 +42,7 @@ class DatabaseConnectionTester:
             # Get database URL from environment or use default
             database_url = os.getenv(
                 "DATABASE_URL", 
-                "postgresql+asyncpg://cosmic_council:cosmic_password@localhost:5432/cosmic_council_db"
+                "postgresql+asyncpg://dream_caesar:dream_caesar_password@localhost:5432/dream_caesar_db"
             )
             
             print(f"📡 Connecting to: {database_url.split('@')[1] if '@' in database_url else 'localhost'}")
@@ -334,7 +334,7 @@ class DatabaseConnectionTester:
             print("⚠️  Some database tests failed. Check the database configuration.")
             print("\n🔧 Troubleshooting Tips:")
             print("1. Ensure PostgreSQL is running on localhost:5432")
-            print("2. Create database 'cosmic_council_db' with user 'cosmic_council'")
+            print("2. Create database 'dream_caesar_db' with user 'dream_caesar'")
             print("3. Set DATABASE_URL environment variable if using different connection")
             print("4. Check database permissions and firewall settings")
         

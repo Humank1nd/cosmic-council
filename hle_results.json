@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-03-10T13:57:24.248832",
+  "results": {
+    "mathematics": {
+      "correct": 8,
+      "total": 8,
+      "accuracy": 100.0
+    },
+    "physics": {
+      "correct": 5,
+      "total": 6,
+      "accuracy": 83.33333333333334
+    },
+    "biology_medicine": {
+      "correct": 6,
+      "total": 7,
+      "accuracy": 85.71428571428571
+    },
+    "computer_science": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "humanities_social": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "philosophy_ethics": {
+      "correct": 7,
+      "total": 7,
+      "accuracy": 100.0
+    },
+    "chemistry": {
+      "correct": 5,
+      "total": 6,
+      "accuracy": 83.33333333333334
+    }
+  },
+  "overall": 93.75,
+  "total_correct": 45,
+  "total_questions": 48
+}
