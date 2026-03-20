@@ -69,7 +69,7 @@ Examples:
             
         elif args.api:
             print("🚀 Starting Cosmic Council API Server...")
-            from src.cosmic_council.core.api import main as api_main
+            from cosmic_council.core.api import main as api_main
             api_main()
             
         elif args.workflow:
