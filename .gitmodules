@@ -1,0 +1,3 @@
+[submodule "vendor/know-joke-u"]
+	path = vendor/know-joke-u
+	url = https://github.com/Know-Joke/KJU.git

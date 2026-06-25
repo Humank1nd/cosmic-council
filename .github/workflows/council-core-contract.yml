@@ -1,0 +1,38 @@
+name: Council Core Contract
+
+on:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "vendor/**"
+      - ".gitmodules"
+      - ".github/workflows/council-core-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "vendor/**"
+      - ".gitmodules"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+      - name: Verify council-core contract
+        run: pnpm verify:council-core
