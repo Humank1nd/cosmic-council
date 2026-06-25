@@ -12,6 +12,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/lib/
 parts/
 sdist/
 var/
@@ -52,6 +53,14 @@ logs/
 
 # Recovery artifacts
 recovery/
+
+# Generated desktop runtime artifacts
+docs/runtime/desktop-council/artifacts/*.jsonl
+docs/runtime/desktop-council/artifacts/*-status.json
+docs/runtime/desktop-council/artifacts/*-feed.json
+docs/runtime/desktop-council/active-canon-terminal-worker.jsonl
+docs/runtime/desktop-council/active-canon-terminal-worker-state.json
+docs/runtime/desktop-council/active-canon-terminal-worker-status.json
 
 # Environment
 .env

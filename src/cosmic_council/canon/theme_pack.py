@@ -1,7 +1,8 @@
 """
-Load universe theme packs for Cosmic Council runtime display (Dream Caesar).
+Load universe theme packs for Cosmic Council runtime display (Marvel Omniverse).
 
-Theme JSON lives in @know-joke-u/council-core — resolved from node_modules or know-joke-u path.
+Theme JSON lives in @know-joke-u/council-core — resolved from node_modules or vendor/know-joke-u.
+Structural spine keys (Dream Caesar, Cosmic Council) stay internal; Marvel UI uses Uatu + Infinity Stones.
 """
 
 from __future__ import annotations
@@ -135,6 +136,35 @@ def resolve_theme_pack_id(explicit: Optional[str] = None, *, public_surface: boo
 def get_council_brand_name(pack_id: Optional[str] = None) -> str:
     resolved = pack_id or resolve_theme_pack_id()
     return get_layer_archetype_label(3, resolved, structural_archetype="Cosmic Council")
+
+
+def get_uatu_brand_name(pack_id: Optional[str] = None) -> str:
+    resolved = pack_id or resolve_theme_pack_id()
+    return get_layer_archetype_label(2, resolved, structural_archetype="Dream Caesar")
+
+
+def get_marvel_omniverse_display_name(pack_id: Optional[str] = None) -> str:
+    resolved = pack_id or resolve_theme_pack_id()
+    pack = load_theme_pack(resolved)
+    return str(pack.get("meta", {}).get("displayName", "Marvel Omniverse"))
+
+
+def get_user_persona_display_name(pack_id: Optional[str] = None) -> str:
+    """Layer 1 themed label for The User (e.g. One Above All in marvel-omniverse)."""
+    resolved = pack_id or resolve_theme_pack_id()
+    return get_layer_archetype_label(1, resolved, structural_archetype="The User")
+
+
+def get_dimension_boundary(pack_id: Optional[str] = None) -> Dict[str, Any]:
+    resolved = pack_id or resolve_theme_pack_id()
+    pack = load_theme_pack(resolved)
+    return dict(pack.get("dimensionBoundary") or {})
+
+
+def get_structural_species(pack_id: Optional[str] = None) -> Dict[str, Any]:
+    resolved = pack_id or resolve_theme_pack_id()
+    pack = load_theme_pack(resolved)
+    return dict(pack.get("structuralSpecies") or {})
 
 
 def get_themed_totem_prompt_line(color: str, pack_id: Optional[str] = None) -> str:
