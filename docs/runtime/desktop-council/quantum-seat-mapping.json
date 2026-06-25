@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-03-12T14:30:00-04:00",
+  "source": "QUANTUM.md",
+  "mappings": [
+    {
+      "seat": "red",
+      "title": "Red Owl",
+      "theme_variant": "Iron Man",
+      "gemstone": "Ruby",
+      "chakra": "Muladhara",
+      "sacred_question": "WHY",
+      "quantum_layer": "Entanglement",
+      "quantum_principle": "Two particles become correlated. Measure one, instantly know the other.",
+      "operational_metaphor": "In any complex system, variables are entangled. Change one element, and others shift.",
+      "key_question": "What else moves when this moves?",
+      "warning": "Entanglement is invisible until you test it. Probe, not assume."
+    },
+    {
+      "seat": "orange",
+      "title": "Orange Orangutan",
+      "theme_variant": "Captain America",
+      "gemstone": "Topaz",
+      "chakra": "Svadhisthana",
+      "sacred_question": "HOW",
+      "quantum_layer": "Tunneling",
+      "quantum_principle": "A particle passes through a barrier it classically shouldn't be able to cross.",
+      "operational_metaphor": "When the obvious path is blocked, there may still be a way through.",
+      "key_question": "What's the smallest version that gets through?",
+      "warning": "Tunneling is probabilistic. Some barriers are real. Know the difference."
+    },
+    {
+      "seat": "yellow",
+      "title": "Yellow Honeybee",
+      "theme_variant": "Spider-Man",
+      "gemstone": "Citrine",
+      "chakra": "Manipura",
+      "sacred_question": "WHAT",
+      "quantum_layer": "Superposition",
+      "quantum_principle": "A particle exists in multiple states simultaneously until observed.",
+      "operational_metaphor": "Hold multiple solutions at once. The act of building collapses superposition into reality.",
+      "key_question": "What if we built three versions and let users collapse the wavefunction?",
+      "warning": "Superposition requires resources. Balance breadth with burn rate."
+    },
+    {
+      "seat": "green",
+      "title": "Green Tortoise",
+      "theme_variant": "Hulk",
+      "gemstone": "Emerald",
+      "chakra": "Anahata",
+      "sacred_question": "WHEN",
+      "quantum_layer": "Teleportation",
+      "quantum_principle": "Quantum information transfers without crossing the intervening space.",
+      "operational_metaphor": "Move knowledge and resources efficiently. Perfect handoffs. No wasted motion.",
+      "key_question": "How do we move the insight without moving the whole team?",
+      "warning": "Teleportation requires infrastructure. Build the receiving station before sending."
+    },
+    {
+      "seat": "blue",
+      "title": "Blue Dolphin",
+      "theme_variant": "Thor",
+      "gemstone": "Sapphire",
+      "chakra": "Vishuddha",
+      "sacred_question": "WHERE",
+      "quantum_layer": "Wave-Particle Duality",
+      "quantum_principle": "Light behaves as a wave or a particle depending on observation.",
+      "operational_metaphor": "Communication has two modes: Broadcast (wave) or Precision (particle).",
+      "key_question": "Is this a broadcast or a direct hit?",
+      "warning": "Duality is not optional. You cannot be both at once. Commit to a mode per channel."
+    },
+    {
+      "seat": "purple",
+      "title": "Purple Elephant",
+      "theme_variant": "Doctor Strange",
+      "gemstone": "Amethyst",
+      "chakra": "Ajna",
+      "sacred_question": "WHO",
+      "quantum_layer": "Zeno Effect",
+      "quantum_principle": "A system that is observed frequently enough cannot evolve.",
+      "operational_metaphor": "Feedback loops stabilize outcomes. Observation shapes what happens.",
+      "key_question": "How often must we observe this to keep it true?",
+      "warning": "Over-observation paralyzes. Calibrate frequency."
+    }
+  ],
+  "cycle_as_wavefunction": {
+    "description": "The full Council cycle can be understood as a single quantum event",
+    "steps": [
+      "Red (Entanglement): Map the possibility space. Everything is connected.",
+      "Orange (Tunneling): Find viable paths through the constraints.",
+      "Yellow (Superposition): Hold multiple builds simultaneously.",
+      "Green (Teleportation): Transfer resources to the most promising.",
+      "Blue (Duality): Communicate in the right mode to the right audience.",
+      "Purple (Zeno): Lock in the outcome with observation."
+    ],
+    "loop": "Then the cycle restarts. The locked outcome becomes the new entangled state."
+  }
+}
