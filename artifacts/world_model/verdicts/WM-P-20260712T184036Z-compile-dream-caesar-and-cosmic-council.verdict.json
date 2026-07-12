@@ -1,0 +1,9 @@
+{
+  "created_at": "2026-07-12T18:40:37Z",
+  "decision": "No world-state commit allowed yet.",
+  "evidence_checked": [],
+  "proposal_id": "WM-P-20260712T184036Z-compile-dream-caesar-and-cosmic-council",
+  "required_next_step": "Attach source evidence and run a real verifier.",
+  "status": "needs_evidence",
+  "verified": false
+}

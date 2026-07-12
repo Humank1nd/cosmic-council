@@ -107,9 +107,10 @@ Promotion requires an explicit classification decision and a trace back to sourc
 1. Keep `dream-caesar.py` as the command entrypoint.
 2. Add explicit subcommands while preserving positional-query behavior.
 3. Add `sources` command that prints the source registry summary.
-4. Add placeholder command contracts for `ingest`, `ask`, `propose`, `verify`, and `commit-world`.
+4. Add doc-backed source registry loading and filtering.
 5. Wire `ask` to the existing `route_query` behavior.
-6. Defer mutation commands until proposal and truth-verdict storage is implemented.
+6. Add local proposal and truth-verdict storage under `artifacts/world_model`.
+7. Keep `commit-world` blocked until a verified verdict exists and durable state graph storage is implemented.
 
 ## Non-Goals For Slice 1
 
@@ -136,5 +137,31 @@ Promotion requires an explicit classification decision and a trace back to sourc
 - Existing positional query usage still works.
 - `dream-caesar status` works as an alias for `--status`.
 - `dream-caesar sources` reports the known source families.
-- Placeholder commands explain their contract without pretending to ingest or commit.
+- `dream-caesar sources --json` emits the parsed registry.
+- `dream-caesar sources --classification "<text>"` filters registry rows.
+- `dream-caesar propose "<change>"` creates a local proposal object.
+- `dream-caesar verify <proposal-id>` writes a local `needs_evidence` verdict until real evidence checks exist.
+- `dream-caesar commit-world <proposal-id>` refuses unverified proposals.
 - All changes are additive or backward-compatible.
+
+## Current Local Proposal Storage
+
+Proposal objects live under:
+
+```text
+artifacts/world_model/proposals/
+```
+
+Truth verdict objects live under:
+
+```text
+artifacts/world_model/verdicts/
+```
+
+The first recorded proposal is:
+
+```text
+WM-P-20260712T184036Z-compile-dream-caesar-and-cosmic-council
+```
+
+Its verdict is `needs_evidence`, so `commit-world` correctly refuses to mutate world state.

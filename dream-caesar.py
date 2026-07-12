@@ -15,6 +15,7 @@ Usage:
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Ensure infrastructure modules are importable
@@ -35,6 +36,9 @@ PLATFORM_COMMANDS = {
 }
 
 SOURCE_REGISTRY_DOC = REPO_ROOT / "docs" / "WORLD_MODEL_SOURCE_REGISTRY.md"
+WORLD_MODEL_DIR = REPO_ROOT / "artifacts" / "world_model"
+PROPOSALS_DIR = WORLD_MODEL_DIR / "proposals"
+VERDICTS_DIR = WORLD_MODEL_DIR / "verdicts"
 
 
 def run_consciousness_check(verbose=False):
@@ -239,27 +243,158 @@ def show_command_contract(command, subject=None):
             "Classify a source and prepare an evidence packet. "
             "Current scaffold does not import, copy, or promote material.",
         ),
-        "propose": (
-            'propose "<change>"',
-            "Create a proposal object for a world-state change. "
-            "Storage is not wired yet, so no proposal is committed.",
-        ),
-        "verify": (
-            "verify <proposal-id>",
-            "Check a proposal against source evidence and truth-verdict rules. "
-            "Verification storage is not wired yet.",
-        ),
-        "commit-world": (
-            "commit-world <proposal-id>",
-            "Commit a verified proposal into the world-state ledger. "
-            "This command is intentionally disabled until proposal verification exists.",
-        ),
     }
     usage, description = contracts[command]
     print(f"Command: dream-caesar {usage}")
     print(description)
     if subject:
         print(f"Received: {subject}")
+
+
+def utc_now():
+    """Return an ISO UTC timestamp."""
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def safe_id_fragment(text):
+    """Create a readable ID fragment from operator text."""
+    chars = []
+    for char in text.lower():
+        if char.isalnum():
+            chars.append(char)
+        elif chars and chars[-1] != "-":
+            chars.append("-")
+        if len(chars) >= 40:
+            break
+    fragment = "".join(chars).strip("-")
+    return fragment or "proposal"
+
+
+def ensure_world_model_dirs():
+    """Create local proposal/verdict storage directories."""
+    PROPOSALS_DIR.mkdir(parents=True, exist_ok=True)
+    VERDICTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def proposal_path(proposal_id):
+    """Return a proposal path for a proposal id."""
+    return PROPOSALS_DIR / f"{proposal_id}.json"
+
+
+def verdict_path(proposal_id):
+    """Return a verdict path for a proposal id."""
+    return VERDICTS_DIR / f"{proposal_id}.verdict.json"
+
+
+def load_json_file(path):
+    """Load a JSON file."""
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json_file(path, payload):
+    """Write pretty JSON with stable ordering."""
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def create_proposal(change, json_output=False):
+    """Create a local world-state proposal object."""
+    if not change:
+        print('Error: propose requires a change. Example: dream-caesar propose "Add source registry"')
+        return 1
+
+    ensure_world_model_dirs()
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    proposal_id = f"WM-P-{timestamp}-{safe_id_fragment(change)}"
+    path = proposal_path(proposal_id)
+    proposal = {
+        "id": proposal_id,
+        "created_at": utc_now(),
+        "status": "proposed",
+        "change": change,
+        "source_evidence": [],
+        "truth_verdict": "pending",
+        "world_state_commit": None,
+        "notes": [
+            "Proposal is local only.",
+            "Verification must attach evidence before commit-world can proceed.",
+        ],
+    }
+    write_json_file(path, proposal)
+
+    if json_output:
+        print(json.dumps({"proposal": proposal, "path": str(path)}, indent=2, sort_keys=True))
+    else:
+        print(f"Proposal: {proposal_id}")
+        print(f"Path: {path}")
+        print("Status: proposed")
+        print("Next: dream-caesar verify " + proposal_id)
+    return 0
+
+
+def verify_proposal(proposal_id, json_output=False):
+    """Create or display a local truth-verdict placeholder for a proposal."""
+    if not proposal_id:
+        print("Error: verify requires a proposal id.")
+        return 1
+
+    path = proposal_path(proposal_id)
+    if not path.exists():
+        print(f"Error: proposal not found: {proposal_id}")
+        print(f"Expected: {path}")
+        return 1
+
+    ensure_world_model_dirs()
+    proposal = load_json_file(path)
+    verdict = {
+        "proposal_id": proposal_id,
+        "created_at": utc_now(),
+        "status": "needs_evidence",
+        "verified": False,
+        "evidence_checked": proposal.get("source_evidence", []),
+        "decision": "No world-state commit allowed yet.",
+        "required_next_step": "Attach source evidence and run a real verifier.",
+    }
+    write_json_file(verdict_path(proposal_id), verdict)
+
+    if json_output:
+        print(json.dumps({"proposal": proposal, "verdict": verdict}, indent=2, sort_keys=True))
+    else:
+        print(f"Proposal: {proposal_id}")
+        print(f"Verdict: {verdict['status']}")
+        print(f"Verified: {verdict['verified']}")
+        print(verdict["decision"])
+        print(f"Verdict path: {verdict_path(proposal_id)}")
+    return 0
+
+
+def commit_world(proposal_id, json_output=False):
+    """Refuse world-state commits unless a verified verdict exists."""
+    if not proposal_id:
+        print("Error: commit-world requires a proposal id.")
+        return 1
+
+    path = proposal_path(proposal_id)
+    verdict = verdict_path(proposal_id)
+    if not path.exists():
+        print(f"Error: proposal not found: {proposal_id}")
+        return 1
+    if not verdict.exists():
+        print(f"Refusing commit: no verdict exists for {proposal_id}.")
+        print(f"Run: dream-caesar verify {proposal_id}")
+        return 1
+
+    verdict_payload = load_json_file(verdict)
+    if not verdict_payload.get("verified"):
+        print(f"Refusing commit: proposal {proposal_id} is not verified.")
+        print(f"Verdict: {verdict_payload.get('status', 'unknown')}")
+        print("World-state commits require verified=true.")
+        if json_output:
+            print(json.dumps({"committed": False, "verdict": verdict_payload}, indent=2, sort_keys=True))
+        return 1
+
+    print("World-state commit storage is not implemented yet.")
+    print("Verified verdict found, but the durable state graph is still pending.")
+    return 1
 
 
 def route_query(query, session_id=None, verbose=False, manual=False):
@@ -511,7 +646,16 @@ def main():
             return 1
         args.query = subject
 
-    if command in {"ingest", "propose", "verify", "commit-world"}:
+    if command == "propose":
+        return create_proposal(subject, json_output=args.json_output)
+
+    if command == "verify":
+        return verify_proposal(subject, json_output=args.json_output)
+
+    if command == "commit-world":
+        return commit_world(subject, json_output=args.json_output)
+
+    if command in {"ingest"}:
         show_command_contract(command, subject=subject)
         return 0
 
