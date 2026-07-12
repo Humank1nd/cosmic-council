@@ -1,0 +1,18 @@
+{
+  "commits": [
+    "WM-C-20260712T184938Z-wm-p-20260712t184036z-compile-dream-caes"
+  ],
+  "created_at": "2026-07-12T18:49:38Z",
+  "proposals": {
+    "WM-P-20260712T184036Z-compile-dream-caesar-and-cosmic-council": {
+      "change": "Compile Dream Caesar and Cosmic Council into one World Model AI CLI platform",
+      "commit_id": "WM-C-20260712T184938Z-wm-p-20260712t184036z-compile-dream-caes",
+      "committed_at": "2026-07-12T18:49:38Z",
+      "evidence": [
+        "WM-E-20260712T184504Z-WM-D8"
+      ]
+    }
+  },
+  "updated_at": "2026-07-12T18:49:38Z",
+  "version": 1
+}

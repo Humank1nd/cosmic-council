@@ -9,8 +9,8 @@
   "source_evidence": [
     "WM-E-20260712T184504Z-WM-D8"
   ],
-  "status": "proposed",
-  "truth_verdict": "pending",
-  "updated_at": "2026-07-12T18:45:04Z",
-  "world_state_commit": null
+  "status": "committed",
+  "truth_verdict": "approved",
+  "updated_at": "2026-07-12T18:50:30Z",
+  "world_state_commit": "WM-C-20260712T184938Z-wm-p-20260712t184036z-compile-dream-caes"
 }

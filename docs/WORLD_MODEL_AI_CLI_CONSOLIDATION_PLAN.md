@@ -111,7 +111,9 @@ Promotion requires an explicit classification decision and a trace back to sourc
 5. Wire `ask` to the existing `route_query` behavior.
 6. Add local proposal and truth-verdict storage under `artifacts/world_model`.
 7. Add local evidence packet storage and `ingest --proposal` attachment.
-8. Keep `commit-world` blocked until a verified verdict exists and durable state graph storage is implemented.
+8. Add manual verifier decisions: approve, reject, and needs-more-evidence.
+9. Add local world-state index commits for approved proposals.
+10. Keep external systems untouched by `commit-world`.
 
 ## Non-Goals For Slice 1
 
@@ -143,8 +145,11 @@ Promotion requires an explicit classification decision and a trace back to sourc
 - `dream-caesar propose "<change>"` creates a local proposal object.
 - `dream-caesar ingest <source-id-or-path>` creates a local evidence packet.
 - `dream-caesar ingest <source-id-or-path> --proposal <proposal-id>` attaches evidence to a proposal.
-- `dream-caesar verify <proposal-id>` writes `needs_evidence` or `evidence_attached` verdicts until real evidence checks exist.
-- `dream-caesar commit-world <proposal-id>` refuses unverified proposals.
+- `dream-caesar verify <proposal-id>` writes `needs_evidence` or `evidence_attached` verdicts.
+- `dream-caesar verify <proposal-id> --decision approve --note "<note>"` manually approves evidence-backed proposals.
+- `dream-caesar verify <proposal-id> --decision reject --note "<note>"` rejects proposals.
+- `dream-caesar verify <proposal-id> --decision needs-more-evidence --note "<note>"` records an evidence gap.
+- `dream-caesar commit-world <proposal-id>` refuses unverified proposals and writes a local world-state commit for approved proposals.
 - All changes are additive or backward-compatible.
 
 ## Current Local Proposal Storage
@@ -167,6 +172,18 @@ Evidence packets live under:
 artifacts/world_model/evidence/
 ```
 
+World-state commits live under:
+
+```text
+artifacts/world_model/commits/
+```
+
+The local world-state index lives at:
+
+```text
+artifacts/world_model/state/world_state.json
+```
+
 The first recorded proposal is:
 
 ```text
@@ -179,4 +196,10 @@ The first attached evidence packet is:
 WM-E-20260712T184504Z-WM-D8
 ```
 
-Its verdict is `evidence_attached` and `verified=false`, so `commit-world` correctly refuses to mutate world state.
+The first local world-state commit is:
+
+```text
+WM-C-20260712T184938Z-wm-p-20260712t184036z-compile-dream-caes
+```
+
+This commit records the accepted proposal in the local world-state index. It does not mutate any external system.

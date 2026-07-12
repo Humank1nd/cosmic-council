@@ -1,6 +1,6 @@
 {
-  "created_at": "2026-07-12T18:45:05Z",
-  "decision": "No world-state commit allowed yet.",
+  "created_at": "2026-07-12T18:50:30Z",
+  "decision": "Manual verifier approved this proposal for world-state commit.",
   "evidence_checked": [
     {
       "capture_mode": "registry-metadata",
@@ -24,9 +24,11 @@
       }
     }
   ],
+  "manual_decision": "approve",
+  "manual_note": "Manual approval for CLI platform consolidation loop after source registry and WM-D8 evidence attachment.",
   "missing_evidence": [],
   "proposal_id": "WM-P-20260712T184036Z-compile-dream-caesar-and-cosmic-council",
-  "required_next_step": "Run a real verifier over attached evidence.",
-  "status": "evidence_attached",
-  "verified": false
+  "required_next_step": "Run commit-world to materialize a local world-state commit.",
+  "status": "approved",
+  "verified": true
 }

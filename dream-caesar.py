@@ -40,6 +40,9 @@ WORLD_MODEL_DIR = REPO_ROOT / "artifacts" / "world_model"
 PROPOSALS_DIR = WORLD_MODEL_DIR / "proposals"
 VERDICTS_DIR = WORLD_MODEL_DIR / "verdicts"
 EVIDENCE_DIR = WORLD_MODEL_DIR / "evidence"
+COMMITS_DIR = WORLD_MODEL_DIR / "commits"
+STATE_DIR = WORLD_MODEL_DIR / "state"
+WORLD_STATE_PATH = STATE_DIR / "world_state.json"
 
 
 def run_consciousness_check(verbose=False):
@@ -276,6 +279,8 @@ def ensure_world_model_dirs():
     PROPOSALS_DIR.mkdir(parents=True, exist_ok=True)
     VERDICTS_DIR.mkdir(parents=True, exist_ok=True)
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    COMMITS_DIR.mkdir(parents=True, exist_ok=True)
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def proposal_path(proposal_id):
@@ -293,6 +298,11 @@ def evidence_path(evidence_id):
     return EVIDENCE_DIR / f"{evidence_id}.json"
 
 
+def world_commit_path(commit_id):
+    """Return a world-state commit path for a commit id."""
+    return COMMITS_DIR / f"{commit_id}.json"
+
+
 def load_json_file(path):
     """Load a JSON file."""
     return json.loads(path.read_text(encoding="utf-8"))
@@ -301,6 +311,20 @@ def load_json_file(path):
 def write_json_file(path, payload):
     """Write pretty JSON with stable ordering."""
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def load_world_state():
+    """Load or initialize the local world-state index."""
+    if WORLD_STATE_PATH.exists():
+        return load_json_file(WORLD_STATE_PATH)
+
+    return {
+        "created_at": utc_now(),
+        "updated_at": None,
+        "version": 0,
+        "commits": [],
+        "proposals": {},
+    }
 
 
 def find_source(source_ref):
@@ -444,8 +468,25 @@ def create_proposal(change, json_output=False):
     return 0
 
 
-def verify_proposal(proposal_id, json_output=False):
-    """Create or display a local truth-verdict placeholder for a proposal."""
+def normalize_decision(decision):
+    """Normalize verifier decisions."""
+    if not decision:
+        return None
+    decision = decision.lower().strip().replace("_", "-")
+    aliases = {
+        "approve": "approve",
+        "approved": "approve",
+        "reject": "reject",
+        "rejected": "reject",
+        "needs-more-evidence": "needs-more-evidence",
+        "more-evidence": "needs-more-evidence",
+        "needs-evidence": "needs-more-evidence",
+    }
+    return aliases.get(decision)
+
+
+def verify_proposal(proposal_id, json_output=False, decision=None, note=None):
+    """Create or display a local truth-verdict for a proposal."""
     if not proposal_id:
         print("Error: verify requires a proposal id.")
         return 1
@@ -458,6 +499,32 @@ def verify_proposal(proposal_id, json_output=False):
 
     ensure_world_model_dirs()
     proposal = load_json_file(path)
+    existing_verdict = None
+    if verdict_path(proposal_id).exists():
+        existing_verdict = load_json_file(verdict_path(proposal_id))
+
+    normalized_decision = normalize_decision(decision)
+    if decision and not normalized_decision:
+        print("Error: --decision must be approve, reject, or needs-more-evidence.")
+        return 1
+
+    if not normalized_decision and existing_verdict:
+        preserved_statuses = {"approved", "rejected", "needs_more_evidence"}
+        if existing_verdict.get("status") in preserved_statuses:
+            if json_output:
+                print(json.dumps(
+                    {"proposal": proposal, "verdict": existing_verdict},
+                    indent=2,
+                    sort_keys=True,
+                ))
+            else:
+                print(f"Proposal: {proposal_id}")
+                print(f"Verdict: {existing_verdict.get('status')}")
+                print(f"Verified: {existing_verdict.get('verified')}")
+                print(existing_verdict.get("decision", ""))
+                print(f"Verdict path: {verdict_path(proposal_id)}")
+            return 0
+
     evidence_ids = proposal.get("source_evidence", [])
     evidence_checked = []
     missing_evidence = []
@@ -468,23 +535,51 @@ def verify_proposal(proposal_id, json_output=False):
         else:
             missing_evidence.append(evidence_id)
 
-    status = "evidence_attached" if evidence_checked else "needs_evidence"
-    required_next_step = (
-        "Run a real verifier over attached evidence."
-        if evidence_checked and not missing_evidence
-        else "Attach source evidence and run a real verifier."
-    )
+    if normalized_decision == "approve" and not evidence_checked:
+        print("Error: refusing approval without attached evidence.")
+        print("Run: dream-caesar ingest <source-id-or-path> --proposal " + proposal_id)
+        return 1
+
+    verified = normalized_decision == "approve"
+    if normalized_decision == "approve":
+        status = "approved"
+        decision_text = "Manual verifier approved this proposal for world-state commit."
+        required_next_step = "Run commit-world to materialize a local world-state commit."
+    elif normalized_decision == "reject":
+        status = "rejected"
+        decision_text = "Manual verifier rejected this proposal."
+        required_next_step = "Revise or create a new proposal."
+    elif normalized_decision == "needs-more-evidence":
+        status = "needs_more_evidence"
+        decision_text = "Manual verifier requested more evidence."
+        required_next_step = "Attach additional evidence and verify again."
+    elif evidence_checked:
+        status = "evidence_attached"
+        decision_text = "No world-state commit allowed yet."
+        required_next_step = "Run a real verifier over attached evidence."
+    else:
+        status = "needs_evidence"
+        decision_text = "No world-state commit allowed yet."
+        required_next_step = "Attach source evidence and run a real verifier."
+
     verdict = {
         "proposal_id": proposal_id,
         "created_at": utc_now(),
         "status": status,
-        "verified": False,
+        "verified": verified,
+        "manual_decision": normalized_decision,
+        "manual_note": note,
         "evidence_checked": evidence_checked,
         "missing_evidence": missing_evidence,
-        "decision": "No world-state commit allowed yet.",
+        "decision": decision_text,
         "required_next_step": required_next_step,
     }
     write_json_file(verdict_path(proposal_id), verdict)
+
+    if normalized_decision:
+        proposal["truth_verdict"] = status
+        proposal["updated_at"] = utc_now()
+        write_json_file(path, proposal)
 
     if json_output:
         print(json.dumps({"proposal": proposal, "verdict": verdict}, indent=2, sort_keys=True))
@@ -498,7 +593,7 @@ def verify_proposal(proposal_id, json_output=False):
 
 
 def commit_world(proposal_id, json_output=False):
-    """Refuse world-state commits unless a verified verdict exists."""
+    """Create a local world-state commit for a verified proposal."""
     if not proposal_id:
         print("Error: commit-world requires a proposal id.")
         return 1
@@ -522,9 +617,58 @@ def commit_world(proposal_id, json_output=False):
             print(json.dumps({"committed": False, "verdict": verdict_payload}, indent=2, sort_keys=True))
         return 1
 
-    print("World-state commit storage is not implemented yet.")
-    print("Verified verdict found, but the durable state graph is still pending.")
-    return 1
+    proposal = load_json_file(path)
+    ensure_world_model_dirs()
+    world_state = load_world_state()
+
+    if proposal_id in world_state.get("proposals", {}):
+        existing_commit = world_state["proposals"][proposal_id].get("commit_id")
+        print(f"Proposal already committed: {proposal_id}")
+        print(f"Commit: {existing_commit}")
+        return 0
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    commit_id = f"WM-C-{timestamp}-{safe_id_fragment(proposal_id)}"
+    commit = {
+        "id": commit_id,
+        "created_at": utc_now(),
+        "proposal_id": proposal_id,
+        "proposal_change": proposal.get("change"),
+        "verdict_path": str(verdict),
+        "proposal_path": str(path),
+        "evidence": proposal.get("source_evidence", []),
+        "state_effect": "recorded_proposal_commit",
+        "notes": [
+            "This is a local world-state index commit.",
+            "It records the accepted proposal; it does not mutate external systems.",
+        ],
+    }
+    write_json_file(world_commit_path(commit_id), commit)
+
+    world_state.setdefault("commits", []).append(commit_id)
+    world_state.setdefault("proposals", {})[proposal_id] = {
+        "commit_id": commit_id,
+        "change": proposal.get("change"),
+        "committed_at": commit["created_at"],
+        "evidence": proposal.get("source_evidence", []),
+    }
+    world_state["version"] = int(world_state.get("version", 0)) + 1
+    world_state["updated_at"] = utc_now()
+    write_json_file(WORLD_STATE_PATH, world_state)
+
+    proposal["status"] = "committed"
+    proposal["world_state_commit"] = commit_id
+    proposal["updated_at"] = utc_now()
+    write_json_file(path, proposal)
+
+    if json_output:
+        print(json.dumps({"committed": True, "commit": commit, "world_state": world_state}, indent=2, sort_keys=True))
+    else:
+        print(f"Committed: {commit_id}")
+        print(f"Proposal: {proposal_id}")
+        print(f"World state: {WORLD_STATE_PATH}")
+        print(f"Commit path: {world_commit_path(commit_id)}")
+    return 0
 
 
 def route_query(query, session_id=None, verbose=False, manual=False):
@@ -738,6 +882,16 @@ def build_parser():
         default=None,
         help="Attach an ingested source evidence packet to a proposal id.",
     )
+    parser.add_argument(
+        "--decision",
+        default=None,
+        help="Manual verifier decision: approve, reject, or needs-more-evidence.",
+    )
+    parser.add_argument(
+        "--note",
+        default=None,
+        help="Manual verifier note recorded with --decision.",
+    )
 
     return parser
 
@@ -785,7 +939,12 @@ def main():
         return create_proposal(subject, json_output=args.json_output)
 
     if command == "verify":
-        return verify_proposal(subject, json_output=args.json_output)
+        return verify_proposal(
+            subject,
+            json_output=args.json_output,
+            decision=args.decision,
+            note=args.note,
+        )
 
     if command == "commit-world":
         return commit_world(subject, json_output=args.json_output)
