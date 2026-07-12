@@ -1,6 +1,14 @@
 {
   "capture_mode": "registry-metadata",
-  "claims": [],
+  "claims": [
+    {
+      "claim_type": "architecture",
+      "created_at": "2026-07-12T19:11:11Z",
+      "id": "WM-E-20260712T184504Z-WM-D8-C001",
+      "status": "operator-extracted",
+      "text": "World Model AI should start with structured state, action, observation, evidence, and planning loops rather than a single giant model."
+    }
+  ],
   "classification": "World-model planning note",
   "created_at": "2026-07-12T18:45:04Z",
   "id": "WM-E-20260712T184504Z-WM-D8",
@@ -17,5 +25,6 @@
     "next_action": "Use as practical architecture input",
     "platform_relevance": "Defines state/action/observation, modular models, planning loop",
     "type": ""
-  }
+  },
+  "updated_at": "2026-07-12T19:11:11Z"
 }

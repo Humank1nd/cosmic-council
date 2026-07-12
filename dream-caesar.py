@@ -29,6 +29,9 @@ PLATFORM_COMMANDS = {
     "status",
     "sources",
     "ingest",
+    "evidence",
+    "inspect-evidence",
+    "add-claim",
     "ask",
     "propose",
     "verify",
@@ -430,6 +433,128 @@ def ingest_source(source_ref, proposal_id=None, json_output=False):
         if proposal_id:
             print(f"Attached to proposal: {proposal_id}")
         print("Capture mode: registry-metadata")
+    return 0
+
+
+def load_evidence(evidence_id):
+    """Load an evidence packet by id."""
+    path = evidence_path(evidence_id)
+    if not path.exists():
+        return None, path
+    return load_json_file(path), path
+
+
+def inspect_evidence(evidence_id, json_output=False):
+    """Display one evidence packet."""
+    if not evidence_id:
+        print("Error: inspect-evidence requires an evidence id.")
+        return 1
+
+    evidence, path = load_evidence(evidence_id)
+    if evidence is None:
+        print(f"Error: evidence not found: {evidence_id}")
+        print(f"Expected: {path}")
+        return 1
+
+    if json_output:
+        print(json.dumps({"evidence": evidence, "path": str(path)}, indent=2, sort_keys=True))
+        return 0
+
+    print(f"Evidence: {evidence['id']}")
+    print(f"Path: {path}")
+    source = evidence.get("source", {})
+    print(f"Source: {source.get('id', 'unknown')} — {source.get('name', 'unknown')}")
+    print(f"Classification: {evidence.get('classification', 'unknown')}")
+    claims = evidence.get("claims", [])
+    print(f"Claims: {len(claims)}")
+    for claim in claims:
+        print(f"  {claim.get('id')}: {claim.get('text')}")
+        if claim.get("claim_type"):
+            print(f"    type: {claim['claim_type']}")
+    return 0
+
+
+def add_claim(evidence_id, claim_text, claim_type=None, json_output=False):
+    """Attach a manual claim to an evidence packet."""
+    if not evidence_id or not claim_text:
+        print('Error: add-claim requires an evidence id and claim text.')
+        print('Example: dream-caesar add-claim WM-E-... "World models need symbolic state."')
+        return 1
+
+    evidence, path = load_evidence(evidence_id)
+    if evidence is None:
+        print(f"Error: evidence not found: {evidence_id}")
+        print(f"Expected: {path}")
+        return 1
+
+    claims = evidence.setdefault("claims", [])
+    claim_id = f"{evidence_id}-C{len(claims) + 1:03d}"
+    claim = {
+        "id": claim_id,
+        "created_at": utc_now(),
+        "text": claim_text,
+        "claim_type": claim_type or "manual",
+        "status": "operator-extracted",
+    }
+    claims.append(claim)
+    evidence["updated_at"] = utc_now()
+    write_json_file(path, evidence)
+
+    if json_output:
+        print(json.dumps({"claim": claim, "evidence": evidence, "path": str(path)}, indent=2, sort_keys=True))
+    else:
+        print(f"Claim: {claim_id}")
+        print(f"Evidence: {evidence_id}")
+        print(f"Text: {claim_text}")
+        print(f"Path: {path}")
+    return 0
+
+
+def show_proposal_evidence(proposal_id, json_output=False):
+    """List evidence packets attached to a proposal."""
+    if not proposal_id:
+        print("Error: evidence requires a proposal id.")
+        return 1
+
+    path = proposal_path(proposal_id)
+    if not path.exists():
+        print(f"Error: proposal not found: {proposal_id}")
+        print(f"Expected: {path}")
+        return 1
+
+    proposal = load_json_file(path)
+    evidence_packets = []
+    missing = []
+    for evidence_id in proposal.get("source_evidence", []):
+        packet, packet_path = load_evidence(evidence_id)
+        if packet:
+            evidence_packets.append({"evidence": packet, "path": str(packet_path)})
+        else:
+            missing.append(evidence_id)
+
+    payload = {
+        "proposal_id": proposal_id,
+        "evidence_count": len(evidence_packets),
+        "evidence": evidence_packets,
+        "missing": missing,
+    }
+
+    if json_output:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+
+    print(f"Proposal: {proposal_id}")
+    print(f"Evidence: {len(evidence_packets)}")
+    for item in evidence_packets:
+        packet = item["evidence"]
+        source = packet.get("source", {})
+        print(f"{packet['id']}: {source.get('id', 'unknown')} — {source.get('name', 'unknown')}")
+        print(f"  claims: {len(packet.get('claims', []))}")
+        print(f"  path: {item['path']}")
+    if missing:
+        print("Missing evidence:")
+        for evidence_id in missing:
+            print(f"  {evidence_id}")
     return 0
 
 
@@ -892,6 +1017,11 @@ def build_parser():
         default=None,
         help="Manual verifier note recorded with --decision.",
     )
+    parser.add_argument(
+        "--claim-type",
+        default=None,
+        help="Optional claim type for add-claim.",
+    )
 
     return parser
 
@@ -951,6 +1081,25 @@ def main():
 
     if command == "ingest":
         return ingest_source(subject, proposal_id=args.proposal, json_output=args.json_output)
+
+    if command == "evidence":
+        return show_proposal_evidence(subject, json_output=args.json_output)
+
+    if command == "inspect-evidence":
+        return inspect_evidence(subject, json_output=args.json_output)
+
+    if command == "add-claim":
+        if not args.command_args:
+            print('Error: add-claim requires an evidence id and claim text.')
+            return 1
+        evidence_id = args.command_args[0]
+        claim_text = " ".join(args.command_args[1:]).strip()
+        return add_claim(
+            evidence_id,
+            claim_text,
+            claim_type=args.claim_type,
+            json_output=args.json_output,
+        )
 
     # --- Query required for pipeline modes ---
     if not args.query and not args.pipeline:

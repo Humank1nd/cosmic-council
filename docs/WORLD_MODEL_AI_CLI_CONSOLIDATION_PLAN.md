@@ -113,7 +113,8 @@ Promotion requires an explicit classification decision and a trace back to sourc
 7. Add local evidence packet storage and `ingest --proposal` attachment.
 8. Add manual verifier decisions: approve, reject, and needs-more-evidence.
 9. Add local world-state index commits for approved proposals.
-10. Keep external systems untouched by `commit-world`.
+10. Add manual evidence claim extraction commands.
+11. Keep external systems untouched by `commit-world`.
 
 ## Non-Goals For Slice 1
 
@@ -150,6 +151,9 @@ Promotion requires an explicit classification decision and a trace back to sourc
 - `dream-caesar verify <proposal-id> --decision reject --note "<note>"` rejects proposals.
 - `dream-caesar verify <proposal-id> --decision needs-more-evidence --note "<note>"` records an evidence gap.
 - `dream-caesar commit-world <proposal-id>` refuses unverified proposals and writes a local world-state commit for approved proposals.
+- `dream-caesar evidence <proposal-id>` lists evidence packets attached to a proposal.
+- `dream-caesar inspect-evidence <evidence-id>` displays one evidence packet and its claims.
+- `dream-caesar add-claim <evidence-id> "<claim>" --claim-type <type>` manually attaches a claim to an evidence packet.
 - All changes are additive or backward-compatible.
 
 ## Current Local Proposal Storage
@@ -194,6 +198,18 @@ The first attached evidence packet is:
 
 ```text
 WM-E-20260712T184504Z-WM-D8
+```
+
+The first extracted claim is:
+
+```text
+WM-E-20260712T184504Z-WM-D8-C001
+```
+
+Claim text:
+
+```text
+World Model AI should start with structured state, action, observation, evidence, and planning loops rather than a single giant model.
 ```
 
 The first local world-state commit is:
