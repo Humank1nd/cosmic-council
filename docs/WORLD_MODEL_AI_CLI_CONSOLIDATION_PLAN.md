@@ -110,7 +110,8 @@ Promotion requires an explicit classification decision and a trace back to sourc
 4. Add doc-backed source registry loading and filtering.
 5. Wire `ask` to the existing `route_query` behavior.
 6. Add local proposal and truth-verdict storage under `artifacts/world_model`.
-7. Keep `commit-world` blocked until a verified verdict exists and durable state graph storage is implemented.
+7. Add local evidence packet storage and `ingest --proposal` attachment.
+8. Keep `commit-world` blocked until a verified verdict exists and durable state graph storage is implemented.
 
 ## Non-Goals For Slice 1
 
@@ -140,7 +141,9 @@ Promotion requires an explicit classification decision and a trace back to sourc
 - `dream-caesar sources --json` emits the parsed registry.
 - `dream-caesar sources --classification "<text>"` filters registry rows.
 - `dream-caesar propose "<change>"` creates a local proposal object.
-- `dream-caesar verify <proposal-id>` writes a local `needs_evidence` verdict until real evidence checks exist.
+- `dream-caesar ingest <source-id-or-path>` creates a local evidence packet.
+- `dream-caesar ingest <source-id-or-path> --proposal <proposal-id>` attaches evidence to a proposal.
+- `dream-caesar verify <proposal-id>` writes `needs_evidence` or `evidence_attached` verdicts until real evidence checks exist.
 - `dream-caesar commit-world <proposal-id>` refuses unverified proposals.
 - All changes are additive or backward-compatible.
 
@@ -158,10 +161,22 @@ Truth verdict objects live under:
 artifacts/world_model/verdicts/
 ```
 
+Evidence packets live under:
+
+```text
+artifacts/world_model/evidence/
+```
+
 The first recorded proposal is:
 
 ```text
 WM-P-20260712T184036Z-compile-dream-caesar-and-cosmic-council
 ```
 
-Its verdict is `needs_evidence`, so `commit-world` correctly refuses to mutate world state.
+The first attached evidence packet is:
+
+```text
+WM-E-20260712T184504Z-WM-D8
+```
+
+Its verdict is `evidence_attached` and `verified=false`, so `commit-world` correctly refuses to mutate world state.

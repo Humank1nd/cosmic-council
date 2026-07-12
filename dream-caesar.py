@@ -39,6 +39,7 @@ SOURCE_REGISTRY_DOC = REPO_ROOT / "docs" / "WORLD_MODEL_SOURCE_REGISTRY.md"
 WORLD_MODEL_DIR = REPO_ROOT / "artifacts" / "world_model"
 PROPOSALS_DIR = WORLD_MODEL_DIR / "proposals"
 VERDICTS_DIR = WORLD_MODEL_DIR / "verdicts"
+EVIDENCE_DIR = WORLD_MODEL_DIR / "evidence"
 
 
 def run_consciousness_check(verbose=False):
@@ -274,6 +275,7 @@ def ensure_world_model_dirs():
     """Create local proposal/verdict storage directories."""
     PROPOSALS_DIR.mkdir(parents=True, exist_ok=True)
     VERDICTS_DIR.mkdir(parents=True, exist_ok=True)
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def proposal_path(proposal_id):
@@ -286,6 +288,11 @@ def verdict_path(proposal_id):
     return VERDICTS_DIR / f"{proposal_id}.verdict.json"
 
 
+def evidence_path(evidence_id):
+    """Return an evidence path for an evidence id."""
+    return EVIDENCE_DIR / f"{evidence_id}.json"
+
+
 def load_json_file(path):
     """Load a JSON file."""
     return json.loads(path.read_text(encoding="utf-8"))
@@ -294,6 +301,112 @@ def load_json_file(path):
 def write_json_file(path, payload):
     """Write pretty JSON with stable ordering."""
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def find_source(source_ref):
+    """Find a source by id or text in the registry."""
+    if not source_ref:
+        return None
+
+    sources = load_source_registry()
+    exact = [source for source in sources if source.get("id", "").lower() == source_ref.lower()]
+    if exact:
+        return exact[0]
+
+    matches = filter_sources(sources, source_filter=source_ref)
+    if len(matches) == 1:
+        return matches[0]
+
+    return None
+
+
+def make_source_from_path(source_ref):
+    """Create an ad hoc source record for a local path that is not in the registry."""
+    path = Path(source_ref).expanduser()
+    if not path.is_absolute():
+        path = (REPO_ROOT / path).resolve()
+
+    if not path.exists():
+        return None
+
+    return {
+        "id": f"WM-LOCAL-{safe_id_fragment(str(path.name)).upper()}",
+        "name": str(path),
+        "location": str(path),
+        "type": "local path",
+        "classification": "unclassified local evidence",
+        "platform_relevance": "Ad hoc local source captured by ingest.",
+        "next_action": "Classify before canon promotion.",
+    }
+
+
+def attach_evidence_to_proposal(proposal_id, evidence_id):
+    """Attach evidence to a local proposal."""
+    path = proposal_path(proposal_id)
+    if not path.exists():
+        print(f"Error: proposal not found: {proposal_id}")
+        print(f"Expected: {path}")
+        return None
+
+    proposal = load_json_file(path)
+    evidence = proposal.setdefault("source_evidence", [])
+    if evidence_id not in evidence:
+        evidence.append(evidence_id)
+    proposal["updated_at"] = utc_now()
+    write_json_file(path, proposal)
+    return proposal
+
+
+def ingest_source(source_ref, proposal_id=None, json_output=False):
+    """Create a local evidence packet from a registry source or local path."""
+    if not source_ref:
+        print("Error: ingest requires a source id or local path.")
+        return 1
+
+    ensure_world_model_dirs()
+    source = find_source(source_ref) or make_source_from_path(source_ref)
+    if not source:
+        print(f"Error: source not found: {source_ref}")
+        print("Use: dream-caesar sources")
+        return 1
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    evidence_id = f"WM-E-{timestamp}-{source['id']}"
+    packet = {
+        "id": evidence_id,
+        "created_at": utc_now(),
+        "source": source,
+        "classification": source.get("classification", "unknown"),
+        "capture_mode": "registry-metadata",
+        "claims": [],
+        "notes": [
+            "Evidence packet captures source metadata only.",
+            "No Drive/GitHub/cloud content was copied by this command.",
+            "Canon promotion requires later review.",
+        ],
+    }
+    write_json_file(evidence_path(evidence_id), packet)
+
+    proposal = None
+    if proposal_id:
+        proposal = attach_evidence_to_proposal(proposal_id, evidence_id)
+        if proposal is None:
+            return 1
+
+    if json_output:
+        print(json.dumps({
+            "evidence": packet,
+            "path": str(evidence_path(evidence_id)),
+            "proposal": proposal,
+        }, indent=2, sort_keys=True))
+    else:
+        print(f"Evidence: {evidence_id}")
+        print(f"Source: {source['id']} — {source['name']}")
+        print(f"Path: {evidence_path(evidence_id)}")
+        if proposal_id:
+            print(f"Attached to proposal: {proposal_id}")
+        print("Capture mode: registry-metadata")
+    return 0
 
 
 def create_proposal(change, json_output=False):
@@ -345,14 +458,31 @@ def verify_proposal(proposal_id, json_output=False):
 
     ensure_world_model_dirs()
     proposal = load_json_file(path)
+    evidence_ids = proposal.get("source_evidence", [])
+    evidence_checked = []
+    missing_evidence = []
+    for evidence_id in evidence_ids:
+        path_for_evidence = evidence_path(evidence_id)
+        if path_for_evidence.exists():
+            evidence_checked.append(load_json_file(path_for_evidence))
+        else:
+            missing_evidence.append(evidence_id)
+
+    status = "evidence_attached" if evidence_checked else "needs_evidence"
+    required_next_step = (
+        "Run a real verifier over attached evidence."
+        if evidence_checked and not missing_evidence
+        else "Attach source evidence and run a real verifier."
+    )
     verdict = {
         "proposal_id": proposal_id,
         "created_at": utc_now(),
-        "status": "needs_evidence",
+        "status": status,
         "verified": False,
-        "evidence_checked": proposal.get("source_evidence", []),
+        "evidence_checked": evidence_checked,
+        "missing_evidence": missing_evidence,
         "decision": "No world-state commit allowed yet.",
-        "required_next_step": "Attach source evidence and run a real verifier.",
+        "required_next_step": required_next_step,
     }
     write_json_file(verdict_path(proposal_id), verdict)
 
@@ -603,6 +733,11 @@ def build_parser():
         default=None,
         help="Filter source registry rows by classification text.",
     )
+    parser.add_argument(
+        "--proposal",
+        default=None,
+        help="Attach an ingested source evidence packet to a proposal id.",
+    )
 
     return parser
 
@@ -655,9 +790,8 @@ def main():
     if command == "commit-world":
         return commit_world(subject, json_output=args.json_output)
 
-    if command in {"ingest"}:
-        show_command_contract(command, subject=subject)
-        return 0
+    if command == "ingest":
+        return ingest_source(subject, proposal_id=args.proposal, json_output=args.json_output)
 
     # --- Query required for pipeline modes ---
     if not args.query and not args.pipeline:

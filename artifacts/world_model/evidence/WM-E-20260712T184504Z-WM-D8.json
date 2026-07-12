@@ -1,0 +1,21 @@
+{
+  "capture_mode": "registry-metadata",
+  "claims": [],
+  "classification": "World-model planning note",
+  "created_at": "2026-07-12T18:45:04Z",
+  "id": "WM-E-20260712T184504Z-WM-D8",
+  "notes": [
+    "Evidence packet captures source metadata only.",
+    "No Drive/GitHub/cloud content was copied by this command.",
+    "Canon promotion requires later review."
+  ],
+  "source": {
+    "classification": "World-model planning note",
+    "id": "WM-D8",
+    "location": "gdrive:F_Backup/Downloads/Walk me through the process of building a world model ai.md",
+    "name": "gdrive:F_Backup/Downloads/Walk me through the process of building a world model ai.md",
+    "next_action": "Use as practical architecture input",
+    "platform_relevance": "Defines state/action/observation, modular models, planning loop",
+    "type": ""
+  }
+}
