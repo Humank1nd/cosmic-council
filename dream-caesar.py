@@ -34,50 +34,7 @@ PLATFORM_COMMANDS = {
     "commit-world",
 }
 
-SOURCE_REGISTRY = [
-    {
-        "id": "WM-S1",
-        "name": "Dream Caesar CLI",
-        "location": "dream-caesar.py",
-        "classification": "active kernel",
-    },
-    {
-        "id": "WM-S2",
-        "name": "Ledger / Router / Crystallization",
-        "location": "infrastructure/ledger",
-        "classification": "active kernel",
-    },
-    {
-        "id": "WM-S3",
-        "name": "Cosmic Council Python package",
-        "location": "src/cosmic_council",
-        "classification": "active donor/kernel",
-    },
-    {
-        "id": "WM-S4",
-        "name": "CRONUS runtime and console",
-        "location": "CRONUS",
-        "classification": "runtime donor",
-    },
-    {
-        "id": "WM-S5",
-        "name": "Dream Caesar frontend",
-        "location": "frontend",
-        "classification": "UI donor",
-    },
-    {
-        "id": "WM-D1",
-        "name": "Dream Caesar Google Drive backup",
-        "location": "gdrive:Dream Caesar Backups/2026-07-12/",
-        "classification": "verified backup",
-    },
-    {
-        "id": "WM-D8",
-        "name": "World Model AI planning note",
-        "location": "gdrive:F_Backup/Downloads/Walk me through the process of building a world model ai.md",
-        "classification": "world-model planning note",
-    },
-]
+SOURCE_REGISTRY_DOC = REPO_ROOT / "docs" / "WORLD_MODEL_SOURCE_REGISTRY.md"
 
 
 def run_consciousness_check(verbose=False):
@@ -138,11 +95,119 @@ def show_status():
     print(f"  verbose: {user_config.get('verbose', False)}")
 
 
-def show_sources(json_output=False):
-    """Display the first-pass World Model source registry."""
+def strip_markdown_cell(value):
+    """Normalize a Markdown table cell into display text."""
+    value = value.strip()
+    if value.startswith("`") and value.endswith("`"):
+        value = value[1:-1]
+    return value.replace("\\|", "|").strip()
+
+
+def is_table_separator(cells):
+    """Return True for Markdown table separator rows."""
+    return all(set(cell.strip()) <= {"-", ":", " "} for cell in cells)
+
+
+def parse_markdown_row(line):
+    """Parse a simple Markdown table row."""
+    stripped = line.strip()
+    if not stripped.startswith("|") or not stripped.endswith("|"):
+        return None
+    return [strip_markdown_cell(cell) for cell in stripped.strip("|").split("|")]
+
+
+def normalize_source_row(headers, cells):
+    """Normalize registry rows from section-specific tables."""
+    row = dict(zip(headers, cells))
+    source_id = row.get("Source ID", "")
+    if not source_id:
+        return None
+
+    name = (
+        row.get("Title / Path")
+        or row.get("Repository")
+        or row.get("Drive path")
+        or source_id
+    )
+    location = row.get("Location") or row.get("Repository") or row.get("Drive path") or name
+    classification = row.get("Classification") or row.get("Type") or "unknown"
+
+    return {
+        "id": source_id,
+        "name": name,
+        "location": location,
+        "type": row.get("Type", ""),
+        "classification": classification,
+        "platform_relevance": row.get("Platform relevance", ""),
+        "next_action": row.get("Next action", ""),
+    }
+
+
+def load_source_registry():
+    """Load source registry rows from the durable Markdown registry."""
+    if not SOURCE_REGISTRY_DOC.exists():
+        return []
+
+    sources = []
+    headers = None
+    for line in SOURCE_REGISTRY_DOC.read_text(encoding="utf-8").splitlines():
+        cells = parse_markdown_row(line)
+        if not cells:
+            headers = None
+            continue
+
+        if is_table_separator(cells):
+            continue
+
+        if "Source ID" in cells:
+            headers = cells
+            continue
+
+        if not headers or len(cells) != len(headers):
+            continue
+
+        source = normalize_source_row(headers, cells)
+        if source:
+            sources.append(source)
+
+    return sources
+
+
+def filter_sources(sources, source_filter=None, classification_filter=None):
+    """Filter registry rows by text and/or classification."""
+    filtered = sources
+    if classification_filter:
+        needle = classification_filter.lower()
+        filtered = [
+            source for source in filtered
+            if needle in source.get("classification", "").lower()
+        ]
+
+    if source_filter:
+        needle = source_filter.lower()
+        filtered = [
+            source for source in filtered
+            if any(
+                needle in str(source.get(key, "")).lower()
+                for key in ("id", "name", "location", "type", "classification")
+            )
+        ]
+
+    return filtered
+
+
+def show_sources(json_output=False, source_filter=None, classification_filter=None):
+    """Display the World Model source registry."""
+    sources = load_source_registry()
+    sources = filter_sources(
+        sources,
+        source_filter=source_filter,
+        classification_filter=classification_filter,
+    )
     payload = {
-        "registry_doc": str(REPO_ROOT / "docs" / "WORLD_MODEL_SOURCE_REGISTRY.md"),
-        "sources": SOURCE_REGISTRY,
+        "registry_doc": str(SOURCE_REGISTRY_DOC),
+        "count": len(sources),
+        "sources": sources,
         "rule": "Sources are evidence first. Promotion to canon requires classification.",
     }
 
@@ -153,12 +218,17 @@ def show_sources(json_output=False):
     print("WORLD MODEL SOURCE REGISTRY")
     print("=" * 60)
     print(f"Registry doc: {payload['registry_doc']}")
+    print(f"Sources: {payload['count']}")
     print(payload["rule"])
     print()
-    for source in SOURCE_REGISTRY:
+    for source in sources:
         print(f"{source['id']}: {source['name']}")
         print(f"  location: {source['location']}")
         print(f"  classification: {source['classification']}")
+        if source.get("platform_relevance"):
+            print(f"  relevance: {source['platform_relevance']}")
+        if source.get("next_action"):
+            print(f"  next: {source['next_action']}")
 
 
 def show_command_contract(command, subject=None):
@@ -393,6 +463,11 @@ def build_parser():
         dest="json_output",
         help="Output results as JSON.",
     )
+    parser.add_argument(
+        "--classification",
+        default=None,
+        help="Filter source registry rows by classification text.",
+    )
 
     return parser
 
@@ -423,7 +498,11 @@ def main():
 
     # --- World Model platform commands ---
     if command == "sources":
-        show_sources(json_output=args.json_output)
+        show_sources(
+            json_output=args.json_output,
+            source_filter=subject,
+            classification_filter=args.classification,
+        )
         return 0
 
     if command == "ask":
