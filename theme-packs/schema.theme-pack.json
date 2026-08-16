@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knowjoke.lol/schemas/universe-theme-pack.json",
+  "title": "UniverseThemePack",
+  "type": "object",
+  "required": ["meta", "layers", "totems"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["id", "displayName", "version", "publicSafe", "structuralCanonRef"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "displayName": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "publicSafe": { "type": "boolean" },
+        "structuralCanonRef": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["layer", "archetypeLabel"],
+        "properties": {
+          "layer": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "archetypeLabel": { "type": "string" },
+          "archetypeSubtitle": { "type": "string" },
+          "mythFrame": { "type": "string" },
+          "icon": { "type": "string" },
+          "accentColor": { "type": "string" }
+        }
+      }
+    },
+    "totems": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["color", "themeVariant", "variantEssence"],
+        "properties": {
+          "color": {
+            "enum": ["red", "orange", "yellow", "green", "blue", "purple"]
+          },
+          "themeVariant": { "type": "string" },
+          "variantEssence": { "type": "string" },
+          "optionalAlias": { "type": "string" }
+        }
+      }
+    }
+  }
+}

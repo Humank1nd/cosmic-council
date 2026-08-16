@@ -1,0 +1,104 @@
+{
+  "meta": {
+    "id": "know-joke-lineage",
+    "displayName": "Know Joke Comedy Lineage Pyramid",
+    "version": "0.1.0",
+    "publicSafe": true,
+    "sourceRef": "gdrive:Know Joke/CAOS - White/The Know Joke University Spine…docx",
+    "notes": "Historical/civilizational descent (few ancient influencers at top → many modern at bottom). NOT the same numbering as system spine in comedy-spine.ts."
+  },
+  "layers": [
+    {
+      "lineageLayer": 1,
+      "lineageName": "Primordial Laugh",
+      "subtitle": "Source Code",
+      "description": "Civilizational originators — survival intelligence, first recorded humor.",
+      "curriculumTier": 800,
+      "primaryTrackTier": 8,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 2,
+      "lineageName": "Sacred / Ritual Clown",
+      "subtitle": "Ritual Mask",
+      "description": "Sacred clowning, ritual inversion, licensed transgression.",
+      "curriculumTier": 700,
+      "primaryTrackTier": 7,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 3,
+      "lineageName": "Court Fool / Truth-Teller",
+      "subtitle": "Licensed Truth",
+      "description": "Court jesters and truth-tellers — distributed across tracks 600–800.",
+      "curriculumTier": null,
+      "primaryTrackTier": 0,
+      "distributed": true,
+      "distributedAcrossTiers": [600, 700, 800]
+    },
+    {
+      "lineageLayer": 4,
+      "lineageName": "Classical Comic Architects",
+      "subtitle": "Form Builders",
+      "description": "Satire, farce, trickster logic — Aristophanes, Plautus, Vidūṣaka tradition.",
+      "curriculumTier": 600,
+      "primaryTrackTier": 6,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 5,
+      "lineageName": "Folk Trickster Lineages",
+      "subtitle": "Oral Remix",
+      "description": "Folk tricksters and oral lineage — distributed across classical and sacred tracks.",
+      "curriculumTier": null,
+      "primaryTrackTier": 0,
+      "distributed": true,
+      "distributedAcrossTiers": [600, 700]
+    },
+    {
+      "lineageLayer": 6,
+      "lineageName": "Print Satirists / Public Wits",
+      "subtitle": "Mass Reproducible Critique",
+      "description": "Printing press era satirists and public wits.",
+      "curriculumTier": 500,
+      "primaryTrackTier": 5,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 7,
+      "lineageName": "Stage / Vaudeville / Club",
+      "subtitle": "Traveling Troupes",
+      "description": "Stage, vaudeville, and club lineages.",
+      "curriculumTier": 400,
+      "primaryTrackTier": 4,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 8,
+      "lineageName": "Broadcast Comedy",
+      "subtitle": "National Monoculture",
+      "description": "Radio, TV, and film broadcast comedy.",
+      "curriculumTier": 300,
+      "primaryTrackTier": 3,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 9,
+      "lineageName": "Internet Comedy Creators",
+      "subtitle": "Zero Barrier",
+      "description": "Digital creators, remix culture, viral spread.",
+      "curriculumTier": 200,
+      "primaryTrackTier": 2,
+      "distributed": false
+    },
+    {
+      "lineageLayer": 10,
+      "lineageName": "Everyone's a Comedian",
+      "subtitle": "Ambient Culture",
+      "description": "Mass participation — memes, feeds, ambient digital democracy.",
+      "curriculumTier": 100,
+      "primaryTrackTier": 1,
+      "distributed": false
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "id": "know-joke",
+    "displayName": "Know Joke University",
+    "version": "0.3.0",
+    "publicSafe": true,
+    "structuralCanonRef": "packages/council-core/src/comedy-spine.ts",
+    "notes": "KJU public dimension. Structural species Dream Caesar shapeshifts as Thalia (L2); Cosmic Council shapeshifts as Comedic Council (L3) — comedy-education training only, no occult/magic council lore. Noe = mascot overlay. OpenClown = OpenClaw student product name. Never import marvel-omniverse occult council prompts onto student paths."
+  },
+  "dimensionBoundary": {
+    "id": "kju-public-dimension",
+    "isolatedFrom": ["marvel-omniverse"],
+    "councilLoreDomain": "comedy-education",
+    "notes": "Comedic Council is the KJU skin of the Cosmic Council species — C.L.O.W.N.S. pedagogy, not Strange-tier grimoire training. Dimension isolation is mandatory."
+  },
+  "structuralSpecies": {
+    "dreamCaesar": {
+      "structuralKey": "Dream Caesar",
+      "shapeshiftLabel": "Thalia",
+      "spineLayer": 2,
+      "notes": "Membrane species — frontier reasoning; shapeshifts for KJU public surfaces."
+    },
+    "cosmicCouncil": {
+      "structuralKey": "Cosmic Council",
+      "shapeshiftLabel": "Comedic Council",
+      "spineLayer": 3,
+      "notes": "Six-seat ring species — comedy-education skin; same ROYGBV engine, different lore domain than Marvel."
+    }
+  },
+  "mascotPersona": {
+    "id": "noe",
+    "displayName": "Noe",
+    "role": "Public mascot for AI agents — wears many hats, plays every part",
+    "notASpineLayer": true,
+    "notSynonymousWith": ["Thalia", "Dream Caesar", "Comedic Council"]
+  },
+  "openClownProduct": {
+    "id": "open-clown",
+    "displayName": "OpenClown",
+    "role": "Agent builder & task orchestrator",
+    "structuralRuntimeKey": "OpenClaw",
+    "studentFacingOnly": true,
+    "notSynonymousWith": ["OpenClaw"]
+  },
+  "layers": [
+    {
+      "layer": 1,
+      "archetypeLabel": "The User",
+      "icon": "globe",
+      "accentColor": "#ef4444"
+    },
+    {
+      "layer": 2,
+      "archetypeLabel": "Thalia",
+      "archetypeSubtitle": "Frontier Reasoning",
+      "mythFrame": "Highest frontier reasoning model. Orchestrates intent and delegates to Comedic Council and lower layers.",
+      "icon": "cpu",
+      "accentColor": "#f97316"
+    },
+    {
+      "layer": 3,
+      "archetypeLabel": "Comedic Council",
+      "archetypeSubtitle": "The Council Ring",
+      "mythFrame": "Six-seat reasoning ring (WHY→WHO). One step below Thalia.",
+      "icon": "brain",
+      "accentColor": "#eab308"
+    },
+    {
+      "layer": 4,
+      "archetypeLabel": "Ancient Humor",
+      "archetypeSubtitle": "Archetype Keepers",
+      "icon": "message-circle",
+      "accentColor": "#22c55e"
+    },
+    {
+      "layer": 5,
+      "archetypeLabel": "Satirical Press",
+      "archetypeSubtitle": "Civic Ink",
+      "icon": "database",
+      "accentColor": "#3b82f6"
+    },
+    {
+      "layer": 6,
+      "archetypeLabel": "Industrial Vaudeville",
+      "archetypeSubtitle": "Stage Mechanics",
+      "icon": "shield-check",
+      "accentColor": "#8b5cf6"
+    },
+    {
+      "layer": 7,
+      "archetypeLabel": "Broadcast Living Room",
+      "archetypeSubtitle": "Domestic Observer",
+      "icon": "radio",
+      "accentColor": "#ec4899"
+    },
+    {
+      "layer": 8,
+      "archetypeLabel": "Iconoclast Era",
+      "archetypeSubtitle": "The Vigilantes",
+      "icon": "gamepad-2",
+      "accentColor": "#06b6d4"
+    },
+    {
+      "layer": 9,
+      "archetypeLabel": "Digital Revolution",
+      "archetypeSubtitle": "Street Level",
+      "icon": "search",
+      "accentColor": "#2dd4bf"
+    },
+    {
+      "layer": 10,
+      "archetypeLabel": "The Population",
+      "archetypeSubtitle": "Quecto / Algorithmic Feed",
+      "mythFrame": "Simplest equations and computational energy — memes, ratios, feed logic.",
+      "icon": "users",
+      "accentColor": "#f8fafc"
+    }
+  ],
+  "totems": [
+    {
+      "color": "red",
+      "themeVariant": "Curiosity",
+      "variantEssence": "Ask what is really happening and why it matters.",
+      "optionalAlias": "Red Owl"
+    },
+    {
+      "color": "orange",
+      "themeVariant": "Logistics",
+      "variantEssence": "Choose the path, owner, constraints, and next move.",
+      "optionalAlias": "Orange Orangutan"
+    },
+    {
+      "color": "yellow",
+      "themeVariant": "Opus",
+      "variantEssence": "Build the work: joke, lesson, map, brief, or artifact.",
+      "optionalAlias": "Yellow Honeybee"
+    },
+    {
+      "color": "green",
+      "themeVariant": "Workflow",
+      "variantEssence": "Make the work executable in time, energy, money, and context.",
+      "optionalAlias": "Green Tortoise"
+    },
+    {
+      "color": "blue",
+      "themeVariant": "Networking",
+      "variantEssence": "Put the work in the right room, channel, audience, or relationship.",
+      "optionalAlias": "Blue Dolphin"
+    },
+    {
+      "color": "purple",
+      "themeVariant": "Sustainability",
+      "variantEssence": "Preserve the person, memory, ethics, and long-term continuity.",
+      "optionalAlias": "Purple Elephant"
+    }
+  ]
+}

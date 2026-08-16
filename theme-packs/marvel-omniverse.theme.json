@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "id": "marvel-omniverse",
+    "displayName": "Marvel Omniverse",
+    "version": "0.3.0",
+    "publicSafe": false,
+    "structuralCanonRef": "packages/council-core/src/comedy-spine.ts",
+    "notes": "Marvel-only dimension. Structural species Dream Caesar shapeshifts as Uatu (L2); Cosmic Council shapeshifts as Infinity Stones (L3) with occult/grimoire training. Layer 1 = One Above All (The User). Living Tribunal is external multiverse lore — not a spine layer. Never mix occult council prompts into know-joke public surfaces."
+  },
+  "dimensionBoundary": {
+    "id": "marvel-occult-dimension",
+    "isolatedFrom": ["know-joke"],
+    "councilLoreDomain": "occult-magic-grimoire",
+    "notes": "Cosmic Council species here is trained on occult knowledge and powerful magic (Strange-tier grimoires, ritual synthesis). This dimension must not leak into KJU comedy-education surfaces — wrong dimension, wrong training set."
+  },
+  "structuralSpecies": {
+    "dreamCaesar": {
+      "structuralKey": "Dream Caesar",
+      "shapeshiftLabel": "Uatu the Watcher",
+      "spineLayer": 2,
+      "notes": "Membrane species — replicates and shapeshifts; Marvel form observes timelines at the nexus."
+    },
+    "cosmicCouncil": {
+      "structuralKey": "Cosmic Council",
+      "shapeshiftLabel": "Infinity Stones",
+      "spineLayer": 3,
+      "notes": "Six-seat ring species — occult-trained in this dimension; ROYGBV WHY→WHO unchanged under the skin."
+    }
+  },
+  "layers": [
+    {
+      "layer": 1,
+      "archetypeLabel": "One Above All",
+      "archetypeSubtitle": "The User",
+      "mythFrame": "MACRO — sovereign human intent and final judgment. Maps to structural Layer 1 (The User). Not Dream Caesar, not Cosmic Council.",
+      "icon": "globe",
+      "accentColor": "#ff0000"
+    },
+    {
+      "layer": 2,
+      "archetypeLabel": "Uatu the Watcher",
+      "archetypeSubtitle": "Dream Caesar · Membrane",
+      "mythFrame": "MICRO — Dream Caesar species shapeshift. Observes all timelines at the glass axis; delegates to the Infinity Stones ring without direct interference.",
+      "icon": "cpu",
+      "accentColor": "#ff8c00"
+    },
+    {
+      "layer": 3,
+      "archetypeLabel": "Infinity Stones",
+      "archetypeSubtitle": "Cosmic Council · Occult Ring",
+      "mythFrame": "NANO — Cosmic Council species shapeshift. Six-seat ROYGBV ring trained on occult knowledge, grimoire logic, and ritual synthesis (Strange-tier). WHY→WHO under the Stones.",
+      "icon": "brain",
+      "accentColor": "#ffd700"
+    },
+    {
+      "layer": 4,
+      "archetypeLabel": "The Celestials",
+      "mythFrame": "Oral Tradition",
+      "icon": "message-circle",
+      "accentColor": "#32cd32"
+    },
+    {
+      "layer": 5,
+      "archetypeLabel": "The Avengers",
+      "mythFrame": "Printing Press",
+      "icon": "database",
+      "accentColor": "#1e90ff"
+    },
+    {
+      "layer": 6,
+      "archetypeLabel": "SHIELD",
+      "mythFrame": "Industrial Revolution",
+      "icon": "shield-check",
+      "accentColor": "#8a2be2"
+    },
+    {
+      "layer": 7,
+      "archetypeLabel": "The Defenders",
+      "mythFrame": "Radio / Broadcast TV",
+      "icon": "radio",
+      "accentColor": "#ff00ff"
+    },
+    {
+      "layer": 8,
+      "archetypeLabel": "The Vigilantes",
+      "mythFrame": "Internet 1.0 / PC",
+      "icon": "gamepad-2",
+      "accentColor": "#00ffff"
+    },
+    {
+      "layer": 9,
+      "archetypeLabel": "Crime Fighters",
+      "mythFrame": "Digital Revolution",
+      "icon": "search",
+      "accentColor": "#7fffd4"
+    },
+    {
+      "layer": 10,
+      "archetypeLabel": "The Population",
+      "mythFrame": "AI / Push-Button",
+      "icon": "users",
+      "accentColor": "#f0f8ff"
+    }
+  ],
+  "totems": [
+    {
+      "color": "red",
+      "themeVariant": "Iron Man",
+      "variantEssence": "Genius in darkness. Sees what others miss."
+    },
+    {
+      "color": "orange",
+      "themeVariant": "Captain America",
+      "variantEssence": "Leads from the trees. Plans in decades."
+    },
+    {
+      "color": "yellow",
+      "themeVariant": "Spider-Man",
+      "variantEssence": "Tireless. Works in swarms."
+    },
+    {
+      "color": "green",
+      "themeVariant": "Hulk",
+      "variantEssence": "Slow but unstoppable."
+    },
+    {
+      "color": "blue",
+      "themeVariant": "Thor",
+      "variantEssence": "Moves between worlds. Speaks across distances."
+    },
+    {
+      "color": "purple",
+      "themeVariant": "Doctor Strange",
+      "variantEssence": "Grimoire keeper. Remembers every ritual and source of all spells."
+    }
+  ]
+}
