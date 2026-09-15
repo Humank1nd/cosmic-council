@@ -23,21 +23,29 @@ ROYGBV multi-agent orchestration system for problem-solving workflows.
 ## Getting Started
 
 ```bash
-cd "Cosmic Council"
+cd api
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python run.py
 ```
 
+The orchestrator calls an LLM backend through Supra-GPTR (default `http://localhost:8005`)
+using OpenAI-compatible `/v1/chat/completions` endpoints.
+
 ## Architecture
 
 ```
 Cosmic Council/
-├── src/cosmic_council/    # Core agent logic
-├── services/              # API gateways
-├── supra_enterprise/      # Per-agent services
-└── tests/
+├── api/
+│   ├── src/
+│   │   ├── council.py     # CosmicCouncil orchestrator (async cycle engine)
+│   │   ├── models.py      # Enterprise, Problem, CycleResult, Solution models
+│   │   └── api.py         # FastAPI routes
+│   ├── run.py             # API entry point
+│   ├── requirements.txt
+│   └── Dockerfile
+└── .github/workflows/ci.yml
 ```
 
 ## Related Repositories
